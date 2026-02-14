@@ -1,18 +1,18 @@
-const Anthropic = require('@anthropic-ai/sdk');
+const Groq = require('groq-sdk');
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const logger = require('../../utils/logger');
 
 /**
  * AI Engine for intelligent automation decisions
- * Integrates with Claude API for element detection, validation, and self-healing
+ * Integrates with Groq LLM API for element detection, validation, and self-healing
  */
 class AIEngine {
   constructor() {
-    this.client = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+    this.groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
     });
-    this.model = 'claude-sonnet-4-20250514';
+    this.model = 'llama-3.3-70b-versatile';
     this.conversationHistory = [];
   }
 
@@ -46,18 +46,20 @@ Provide your response in JSON format with the following structure:
   }
 }`;
 
-      const response = await this.client.messages.create({
+      const response = await this.groq.chat.completions.create({
         model: this.model,
+        temperature: 0.1,
         max_tokens: 1000,
         messages: [
           {
             role: 'user',
             content: prompt
           }
-        ]
+        ],
+        response_format: { type: 'json_object' },
       });
 
-      const result = JSON.parse(response.content[0].text);
+      const result = JSON.parse(response.choices[0].message.content);
       logger.info(`AI found selector with ${result.confidence} confidence`);
       
       return result;
@@ -69,53 +71,23 @@ Provide your response in JSON format with the following structure:
 
   /**
    * Analyze screenshot to validate UI state
-   * @param {Buffer} screenshotBuffer - Screenshot as buffer
+   * Note: Groq doesn't support vision - this method is limited
+   * @param {Buffer} screenshotBuffer - Screenshot as buffer (not used with Groq)
    * @param {string} expectedState - Description of expected state
-   * @returns {Promise<Object>} - Validation result
+   * @returns {Promise<Object>} - Validation result (limited without vision)
    */
   async analyzeScreenshot(screenshotBuffer, expectedState) {
     try {
-      logger.info(`AI analyzing screenshot for: ${expectedState}`);
+      logger.warn('Visual analysis not supported with Groq - returning basic response');
 
-      const base64Image = screenshotBuffer.toString('base64');
-
-      const response = await this.client.messages.create({
-        model: this.model,
-        max_tokens: 1000,
-        messages: [
-          {
-            role: 'user',
-            content: [
-              {
-                type: 'image',
-                source: {
-                  type: 'base64',
-                  media_type: 'image/png',
-                  data: base64Image
-                }
-              },
-              {
-                type: 'text',
-                text: `Analyze this screenshot and determine if it matches the expected state: "${expectedState}"
-
-Provide your response in JSON format:
-{
-  "matches": true/false,
-  "confidence": 0.95,
-  "observations": ["what you see in the image"],
-  "issues": ["any problems or discrepancies"],
-  "suggestions": ["recommendations if state doesn't match"]
-}`
-              }
-            ]
-          }
-        ]
-      });
-
-      const result = JSON.parse(response.content[0].text);
-      logger.info(`Visual validation: ${result.matches ? 'PASS' : 'FAIL'} (${result.confidence} confidence)`);
-      
-      return result;
+      // Groq doesn't support image analysis, return a default response
+      return {
+        matches: false,
+        confidence: 0.5,
+        observations: ['Visual analysis not available with Groq LLM'],
+        issues: ['Groq does not support image/vision capabilities'],
+        suggestions: ['Use DOM-based verification instead of visual validation']
+      };
     } catch (error) {
       logger.error(`Screenshot analysis error: ${error.message}`);
       throw error;
@@ -154,13 +126,15 @@ Response format:
   "confidence": 0.85
 }`;
 
-      const response = await this.client.messages.create({
+      const response = await this.groq.chat.completions.create({
         model: this.model,
+        temperature: 0.2,
         max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' },
       });
 
-      const result = JSON.parse(response.content[0].text);
+      const result = JSON.parse(response.choices[0].message.content);
       logger.info(`Self-healing suggestion: ${result.newSelectors[0]}`);
       
       return result;
@@ -181,12 +155,8 @@ Response format:
     try {
       logger.info('AI analyzing test failure');
 
-      const base64Image = screenshot ? screenshot.toString('base64') : null;
-
-      const content = [
-        {
-          type: 'text',
-          text: `A test has failed. Analyze the failure and provide actionable insights.
+      // Note: Groq doesn't support vision, so we skip screenshot analysis
+      const prompt = `A test has failed. Analyze the failure and provide actionable insights.
 
 Test Context:
 - Test Name: ${testContext.testName}
@@ -201,28 +171,17 @@ Provide analysis in JSON:
   "recommendations": ["how to fix"],
   "isFlaky": true/false,
   "confidence": 0.9
-}`
-        }
-      ];
+}`;
 
-      if (base64Image) {
-        content.unshift({
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: 'image/png',
-            data: base64Image
-          }
-        });
-      }
-
-      const response = await this.client.messages.create({
+      const response = await this.groq.chat.completions.create({
         model: this.model,
+        temperature: 0.2,
         max_tokens: 1500,
-        messages: [{ role: 'user', content }]
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' },
       });
 
-      const result = JSON.parse(response.content[0].text);
+      const result = JSON.parse(response.choices[0].message.content);
       logger.info(`Failure analysis: ${result.category} - ${result.rootCause}`);
       
       return result;
@@ -257,13 +216,15 @@ Generate appropriate test assertions in JSON format:
   ]
 }`;
 
-      const response = await this.client.messages.create({
+      const response = await this.groq.chat.completions.create({
         model: this.model,
+        temperature: 0.2,
         max_tokens: 1000,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: prompt }],
+        response_format: { type: 'json_object' },
       });
 
-      const result = JSON.parse(response.content[0].text);
+      const result = JSON.parse(response.choices[0].message.content);
       return result.assertions;
     } catch (error) {
       logger.error(`Assertion generation error: ${error.message}`);

@@ -1,15 +1,23 @@
 const { test: base, expect } = require('@playwright/test');
 const AIPage = require('./ai-page');
 const aiEngine = require('./ai-engine');
+const MCPClaudeClient = require('../mcp/client');
 const logger = require('../../utils/logger');
 
 /**
- * Extended Playwright test with AI capabilities
+ * Extended Playwright test with AI capabilities + MCP
  */
 const test = base.extend({
   aiPage: async ({ page }, use) => {
     const aiPage = new AIPage(page);
     await use(aiPage);
+  },
+
+  // MCP-powered Claude client for conversational test authoring
+  mcpClaude: async ({ page, context }, use) => {
+    const mcpClient = new MCPClaudeClient(page, context);
+    await mcpClient.initialize();
+    await use(mcpClient);
   },
 
   // Auto-capture on failure
