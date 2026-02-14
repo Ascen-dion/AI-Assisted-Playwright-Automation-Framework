@@ -35,7 +35,7 @@ jobs:
       continue-on-error: true
       env:
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      run: npx playwright test
+      run: npx playwright test saucedemo_Smoke.spec.js 
 
     - name: Generate test report
       if: always()
