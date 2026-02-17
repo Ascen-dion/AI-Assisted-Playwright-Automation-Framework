@@ -9,6 +9,9 @@ const { test, expect } = require('@playwright/test');
 const testAgents = require('../core/test-agents-mcp');
 const mcpClient = require('../mcp/playwright-mcp-client');
 
+// Increase timeout for AI operations (AI calls can take 30-60 seconds)
+test.setTimeout(120000); // 2 minutes
+
 test.describe('MCP Demo - Quick Start', () => {
 
   test('1. MCP Connection and Server Info', async () => {
