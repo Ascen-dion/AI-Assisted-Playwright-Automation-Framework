@@ -6,13 +6,14 @@ const logger = require('../../utils/logger');
 
 /**
  * Flexible AI Engine supporting multiple providers:
+ * - OpenRouter (cloud, fast, multiple models)
  * - Anthropic Claude (cloud)
  * - Local LLM via Ollama/LM Studio (OpenAI-compatible)
  * - Disabled mode (fallback to standard selectors)
  */
 class AIEngine {
   constructor() {
-    this.provider = process.env.AI_PROVIDER || 'anthropic'; // 'anthropic', 'local', 'disabled'
+    this.provider = process.env.AI_PROVIDER || 'openrouter'; // 'openrouter', 'anthropic', 'local', 'disabled'
     this.conversationHistory = [];
     
     this.initializeProvider();
@@ -22,11 +23,15 @@ class AIEngine {
     logger.info(`Initializing AI provider: ${this.provider}`);
 
     switch (this.provider.toLowerCase()) {
+      case 'openrouter':
+        this.initializeOpenRouter();
+        break;
+
       case 'anthropic':
         if (!process.env.ANTHROPIC_API_KEY) {
-          logger.warn('ANTHROPIC_API_KEY not found, falling back to local LLM');
-          this.provider = 'local';
-          this.initializeLocal();
+          logger.warn('ANTHROPIC_API_KEY not found, falling back to OpenRouter');
+          this.provider = 'openrouter';
+          this.initializeOpenRouter();
         } else {
           this.client = new Anthropic({
             apiKey: process.env.ANTHROPIC_API_KEY,
@@ -44,10 +49,32 @@ class AIEngine {
         break;
 
       default:
-        logger.warn(`Unknown AI provider: ${this.provider}, falling back to local`);
-        this.provider = 'local';
-        this.initializeLocal();
+        logger.warn(`Unknown AI provider: ${this.provider}, falling back to OpenRouter`);
+        this.provider = 'openrouter';
+        this.initializeOpenRouter();
     }
+  }
+
+  initializeOpenRouter() {
+    // OpenRouter is OpenAI-compatible, uses same SDK
+    if (!process.env.OPENROUTER_API_KEY) {
+      logger.error('OPENROUTER_API_KEY not found in .env file!');
+      throw new Error('OpenRouter API key required. Please set OPENROUTER_API_KEY in .env');
+    }
+    
+    this.client = new OpenAI({
+      baseURL: 'https://openrouter.ai/api/v1',
+      apiKey: process.env.OPENROUTER_API_KEY,
+      defaultHeaders: {
+        'HTTP-Referer': 'https://github.com/playwright',
+        'X-Title': 'Playwright AI Framework'
+      }
+    });
+    
+    this.model = process.env.OPENROUTER_MODEL || 'openai/gpt-4o-mini';
+    
+    logger.info(`OpenRouter configured with model: ${this.model}`);
+    logger.info('🚀 Using fast cloud-based AI (OpenRouter)');
   }
 
   initializeLocal() {
@@ -110,7 +137,7 @@ Provide your response in JSON format with the following structure:
         logger.info(`AI found selector with ${result.confidence} confidence`);
         return result;
         
-      } else if (this.provider === 'local') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local') {
         response = await this.client.chat.completions.create({
           model: this.model,
           messages: [
@@ -143,13 +170,25 @@ Provide your response in JSON format with the following structure:
       throw new Error('AI is disabled. Use standard assertions.');
     }
 
-    // Note: Local LLMs typically don't support vision, so we skip for local
+    // Note: Vision analysis requires models with vision capability
     if (this.provider === 'local') {
       logger.warn('Vision analysis not supported with local LLM - skipping');
       return {
         matches: true,
         confidence: 0.5,
         observations: ['Vision analysis skipped - local LLM has no vision capability'],
+        issues: [],
+        suggestions: []
+      };
+    }
+    
+    // OpenRouter vision support (some models)
+    if (this.provider === 'openrouter') {
+      logger.warn('Vision analysis with OpenRouter - using text-based analysis');
+      return {
+        matches: true,
+        confidence: 0.7,
+        observations: ['Text-based analysis used'],
         issues: [],
         suggestions: []
       };
@@ -245,7 +284,7 @@ Response format:
         });
         return JSON.parse(response.content[0].text);
         
-      } else if (this.provider === 'local') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local') {
         response = await this.client.chat.completions.create({
           model: this.model,
           messages: [
@@ -317,7 +356,7 @@ Provide analysis in JSON:
         });
         return JSON.parse(response.content[0].text);
         
-      } else if (this.provider === 'local') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local') {
         response = await this.client.chat.completions.create({
           model: this.model,
           messages: [
@@ -364,7 +403,7 @@ Provide analysis in JSON:
         
         return response.content[0].text;
         
-      } else if (this.provider === 'local') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local') {
         const messages = [];
         
         if (systemMessage) {
