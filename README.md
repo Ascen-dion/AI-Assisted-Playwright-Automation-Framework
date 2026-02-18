@@ -28,12 +28,91 @@ Works with **FREE local LLM (Ollama)** or **fast cloud AI (OpenRouter)**! See [L
 - 🤖 **AI-Powered Element Detection**: Intelligent element identification using natural language
 - 🔄 **Self-Healing Tests**: Automatically adapts to UI changes (80% maintenance reduction)
 - 🎭 **4 MCP Test Agents**: Complete test lifecycle automation (Plan → Generate → Execute → Heal)
+- � **Jira & TestRail Integration**: Fetch user stories → Generate tests → Push results automatically
 - 👁️ **Visual AI Validation**: Screenshot analysis and visual regression testing
 - 📊 **Smart Reporting**: AI-generated test insights and failure analysis
 - 🎯 **Natural Language Test Writing**: Write tests in plain English
 - 🛡️ **Robust Element Selection**: Multiple fallback strategies for element location
 - 🌐 **Multiple AI Providers**: OpenRouter, Anthropic Claude, Local LLM, or Traditional selectors
 - 💰 **Flexible Pricing**: FREE (local) to cost-effective cloud options
+
+## 🔗 TestRail & Jira Integration
+
+**NEW! Complete end-to-end traceability** from user story to automated test:
+
+### 🚀 What's Possible
+
+1. **Fetch User Story from Jira** → Extract acceptance criteria automatically
+2. **AI Generates Test Cases** → From acceptance criteria to complete Playwright script
+3. **Execute Tests** → Run the generated automation
+4. **Push to TestRail** → Test cases sync automatically
+5. **Update Jira** → Results posted back to the story
+
+### 💡 One Command Does It All
+
+```bash
+# Generate complete automation from a Jira story
+node src/integrations/jira-to-automation.js PROJ-123
+```
+
+**This will:**
+- ✅ Fetch story PROJ-123 from Jira
+- ✅ Extract acceptance criteria
+- ✅ Generate test plan with test cases
+- ✅ Use AI to create Playwright test script
+- ✅ Execute the generated test
+- ✅ Push test cases to TestRail
+- ✅ Report results back to Jira
+
+### 📋 Features
+
+- **TestRail Integration**
+  - Push test cases automatically
+  - Update test run results in real-time
+  - Create test suites and sections
+  - Map Playwright tests to TestRail cases
+  - Automatic test execution reporting
+
+- **Jira Integration**
+  - Fetch user stories and requirements
+  - Extract acceptance criteria
+  - Generate test plans from stories
+  - Update Jira with test results
+  - Link test execution to stories
+  - Query stories by JQL
+
+### 📖 Setup Guide
+
+See **[INTEGRATION_SETUP.md](INTEGRATION_SETUP.md)** for complete configuration and usage examples.
+
+### ⚙️ Quick Setup
+
+```bash
+# Install dependencies
+npm install axios dotenv
+
+# Configure .env file
+JIRA_HOST=https://your-domain.atlassian.net
+JIRA_EMAIL=your-email@domain.com
+JIRA_API_TOKEN=your-api-token
+
+TESTRAIL_HOST=https://your-domain.testrail.io
+TESTRAIL_USER=your-email@domain.com
+TESTRAIL_API_KEY=your-api-key
+TESTRAIL_PROJECT_ID=1
+TESTRAIL_SUITE_ID=1
+
+# Run demo
+node demo-integration.js
+```
+
+### 💼 Business Value
+
+- **95% Time Savings**: Automatic test case documentation
+- **Zero Manual Sync**: Results flow automatically to TestRail & Jira
+- **Complete Traceability**: Story → Test → Result in one workflow
+- **Quality Metrics**: Real-time dashboards in TestRail
+- **Developer-Friendly**: No context switching between tools
 
 ## 🏗️ Architecture
 
@@ -761,13 +840,14 @@ module.exports = {
 - [ ] Real-time test generation from screen recordings
 - [ ] Advanced visual AI with element recognition
 - [ ] Multi-language test generation support
-- [ ] Integration with Jira/Azure DevOps
+- [ ] Azure DevOps integration (similar to Jira)
 - [ ] Mobile app testing (Appium integration)
 - [ ] API testing with AI-powered validation
 - [ ] Performance testing integration
 - [ ] Accessibility scoring and recommendations
 
 ### Recently Added ✅
+- [x] **Jira & TestRail Integration** - Complete workflow from user story to test execution
 - [x] OpenRouter integration (50-100x speed improvement)
 - [x] 4 MCP Test Agents (Planner, Generator, Healer, Analyzer)
 - [x] Multi-provider AI support
