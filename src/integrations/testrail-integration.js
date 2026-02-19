@@ -47,7 +47,7 @@ class TestRailIntegration {
    * @param {Object} testCase - Test case object
    * @returns {Promise<Object>} Created test case
    */
-  async pushTestCase(projectId, suiteId, testCase) {
+  async pushTestCase(projectId, suiteId, testCase, sectionId = null) {
     try {
       const payload = {
         title: testCase.title,
@@ -61,15 +61,85 @@ class TestRailIntegration {
         refs: testCase.refs || '' // Link to Jira ticket
       };
 
-      const response = await this.client.post(
-        `/add_case/${suiteId}`,
-        payload
-      );
+      // Use section_id in URL if provided, otherwise use suite_id
+      const endpoint = sectionId 
+        ? `/add_case/${sectionId}`
+        : `/add_case/${suiteId}`;
+
+      const response = await this.client.post(endpoint, payload);
 
       console.log(`✅ Test case pushed to TestRail: ${response.data.id} - ${testCase.title}`);
       return response.data;
     } catch (error) {
       console.error('❌ Failed to push test case:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Get all test cases from a suite/section
+   * @param {number} projectId - TestRail project ID
+   * @param {number} suiteId - TestRail suite ID
+   * @param {number} sectionId - Optional section ID
+   * @returns {Promise<Array>} Array of test cases
+   */
+  async getTestCases(projectId, suiteId, sectionId = null) {
+    try {
+      let url = `/get_cases/${projectId}&suite_id=${suiteId}`;
+      if (sectionId) {
+        url += `&section_id=${sectionId}`;
+      }
+
+      const response = await this.client.get(url);
+      return response.data.cases || response.data;
+    } catch (error) {
+      console.error('❌ Failed to get test cases:', error.response?.data || error.message);
+      return [];
+    }
+  }
+
+  /**
+   * Find existing test case by title
+   * @param {number} projectId - TestRail project ID
+   * @param {number} suiteId - TestRail suite ID
+   * @param {string} title - Test case title
+   * @param {number} sectionId - Optional section ID
+   * @returns {Promise<Object|null>} Existing test case or null
+   */
+  async findTestCaseByTitle(projectId, suiteId, title, sectionId = null) {
+    try {
+      const cases = await this.getTestCases(projectId, suiteId, sectionId);
+      return cases.find(testCase => testCase.title === title) || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * Update an existing test case
+   * @param {number} caseId - Test case ID to update
+   * @param {Object} testCase - Updated test case data
+   * @returns {Promise<Object>} Updated test case
+   */
+  async updateTestCase(caseId, testCase) {
+    try {
+      const payload = {
+        title: testCase.title,
+        type_id: 1, // Automated
+        priority_id: testCase.priority || 2,
+        estimate: testCase.estimate || '5m',
+        custom_automation_type: 1,
+        custom_steps: testCase.steps || '',
+        custom_expected: testCase.expected || '',
+        custom_preconds: testCase.preconditions || '',
+        refs: testCase.refs || ''
+      };
+
+      const response = await this.client.post(`/update_case/${caseId}`, payload);
+      console.log(`✅ Test case updated: ${caseId} - ${testCase.title}`);
+      return response.data;
+    } catch (error) {
+      console.error('❌ Failed to update test case:', error.response?.data || error.message);
       throw error;
     }
   }
@@ -181,46 +251,61 @@ class TestRailIntegration {
   }
 
   /**
-   * Batch push multiple test cases
+   * Batch push multiple test cases (with duplicate detection)
    * @param {number} projectId - TestRail project ID
    * @param {number} suiteId - TestRail suite ID
    * @param {Array<Object>} testCases - Array of test cases
-   * @returns {Promise<Array>} Created test cases
+   * @param {number} sectionId - Optional section ID
+   * @param {boolean} updateExisting - Whether to update existing test cases (default: true)
+   * @returns {Promise<Array>} Created/updated test cases
    */
-  async batchPushTestCases(projectId, suiteId, testCases) {
+  async batchPushTestCases(projectId, suiteId, testCases, sectionId = null, updateExisting = true) {
     console.log(`\n🔄 Pushing ${testCases.length} test cases to TestRail...\n`);
     
+    // Fetch existing test cases to check for duplicates
+    console.log('🔍 Checking for existing test cases...');
+    const existingCases = await this.getTestCases(projectId, suiteId, sectionId);
+    
     const results = [];
+    let created = 0;
+    let updated = 0;
+    let skipped = 0;
+
     for (const testCase of testCases) {
       try {
-        const result = await this.pushTestCase(projectId, suiteId, testCase);
-        results.push(result);
+        // Check if test case already exists
+        const existing = existingCases.find(tc => tc.title === testCase.title);
+        
+        if (existing) {
+          if (updateExisting) {
+            console.log(`🔄 Updating existing test case: ${existing.id} - ${testCase.title}`);
+            const result = await this.updateTestCase(existing.id, testCase);
+            results.push({ ...result, action: 'updated' });
+            updated++;
+          } else {
+            console.log(`⏭️  Skipping existing test case: ${existing.id} - ${testCase.title}`);
+            results.push({ ...existing, action: 'skipped' });
+            skipped++;
+          }
+        } else {
+          // Create new test case
+          const result = await this.pushTestCase(projectId, suiteId, testCase, sectionId);
+          results.push({ ...result, action: 'created' });
+          created++;
+        }
       } catch (error) {
-        console.error(`⚠️  Failed to push: ${testCase.title}`);
-        results.push({ error: error.message, testCase });
+        console.error(`⚠️  Failed to process: ${testCase.title}`);
+        results.push({ error: error.message, testCase, action: 'failed' });
       }
     }
 
-    console.log(`\n✅ Batch push complete: ${results.filter(r => !r.error).length}/${testCases.length} successful\n`);
+    console.log(`\n✅ Batch push complete:`);
+    console.log(`   📝 Created: ${created}`);
+    console.log(`   🔄 Updated: ${updated}`);
+    console.log(`   ⏭️  Skipped: ${skipped}`);
+    console.log(`   ❌ Failed: ${results.filter(r => r.error).length}\n`);
+    
     return results;
-  }
-
-  /**
-   * Get all test cases from a suite
-   * @param {number} projectId - TestRail project ID
-   * @param {number} suiteId - TestRail suite ID
-   * @returns {Promise<Array>} Test cases
-   */
-  async getTestCases(projectId, suiteId) {
-    try {
-      const response = await this.client.get(
-        `/get_cases/${projectId}&suite_id=${suiteId}`
-      );
-      return response.data;
-    } catch (error) {
-      console.error('❌ Failed to get test cases:', error.response?.data || error.message);
-      throw error;
-    }
   }
 
   /**

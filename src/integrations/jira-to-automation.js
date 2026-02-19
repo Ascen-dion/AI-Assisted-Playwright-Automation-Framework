@@ -15,7 +15,7 @@
 
 const { JiraIntegration } = require('./jira-integration');
 const { TestRailIntegration } = require('./testrail-integration');
-const AIEngine = require('../core/ai-engine');
+const aiEngine = require('../core/ai-engine');
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
@@ -24,7 +24,7 @@ class JiraToAutomationWorkflow {
   constructor() {
     this.jira = new JiraIntegration();
     this.testRail = new TestRailIntegration();
-    this.aiEngine = new AIEngine();
+    this.aiEngine = aiEngine;
   }
 
   /**
@@ -152,10 +152,14 @@ class JiraToAutomationWorkflow {
           refs: issueKey
         }));
 
+        // Get section ID from options or environment
+        const sectionId = options.testRailSectionId || process.env.TESTRAIL_SECTION_ID;
+
         workflow.testRailResults = await this.testRail.batchPushTestCases(
           options.testRailProjectId,
           suiteId,
-          testRailCases
+          testRailCases,
+          sectionId ? parseInt(sectionId) : null
         );
 
         console.log(`   ✅ Pushed ${workflow.testRailResults.length} test cases to TestRail\n`);

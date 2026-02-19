@@ -433,6 +433,85 @@ Provide analysis in JSON:
     }
   }
 
+  /**
+   * Generate complete Playwright test script from a prompt
+   * @param {string} prompt - Detailed prompt with requirements and test plan
+   * @returns {Promise<string>} Generated Playwright test script
+   */
+  async generateTestScript(prompt) {
+    if (this.provider === 'disabled') {
+      throw new Error('AI is disabled. Cannot generate test scripts.');
+    }
+
+    try {
+      logger.info('Generating test script with AI...');
+
+      const systemMessage = `You are an expert Playwright test automation engineer. Generate complete, executable Playwright test scripts following best practices.
+
+Requirements:
+- Use async/await syntax
+- Include proper imports
+- Add descriptive test names
+- Use page object patterns when appropriate
+- Include proper assertions
+- Add comments for clarity
+- Handle waits and timeouts properly
+- Use modern Playwright APIs
+
+Return ONLY the JavaScript code for the test file, no markdown, no explanations, just the code.`;
+
+      let response;
+      
+      if (this.provider === 'anthropic') {
+        response = await this.client.messages.create({
+          model: this.model,
+          max_tokens: 4000,
+          messages: [
+            { role: 'user', content: `${systemMessage}\n\n${prompt}` }
+          ]
+        });
+        
+        const script = response.content[0].text;
+        logger.info('Test script generated successfully');
+        return this.cleanGeneratedScript(script);
+        
+      } else if (this.provider === 'openrouter' || this.provider === 'local') {
+        response = await this.client.chat.completions.create({
+          model: this.model,
+          messages: [
+            { role: 'system', content: systemMessage },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.3,
+          max_tokens: 4000
+        });
+        
+        const script = response.choices[0].message.content;
+        logger.info('Test script generated successfully');
+        return this.cleanGeneratedScript(script);
+      }
+      
+    } catch (error) {
+      logger.error(`Test script generation error: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
+   * Clean AI-generated script by removing markdown code blocks
+   * @param {string} script - Raw AI output
+   * @returns {string} Cleaned JavaScript code
+   */
+  cleanGeneratedScript(script) {
+    // Remove markdown code blocks if present
+    let cleaned = script.replace(/```javascript\n?/g, '').replace(/```\n?/g, '');
+    
+    // Remove any leading/trailing whitespace
+    cleaned = cleaned.trim();
+    
+    return cleaned;
+  }
+
   clearHistory() {
     this.conversationHistory = [];
   }
