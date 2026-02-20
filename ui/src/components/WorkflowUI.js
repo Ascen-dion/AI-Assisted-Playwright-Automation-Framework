@@ -102,6 +102,22 @@ const WorkflowUI = () => {
       });
       const testrailData = await testrailResponse.json();
       addLog(`✓ TestRail: ${testrailData.created} created, ${testrailData.updated} updated`, 'success');
+      
+      // Show detailed test case information
+      if (testrailData.createdCases && testrailData.createdCases.length > 0) {
+        addLog(`   Created test cases:`, 'info');
+        testrailData.createdCases.forEach((tc, idx) => {
+          addLog(`     ${idx + 1}. ${tc.title}`, 'info');
+        });
+      }
+      
+      if (testrailData.updatedCases && testrailData.updatedCases.length > 0) {
+        addLog(`   Updated test cases:`, 'info');
+        testrailData.updatedCases.forEach((tc, idx) => {
+          addLog(`     ${idx + 1}. C${tc.id} - ${tc.title}`, 'info');
+        });
+      }
+      
       addLog(`📊 TestRail: ${testrailData.testrailUrl}`, 'info');
 
       // Step 4: Generate Test Scripts
@@ -129,9 +145,49 @@ const WorkflowUI = () => {
       });
       const executionData = await executionResponse.json();
       
+      // Show detailed execution results
+      if (executionData.testResults && executionData.testResults.length > 0) {
+        addLog(`   Test Results:`, 'info');
+        executionData.testResults.forEach((test, idx) => {
+          const icon = test.status === 'passed' ? '✓' : '✗';
+          const logType = test.status === 'passed' ? 'success' : 'error';
+          addLog(`     ${icon} ${test.title} (${test.duration}ms)`, logType);
+        });
+      }
+      
       // Show healing status if applied
-      if (executionData.healingApplied) {
-        addLog(`🔧 Self-healing applied after ${executionData.attempts - 1} failed attempt(s)`, 'warning');
+      if (executionData.healingApplied && executionData.healingDetails) {
+        const details = executionData.healingDetails;
+        addLog(`🔧 Self-healing applied after attempt ${executionData.attempts - 1}`, 'warning');
+        
+        if (details.errorAnalysis) {
+          addLog(`   Error Analysis:`, 'warning');
+          const analysis = details.errorAnalysis;
+          if (analysis.strictModeViolations > 0) {
+            addLog(`     - Strict mode violations: ${analysis.strictModeViolations}`, 'warning');
+          }
+          if (analysis.selectorIssues > 0) {
+            addLog(`     - Selector issues: ${analysis.selectorIssues}`, 'warning');
+          }
+          if (analysis.navigationIssues) {
+            addLog(`     - Navigation timeout detected`, 'warning');
+          }
+          if (analysis.cssIssues > 0) {
+            addLog(`     - CSS assertion issues: ${analysis.cssIssues}`, 'warning');
+          }
+          if (analysis.textMismatches > 0) {
+            addLog(`     - Text mismatch issues: ${analysis.textMismatches}`, 'warning');
+          }
+        }
+        
+        if (details.fixesApplied && details.fixesApplied.length > 0) {
+          addLog(`   Fixes Applied:`, 'success');
+          details.fixesApplied.forEach(fix => {
+            addLog(`     ✓ ${fix}`, 'success');
+          });
+        }
+        
+        addLog(`   Agent: ${details.agentUsed} (MCP: ${details.mcpEnabled ? 'enabled' : 'disabled'})`, 'info');
       }
       
       if (executionData.attempts > 1) {

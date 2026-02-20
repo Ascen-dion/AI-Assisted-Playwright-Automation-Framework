@@ -301,6 +301,8 @@ app.post('/api/workflow/push-testrail', async (req, res) => {
 
     let created = 0;
     let updated = 0;
+    const createdCases = [];
+    const updatedCases = [];
 
     for (const testCase of testCases) {
       // Check if test case already exists
@@ -323,10 +325,14 @@ app.post('/api/workflow/push-testrail', async (req, res) => {
         // Update existing test case
         await testrailClient.updateTestCase(existing.id, testCaseData);
         updated++;
+        updatedCases.push({ id: existing.id, title: testCase.title });
+        console.log(`[API] ✓ Updated: C${existing.id} - ${testCase.title}`);
       } else {
         // Create new test case
-        await testrailClient.pushTestCase(projectId, suiteId, testCaseData, sectionId);
+        const newCase = await testrailClient.pushTestCase(projectId, suiteId, testCaseData, sectionId);
         created++;
+        createdCases.push({ id: newCase?.id || 'new', title: testCase.title });
+        console.log(`[API] ✓ Created: ${testCase.title}`);
       }
     }
 
@@ -336,6 +342,8 @@ app.post('/api/workflow/push-testrail', async (req, res) => {
       success: true,
       created,
       updated,
+      createdCases,
+      updatedCases,
       message: `TestRail sync complete: ${created} created, ${updated} updated`,
       testrailUrl
     });
@@ -452,7 +460,8 @@ app.post('/api/workflow/execute-tests', async (req, res) => {
           duration,
           output: stdout,
           message: `Tests executed: ${results.passed}/${results.total} passed`,
-          healingApplied,
+          healingApplied: healingApplied ? true : false,
+          healingDetails: healingApplied || null,
           attempts: attempt
         });
 
@@ -489,7 +498,7 @@ app.post('/api/workflow/execute-tests', async (req, res) => {
 
         if (healingResult.success) {
           console.log('[SELF-HEAL] Successfully regenerated tests with improved selectors');
-          healingApplied = true;
+          healingApplied = healingResult; // Store full healing details
           attempt++;
         } else {
           // Healing failed, return current results
@@ -500,6 +509,7 @@ app.post('/api/workflow/execute-tests', async (req, res) => {
             error: healingResult.error,
             output: error.stdout || error.stderr,
             healingApplied: false,
+            healingDetails: healingResult,
             attempts: attempt,
             message: 'Self-healing failed'
           });
@@ -848,6 +858,19 @@ Return ONLY the complete, executable test code.`;
       healedFile: filename,
       agentUsed: 'healer',
       mcpEnabled: process.env.USE_MCP === 'true',
+      errorAnalysis: {
+        selectorIssues: errors.selectorIssues.length,
+        textMismatches: errors.textMismatches.length,
+        navigationIssues: errors.navigationIssues,
+        strictModeViolations: errors.strictModeViolations.length,
+        cssIssues: errors.cssIssues.length
+      },
+      fixesApplied: [
+        errors.strictModeViolations.length > 0 && 'Added .first() to multi-match locators',
+        errors.navigationIssues && 'Increased navigation timeout to 30000ms',
+        errors.cssIssues.length > 0 && 'Removed CSS exact value assertions',
+        errors.selectorIssues.length > 0 && 'Improved selector reliability'
+      ].filter(Boolean),
       analysis: typeof healingAnalysis === 'object' ? healingAnalysis : { rawAnalysis: healingAnalysis }
     };
 
@@ -863,7 +886,7 @@ Return ONLY the complete, executable test code.`;
 function parsePlaywrightOutput(output) {
   if (!output) {
     console.warn('[Parser] Empty output received');
-    return { passed: 0, failed: 0, total: 0, skipped: 0, duration: 0 };
+    return { passed: 0, failed: 0, total: 0, skipped: 0, duration: 0, testResults: [] };
   }
 
   console.log('[DEBUG] Parsing test output, length:', output.length);
@@ -880,7 +903,52 @@ function parsePlaywrightOutput(output) {
   const total = passed + failed; // Don't count skipped in total
   const duration = durationMatch ? parseFloat(durationMatch[1]) : 0;
 
-  console.log('[DEBUG] Parsed results:', { passed, failed, skipped, total, duration });
+  // Extract individual test results
+  const testResults = [];
+  const testPattern = /\[[\w-]+\]\s+›\s+[^\n]+\.spec\.js:\d+:\d+\s+›\s+([^\n]+)\s+\((\d+)ms\)/g;
+  let match;
+  
+  // Parse test results from Playwright output
+  const lines = output.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    
+    // Match passed tests (✓ or checkmark)
+    if (line.includes('✓') || line.includes('[') && line.includes('] ›')) {
+      const testMatch = line.match(/›\s+([^(]+)\s+\((\d+)ms\)/);
+      if (testMatch) {
+        testResults.push({
+          title: testMatch[1].trim(),
+          status: 'passed',
+          duration: parseInt(testMatch[2])
+        });
+      }
+    }
+    
+    // Match failed tests (✗ or X mark or number with x)
+    if (line.includes('✗') || line.includes('×') || /^\s*\d+\)\s+/.test(line)) {
+      const failMatch = line.match(/\d+\)\s+([^›\n]+)(?:›\s+([^\n]+))?/);
+      if (failMatch) {
+        const title = (failMatch[2] || failMatch[1]).trim();
+        // Look ahead for timing
+        let testDuration = 0;
+        for (let j = i; j < Math.min(i + 5, lines.length); j++) {
+          const timeMatch = lines[j].match(/\((\d+)ms\)/);
+          if (timeMatch) {
+            testDuration = parseInt(timeMatch[1]);
+            break;
+          }
+        }
+        testResults.push({
+          title: title,
+          status: 'failed',
+          duration: testDuration
+        });
+      }
+    }
+  }
+
+  console.log('[DEBUG] Parsed results:', { passed, failed, skipped, total, duration, testResults: testResults.length });
 
   // If no matches found but output exists, check for error patterns
   if (total === 0 && output.length > 0) {
@@ -890,7 +958,7 @@ function parsePlaywrightOutput(output) {
     }
   }
 
-  return { passed, failed, skipped, total, duration };
+  return { passed, failed, skipped, total, duration, testResults };
 }
 
 // Start server
