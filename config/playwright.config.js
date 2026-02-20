@@ -66,13 +66,18 @@ module.exports = defineConfig({
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        // Use system Chromium on Railway/Linux with required flags
-        ...(process.env.RAILWAY_ENVIRONMENT && {
-          launchOptions: {
-            executablePath: 'chromium',
-            args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
-          }
-        })
+        // Use system Chromium on Railway/cloud environments
+        launchOptions: {
+          executablePath: process.env.RAILWAY_STATIC_URL ? 'chromium' : undefined,
+          args: process.env.RAILWAY_STATIC_URL ? [
+            '--no-sandbox',
+            '--disable-setuid-sandbox', 
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--disable-software-rasterizer',
+            '--disable-dev-tools'
+          ] : []
+        }
       },
     },
 
