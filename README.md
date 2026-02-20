@@ -31,9 +31,9 @@ An intelligent UI automation framework that combines Playwright with AI capabili
 - **🔧 Healer Agent**: Auto-fix broken tests and selectors
 - **🔍 Analyzer Agent**: Deep failure analysis and root cause identification
 
-👉 **[Test Agents Guide](TEST_AGENTS_GUIDE.md)** | **[Quick Reference](TEST_AGENTS_QUICK_REF.md)**
+👉 **[Test Agents Guide](docs/TEST_AGENTS_GUIDE.md)** | **[Quick Reference](docs/TEST_AGENTS_QUICK_REF.md)**
 
-Works with **FREE local LLM (Ollama)** or **fast cloud AI (OpenRouter)**! See [Local LLM Setup](LOCAL_LLM_SETUP.md).
+Works with **FREE local LLM (Ollama)** or **fast cloud AI (OpenRouter)**! See [Local LLM Setup](docs/LOCAL_LLM_SETUP.md).
 
 ## ✨ Features
 
@@ -173,7 +173,7 @@ node src/integrations/get-testrail-sections.js 7 14 --create "Automated Tests"
 
 ### 📖 Setup Guide
 
-See **[INTEGRATION_SETUP.md](INTEGRATION_SETUP.md)** for complete configuration and usage examples.
+See **[INTEGRATION_SETUP.md](docs/INTEGRATION_SETUP.md)** for complete configuration and usage examples.
 
 ### ⚙️ Quick Setup
 
@@ -348,7 +348,7 @@ LOCAL_LLM_MODEL=llama3.2:3b
 
 # Performance: 30-120 seconds per query
 # Cost: FREE (hardware only)
-# Setup: See LOCAL_LLM_SETUP.md
+# Setup: See docs/LOCAL_LLM_SETUP.md
 ```
 
 #### Option 4: Disabled (Traditional Selectors)
@@ -952,7 +952,7 @@ This framework includes GitHub Actions workflow for automated testing with AI-po
 | Local LLM | +5-10 min | FREE | Development only |
 | Disabled | +0 sec | FREE | Stable apps |
 
-📖 **Detailed CI/CD Guide:** [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md)
+📖 **Detailed CI/CD Guide:** [GITHUB_ACTIONS_SETUP.md](docs/GITHUB_ACTIONS_SETUP.md)
 
 ## 🛠️ Troubleshooting
 
