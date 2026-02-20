@@ -2,33 +2,29 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('ED-3: Ascendion Homepage Tests', () => {
   
-  test('Test Case 1: Display Welcome Message on Ascendion Homepage', async ({ page }) => {
+  test('Test Case 1: [UI] Display Welcome Message on Ascendion Homepage', async ({ page }) => {
     try {
-      // Navigate to the Ascendion homepage
-      await page.goto('https://www.ascendion.com', { 
-        waitUntil: 'domcontentloaded', 
-        timeout: 30000 
+      console.log('Starting test for Ascendion Homepage...');
+      
+      // Navigate to the target URL with networkidle
+      await page.goto('https://ascendion.com', { 
+        waitUntil: 'networkidle', 
+        timeout: 60000 
       });
+      console.log('✓ Navigated to Ascendion Homepage.');
 
-      // Get the page title and verify it contains "Ascendion"
+      // Verify the welcome message text is visible
+      const welcomeMessage = page.locator('text="AI is Everywhere. Value Isn\'t—Until You Engineer It."');
+      await expect(welcomeMessage).toBeVisible({ timeout: 15000 });
+      console.log('✓ Welcome message is visible on the homepage.');
+
+      // Verify page title contains Ascendion
       const title = await page.title();
       expect(title).toContain('Ascendion');
-
-      // Verify the page loaded successfully
-      const url = page.url();
-      expect(url).toContain('ascendion.com');
-
-      // Check for any visible text content
-      const bodyText = await page.locator('body').textContent();
-      expect(bodyText).toBeTruthy();
-      expect(bodyText.length).toBeGreaterThan(100);
-
-      console.log('✓ Successfully loaded Ascendion homepage');
-      console.log(`  Page title: ${title}`);
-      console.log(`  Page URL: ${url}`);
+      console.log(`✓ Page title verified: ${title}`);
 
     } catch (error) {
-      console.error('Error during test execution:', error);
+      console.error('❌ Error during test execution:', error);
       throw error;
     }
   });

@@ -251,21 +251,59 @@ Test Description: ${args.testDescription}
 ${args.url ? `Target URL: ${args.url}` : ''}
 Framework: ${framework}
 
-Generate a complete Playwright test file with:
-1. Proper imports (${useAIPage ? 'use AIPage from ./src/core/ai-page.js' : 'standard Playwright'})
-2. Test suite with describe/test blocks
-3. ${useAIPage ? 'AI-powered interactions using natural language' : 'Standard Playwright API'}
-4. Proper assertions
-5. Error handling
-6. Comments explaining logic
+CRITICAL REQUIREMENTS - MUST FOLLOW:
 
-Code requirements:
-- Use async/await properly
-- Include setup/teardown if needed
-- Add meaningful test names
-- Use best practices
+1. IMPORTS: Use this exact import:
+   const { test, expect } = require('@playwright/test');
 
-Return ONLY the JavaScript code, no explanations.`;
+2. NO HOOKS: Never use test.beforeAll() or test.afterAll() - they cause syntax errors
+   ❌ WRONG: test.beforeAll(async ({ browser }) => {})
+   ✅ RIGHT: Put all code inside test() functions only
+
+3. URL: Use the EXACT URL provided above: ${args.url || 'https://example.com'}
+   - Do NOT change or assume a different URL
+   - Do NOT use hardcoded URLs like endpointclinical.com
+
+4. TIMEOUTS: Always use generous timeouts:
+   - page.goto(): timeout: 60000
+   - waitForLoadState: Remove it (causes timeouts)
+   - toBeVisible(): timeout: 15000
+
+5. SELECTORS: Use flexible, reliable selectors:
+   - Prefer text content: page.locator('text="exact text"')
+   - Use partial matches: page.locator('h1:has-text("partial")')
+   - Add .first() for multi-match elements
+   - Never assume specific class names
+
+6. ERROR HANDLING: Wrap all test code in try/catch with console.log
+
+7. STRUCTURE:
+\`\`\`javascript
+const { test, expect } = require('@playwright/test');
+
+test.describe('Test Suite Name', () => {
+  test('Test Case Name', async ({ page }) => {
+    try {
+      // Navigate with timeout
+      await page.goto('${args.url || 'URL'}', { 
+        waitUntil: 'domcontentloaded', 
+        timeout: 60000 
+      });
+      
+      // Find elements with flexible selectors
+      const element = page.locator('text="content"').first();
+      await expect(element).toBeVisible({ timeout: 15000 });
+      
+      console.log('✓ Test passed');
+    } catch (error) {
+      console.error('❌ Error:', error);
+      throw error;
+    }
+  });
+});
+\`\`\`
+
+Return ONLY the complete, valid JavaScript code. No markdown wrappers, no explanations.`;
 
       const response = await this.aiEngine.query(prompt, { 
         maxTokens: 8000,  // Increased for complete test file generation
