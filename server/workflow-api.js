@@ -6,6 +6,7 @@ const execPromise = util.promisify(exec);
 const { JiraIntegration } = require('../src/integrations/jira-integration');
 const { TestRailIntegration } = require('../src/integrations/testrail-integration');
 const aiEngine = require('../src/core/ai-engine');
+const testAgents = require('../src/core/test-agents-mcp'); // MCP-enhanced test agents
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -22,7 +23,16 @@ const testrailClient = new TestRailIntegration();
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Workflow API is running' });
+  res.json({ 
+    status: 'ok', 
+    message: 'Workflow API is running',
+    agents: {
+      mcp: process.env.USE_MCP === 'true',
+      planner: true,
+      generator: true,
+      healer: true
+    }
+  });
 });
 
 // Step 0: Create Jira Story from Plain English
@@ -173,7 +183,7 @@ app.post('/api/workflow/fetch-jira', async (req, res) => {
   }
 });
 
-// Step 2: Generate Test Cases
+// Step 2: Generate Test Cases using Planner Agent
 app.post('/api/workflow/generate-tests', async (req, res) => {
   try {
     const { story } = req.body;
@@ -182,51 +192,87 @@ app.post('/api/workflow/generate-tests', async (req, res) => {
       return res.status(400).json({ error: 'Story data is required' });
     }
 
-    console.log(`[API] Generating test cases for: ${story.id}`);
+    console.log(`[API] 🎭 Using Planner Agent to generate test cases for: ${story.id}`);
     
-    const criteriaText = Array.isArray(story.acceptanceCriteria) && story.acceptanceCriteria.length > 0
-      ? story.acceptanceCriteria.join('\n- ')
-      : 'Verify the feature works as described';
+    // Use Test Agents Planner for comprehensive test planning
+    const testDescription = `
+User Story: ${story.title}
+
+Description: ${story.description}
+
+Acceptance Criteria:
+${Array.isArray(story.acceptanceCriteria) && story.acceptanceCriteria.length > 0
+  ? story.acceptanceCriteria.map((c, i) => `${i + 1}. ${c}`).join('\n')
+  : '- Verify the feature works as described'}
+`;
+
+    // Generate test plan using Planner Agent with MCP support
+    const planResult = await testAgents.planTest(testDescription, {
+      testType: 'e2e',
+      priority: 'medium',
+      detailLevel: 'detailed'
+    });
     
-    const prompt = `Generate a comprehensive test plan for this user story:
-
-**Story Title:** ${story.title}
-
-**Description:** ${story.description}
-
-**Acceptance Criteria:**
-- ${criteriaText}
-
-**Instructions:**
-1. Generate at least 1-5 detailed test cases
-2. Cover all acceptance criteria
-3. Include positive and negative test scenarios
-4. Format each test case as follows:
-
-Test Case 1: [Clear descriptive title]
-Steps: [Detailed steps to execute]
-Expected: [Expected outcome]
-
-Test Case 2: [Clear descriptive title]
-Steps: [Detailed steps to execute]
-Expected: [Expected outcome]
-
-... and so on.
-
-Generate the test cases now:`;
-
-    const testPlan = await aiEngine.query(prompt, { maxTokens: 3000 });
+    console.log('[DEBUG] Planner Agent generated:', planResult);
     
-    console.log('[DEBUG] Raw AI response length:', testPlan.length);
-    console.log('[DEBUG] First 500 chars:', testPlan.substring(0, 500));
+    // Convert plan to test cases format
+    const testCases = [];
     
-    const testCases = parseTestCases(testPlan);
-    console.log('[DEBUG] Parsed test cases count:', testCases.length);
+    if (planResult.steps && Array.isArray(planResult.steps)) {
+      // If we have structured steps, convert them to test cases
+      const groupedSteps = [];
+      let currentGroup = { title: '', steps: [], expected: [] };
+      
+      planResult.steps.forEach((step, index) => {
+        if (index % 3 === 0 && index > 0) {
+          if (currentGroup.steps.length > 0) {
+            groupedSteps.push(currentGroup);
+          }
+          currentGroup = { title: '', steps: [], expected: [] };
+        }
+        currentGroup.steps.push(step.description || step.action);
+      });
+      
+      if (currentGroup.steps.length > 0) {
+        groupedSteps.push(currentGroup);
+      }
+      
+      groupedSteps.forEach((group, index) => {
+        testCases.push({
+          title: `Test Case ${index + 1}: ${planResult.testName || story.title}`,
+          steps: group.steps.join('\n'),
+          expected: planResult.assertions?.[index]?.description || 'Test passes successfully'
+        });
+      });
+    }
+    
+    // Fallback: Create test cases from assertions if available
+    if (testCases.length === 0 && planResult.assertions && Array.isArray(planResult.assertions)) {
+      planResult.assertions.forEach((assertion, index) => {
+        testCases.push({
+          title: `Test Case ${index + 1}: Verify ${assertion.target}`,
+          steps: `1. Navigate to application\n2. Perform ${assertion.type} check on ${assertion.target}`,
+          expected: assertion.description || `Verify ${assertion.expected}`
+        });
+      });
+    }
+    
+    // Final fallback: Generate basic test case
+    if (testCases.length === 0) {
+      testCases.push({
+        title: `Test Case 1: ${planResult.testName || story.title}`,
+        steps: planResult.description || 'Execute test steps as planned',
+        expected: 'All acceptance criteria are met'
+      });
+    }
 
     res.json({
       success: true,
       testCases,
-      message: `Generated ${testCases.length} test cases`
+      plan: planResult,
+      agentUsed: 'planner',
+      mcpEnabled: process.env.USE_MCP === 'true',
+      message: `Generated ${testCases.length} test cases using Planner Agent`
     });
   } catch (error) {
     console.error('[API] Error generating test cases:', error);
@@ -302,55 +348,46 @@ app.post('/api/workflow/push-testrail', async (req, res) => {
   }
 });
 
-// Step 4: Generate Test Scripts
+// Step 4: Generate Test Scripts using Generator Agent
 app.post('/api/workflow/generate-scripts', async (req, res) => {
   try {
-    const { testCases, storyId } = req.body;
+    const { testCases, storyId, plan } = req.body;
 
     if (!testCases || !storyId) {
       return res.status(400).json({ error: 'Test cases and story ID are required' });
     }
 
-    console.log(`[API] Generating Playwright scripts for ${storyId}`);
+    console.log(`[API] 💻 Using Generator Agent to create Playwright scripts for ${storyId}`);
 
-    // Enhanced prompt with specific page insights
-    const prompt = `Generate Playwright test scripts for these test cases:
-${JSON.stringify(testCases, null, 2)}
+    // Prepare test description for Generator Agent
+    const testDescription = `
+Story ID: ${storyId}
+Target URL: https://www.endpointclinical.com
 
-**CRITICAL INSTRUCTIONS:**
+Test Cases:
+${testCases.map((tc, i) => `
+Test Case ${i + 1}: ${tc.title}
+Steps: ${tc.steps}
+Expected: ${tc.expected}
+`).join('\n')}
 
-1. **Page URL:** https://www.endpointclinical.com
-2. **Target Element:** The main H1 headline on the homepage
-3. **IMPORTANT HTML Structure:** The H1 tag contains text WITHOUT spaces in HTML: "Your hiddenadvantagein RTSM"
-   - Although it displays with spaces visually (due to CSS), the actual HTML text has no spaces
-   - DO NOT use exact text matching like 'h1:has-text("Your hidden advantage in RTSM")'
-   - INSTEAD use: page.locator('h1') and verify keywords individually
+**IMPORTANT Page-Specific Instructions:**
+1. H1 Element: Contains text "Your hiddenadvantagein RTSM" (no spaces in HTML)
+2. Use flexible selectors: page.locator('h1') NOT exact text matching
+3. Verify keywords individually: 'hidden', 'advantage', 'RTSM'
+4. Handle navigation timeouts gracefully
+5. Use domcontentloaded for faster page loads
+`;
 
-4. **Selector Strategy:**
-   - Use simple selectors: \`page.locator('h1')\` (NOT page.locator('h1:has-text(...)')
-   - Verify content by checking if text CONTAINS keywords: 'hidden', 'advantage', 'RTSM'
-   - Example: \`const text = await headline.textContent(); expect(text.toLowerCase()).toContain('rtsm');\`
-
-5. **Test Requirements:**
-   - Import: \`import { test, expect } from '@playwright/test';\`
-   - Use proper assertions: \`await expect(locator).toBeVisible()\`, \`toBeInViewport()\`
-   - Handle timeouts gracefully with try-catch for navigation
-   - Use \`{ waitUntil: 'domcontentloaded', timeout: 10000 }\` for page.goto()
-
-6. **Responsive Testing:**
-   - Desktop: 1280x800
-   - Tablet: 768x1024
-   - Mobile: 375x667
-
-7. **Best Practices:**
-   - Keep tests simple and focused
-   - Avoid brittle exact text matches
-   - Use flexible keyword-based assertions
-   - Remove 'await' from page.locator() calls - use: \`const headline = page.locator('selector')\`
-
-Create a complete, executable Playwright test file following these guidelines.`;
-
-    const testScript = await aiEngine.generateTestScript(prompt);
+    // Use Generator Agent to create test code with MCP support
+    const testScript = await testAgents.generateTest(testDescription, {
+      url: 'https://www.endpointclinical.com',
+      framework: 'playwright',
+      useAIPage: false,
+      includeComments: true
+    });
+    
+    console.log('[DEBUG] Generator Agent created test script');
     
     // Save the generated script
     const filename = `${storyId.toLowerCase()}-automated.spec.js`;
@@ -361,7 +398,9 @@ Create a complete, executable Playwright test file following these guidelines.`;
       success: true,
       filename,
       filepath,
-      message: `Generated test script: ${filename}`
+      agentUsed: 'generator',
+      mcpEnabled: process.env.USE_MCP === 'true',
+      message: `Generated test script using Generator Agent: ${filename}`
     });
   } catch (error) {
     console.error('[API] Error generating scripts:', error);
@@ -664,12 +703,12 @@ function parseTestCases(testPlan) {
 }
 
 /**
- * Apply self-healing to failed tests
+ * Apply self-healing to failed tests using Healer Agent
  * Analyzes failures and regenerates tests with improved selectors
  */
 async function applyTestHealing({ filename, testCases, storyId, errorOutput, attempt }) {
   try {
-    console.log('[SELF-HEAL] Analyzing test failures...');
+    console.log('[SELF-HEAL] 🔧 Using Healer Agent to analyze and fix test failures...');
     
     // Extract error details from Playwright output
     const errorPatterns = {
@@ -714,97 +753,106 @@ async function applyTestHealing({ filename, testCases, storyId, errorOutput, att
       cssIssues: errors.cssIssues.length
     });
 
-    // Generate healing prompt for AI
-    const healingPrompt = `You are debugging Playwright tests that failed. Analyze the errors and regenerate improved tests.
+    // Read the failing test file
+    const filepath = path.join(__dirname, '..', 'src', 'tests', filename);
+    const failingCode = await fs.readFile(filepath, 'utf-8');
 
-**Original Test Cases:**
+    // Prepare context for Healer Agent
+    const healingContext = {
+      testCode: failingCode,
+      error: {
+        message: errorOutput.substring(0, 1000), // First 1000 chars of error
+        stack: errorOutput,
+        type: errors.strictModeViolations.length > 0 ? 'strict-mode-violation' :
+              errors.navigationIssues ? 'navigation-timeout' :
+              errors.selectorIssues.length > 0 ? 'selector-not-found' :
+              errors.cssIssues.length > 0 ? 'css-assertion' : 'unknown'
+      },
+      testCases: testCases,
+      storyId: storyId,
+      attempt: attempt,
+      url: 'https://www.endpointclinical.com',
+      analysisDetails: {
+        selectorIssues: errors.selectorIssues,
+        textMismatches: errors.textMismatches,
+        navigationIssues: errors.navigationIssues,
+        strictModeViolations: errors.strictModeViolations,
+        cssIssues: errors.cssIssues
+      }
+    };
+
+    // Use Healer Agent to analyze and get fix recommendations
+    console.log('[SELF-HEAL] 🤖 Invoking Healer Agent with MCP support...');
+    const healingAnalysis = await testAgents.healTest(healingContext, {
+      autoFix: true,
+      returnCode: true,
+      fixStrategies: [
+        'strict-mode-fix',
+        'timeout-increase',
+        'flexible-selectors',
+        'remove-css-assertions'
+      ]
+    });
+
+    console.log('[SELF-HEAL] Healer Agent analysis received');
+
+    // Extract the healed code from the analysis
+    let healedScript;
+    
+    if (typeof healingAnalysis === 'string') {
+      // If the healer returned code directly
+      healedScript = healingAnalysis;
+    } else if (healingAnalysis.fixedCode) {
+      // If it returned an object with fixedCode
+      healedScript = healingAnalysis.fixedCode;
+    } else if (healingAnalysis.solutions && healingAnalysis.solutions[0]) {
+      // If it returned solutions array
+      healedScript = healingAnalysis.solutions[0].code || healingAnalysis.solutions[0];
+    } else {
+      // Fallback: use the original healing analysis as instructions to regenerate
+      console.log('[SELF-HEAL] Healer provided analysis, regenerating code...');
+      
+      const regeneratePrompt = `${healingAnalysis}
+
+Based on this analysis, generate a COMPLETE, FIXED Playwright test file for:
+
+Story ID: ${storyId}
+Test Cases:
 ${JSON.stringify(testCases, null, 2)}
 
-**Test Failures (Attempt ${attempt}):**
-${errorOutput}
+**Critical Fixes Required:**
+${errors.strictModeViolations.length > 0 ? '- Add .first() to all multi-match locators' : ''}
+${errors.navigationIssues ? '- Increase navigation timeout to 30000ms' : ''}
+${errors.cssIssues.length > 0 ? '- Remove CSS exact value assertions, use visibility checks instead' : ''}
+${errors.selectorIssues.length > 0 ? '- Improve selector reliability and add wait conditions' : ''}
 
-**Error Analysis:**
-- Selector issues: ${errors.selectorIssues.length}
-- Text mismatches: ${errors.textMismatches.length}
-- Navigation issues: ${errors.navigationIssues ? 'YES' : 'NO'}
-- Strict mode violations: ${errors.strictModeViolations.length}
-- CSS assertion failures: ${errors.cssIssues.length}
+Return ONLY the complete, executable test code.`;
 
-**Failed Error Messages:**
-${errors.selectorIssues.join('\n')}
-${errors.textMismatches.join('\n')}
-${errors.strictModeViolations.join('\n')}
-${errors.cssIssues.join('\n')}
+      healedScript = await testAgents.generateTest(regeneratePrompt, {
+        url: 'https://www.endpointclinical.com',
+        framework: 'playwright'
+      });
+    }
 
-**HEALING INSTRUCTIONS:**
-
-1. **Fix Strict Mode Violations (CRITICAL):**
-   - If error says "strict mode violation: locator resolved to X elements"
-   - ALWAYS use \`.first()\`, \`.last()\`, or \`.nth(index)\` to target specific element
-   - Example: \`page.locator('h1').first()\` instead of \`page.locator('h1')\`
-   - Or use more specific selectors: \`page.getByRole('heading', { level: 1 }).first()\`
-
-2. **Fix Navigation Timeouts:**
-   - Increase timeout to 30000ms: \`{ waitUntil: 'domcontentloaded', timeout: 30000 }\`
-   - Add network idle wait with error handling: \`await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {})\`
-   - Some sites are slow, be patient with timeouts
-
-3. **Fix CSS Assertions (Avoid Exact Values):**
-   - NEVER check exact CSS values like 'font-size': '32px' or 'font-family'
-   - Instead, use flexible checks:
-     \`\`\`javascript
-     const fontSize = await element.evaluate(el => window.getComputedStyle(el).fontSize);
-     expect(parseFloat(fontSize)).toBeGreaterThan(20);
-     \`\`\`
-   - Or just verify element is visible: \`await expect(element).toBeVisible()\`
-
-4. **Fix Positioning/Centering Checks:**
-   - Avoid exact positioning math (brittle and fails often)
-   - Use \`await expect(element).toBeInViewport()\` instead
-   - This is more reliable than checking x/y coordinates
-
-5. **Fix Text Matching:**
-   - Use \`.toContain()\` for partial matches
-   - Check for keywords individually if text has formatting issues
-   - Example: \`expect(text.toLowerCase()).toContain('keyword')\`
-
-6. **Fix Selector Issues:**
-   - If selectors timing out, use more reliable selectors (data-testid, role, labels)
-   - Add proper wait conditions before assertions
-   - Use \`await expect(locator).toBeVisible({ timeout: 10000 })\`
-
-7. **Best Practices:**
-   - ALWAYS use \`.first()\` when locator might match multiple elements
-   - Check element visibility before interacting
-   - Use flexible assertions, not exact values
-   - Handle errors gracefully with try-catch for navigation
-
-**Generate a COMPLETE, EXECUTABLE Playwright test file** that fixes all identified issues.
-Include:
-- All imports: \`import { test, expect } from '@playwright/test';\`
-- All test cases (even ones that passed)
-- Improved selectors and assertions
-- Proper error handling
-
-Return ONLY the complete test file code, no explanations.`;
-
-    console.log('[SELF-HEAL] Generating healed tests with AI...');
-    const healedScript = await aiEngine.generateTestScript(healingPrompt);
+    // Clean up the code if it has markdown formatting
+    healedScript = healedScript.replace(/```javascript\n?/g, '').replace(/```\n?/g, '').trim();
 
     // Save the healed script (overwrite the failing one)
-    const filepath = path.join(__dirname, '..', 'src', 'tests', filename);
     await fs.writeFile(filepath, healedScript);
 
-    console.log(`[SELF-HEAL] Saved healed test script: ${filename}`);
+    console.log(`[SELF-HEAL] ✅ Saved healed test script using Healer Agent: ${filename}`);
 
     return {
       success: true,
-      message: `Applied self-healing (attempt ${attempt})`,
-      healedFile: filename
+      message: `Applied self-healing with Healer Agent (attempt ${attempt})`,
+      healedFile: filename,
+      agentUsed: 'healer',
+      mcpEnabled: process.env.USE_MCP === 'true',
+      analysis: typeof healingAnalysis === 'object' ? healingAnalysis : { rawAnalysis: healingAnalysis }
     };
 
   } catch (error) {
-    console.error('[SELF-HEAL] Healing failed:', error);
+    console.error('[SELF-HEAL] ❌ Healer Agent failed:', error);
     return {
       success: false,
       error: error.message
