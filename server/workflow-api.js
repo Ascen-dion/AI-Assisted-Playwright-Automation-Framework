@@ -441,7 +441,7 @@ app.post('/api/workflow/execute-tests', async (req, res) => {
       console.log(`[SELF-HEAL] Attempt ${attempt}/${maxRetries}`);
 
       try {
-        const command = `npx playwright test "${testPath}"`;
+        const command = `npx playwright test "${testPath}" --config=config/playwright.config.js --project=chromium`;
         console.log(`[DEBUG] Executing: ${command}`);
 
         const startTime = Date.now();

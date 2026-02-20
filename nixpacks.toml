@@ -1,8 +1,13 @@
 [phases.setup]
 nixPkgs = ['nodejs']
+aptPkgs = ['chromium', 'chromium-driver', 'libnss3', 'libatk-bridge2.0-0', 'libdrm2', 'libxkbcommon0', 'libgbm1', 'libasound2']
 
 [phases.install]
-cmds = ['npm install --production=false', 'cd server && npm install']
+cmds = [
+  'npm install --production=false', 
+  'cd server && npm install',
+  'npx playwright install chromium --with-deps'
+]
 
 [start]
 cmd = 'cd server && npm start'
