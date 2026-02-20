@@ -6,7 +6,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
  * Playwright configuration with AI framework settings
  */
 module.exports = defineConfig({
-  testDir: './src/tests',
+  testDir: path.resolve(__dirname, '../src/tests'),  // Absolute path from config location
   
   // Maximum time one test can run
   timeout: 60 * 1000,
