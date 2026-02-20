@@ -1,0 +1,17 @@
+{
+  "name": "workflow-api-server",
+  "version": "1.0.0",
+  "description": "Backend API for Playwright AI Workflow",
+  "main": "workflow-api.js",
+  "scripts": {
+    "start": "node workflow-api.js",
+    "dev": "nodemon workflow-api.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

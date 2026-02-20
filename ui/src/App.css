@@ -1,0 +1,56 @@
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #e9d5ff 0%, #ddd6fe 50%, #c7d2fe 100%);
+}
+
+.App-header {
+  background: transparent;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.brand-logo {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  letter-spacing: -1px;
+}
+
+.App-header h1 {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+  font-weight: 400;
+  background: linear-gradient(135deg, #a855f7 0%, #8b5cf6 50%, #7c3aed 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.App-header p {
+  font-size: 1.25rem;
+  color: #475569;
+  font-weight: 400;
+  margin-top: 0.5rem;
+}
+
+.App-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.App-footer {
+  background: transparent;
+  padding: 1.5rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 500;
+}

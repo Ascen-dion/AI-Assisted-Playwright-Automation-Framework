@@ -1,8 +1,21 @@
 # AI-Assisted Playwright Automation Framework
 
-An intelligent UI automation framework that combines Playwright with AI capabilities for self-healing tests, smart element detection, and visual validation. **Now with OpenRouter integration for 50-100x faster AI responses!** ⚡
+An intelligent UI automation framework that combines Playwright with AI capabilities for self-healing tests, smart element detection, and visual validation. **Now with Web UI, OpenRouter integration, and complete Jira→TestRail workflow!** 🚀
 
-## ⚡ NEW: OpenRouter Integration (50-100x Faster!)
+## 🌐 NEW: Web UI Interface
+
+**Beautiful web interface** for the complete Jira→TestRail workflow:
+- **Input**: Enter any Jira story ID (e.g., ED-2)
+- **AI Generation**: Automatic test case & script generation
+- **Live Progress**: Real-time visual progress indicators
+- **Results Dashboard**: Comprehensive execution metrics
+- **Hosted on GitHub Pages**: Access from anywhere!
+
+👉 **[Quick Start: Run the UI](#-web-ui-quick-start)** | **[Deployment Guide](UI_DEPLOYMENT_GUIDE.md)**
+
+**Live Demo**: `https://viplove29.github.io/playwright-ai-framework` (after deployment)
+
+## ⚡ OpenRouter Integration (50-100x Faster!)
 
 **Lightning-fast AI responses** with cloud-based OpenRouter:
 - **Speed Improvement**: 1-3 seconds vs 30-120 seconds (local LLM)
@@ -811,6 +824,55 @@ All critical flows verified ✓
 - **[Aava AI Test Plan](docs/AAVA_AI_TEST_PLAN.md)** - "Future of Engineering" verification
 - **[Aava Experienced Today Test Plan](docs/AAVA_EXPERIENCED_TODAY_TEST_PLAN.md)** - Text verification
 - **[SharePoint Hub Test Plan](docs/SHAREPOINT_HUB_TEST_PLAN.md)** - Enterprise auth testing
+
+## 🌐 Web UI Quick Start
+
+**Easiest way to use the framework** - Beautiful web interface for complete workflow automation!
+
+### Launch the UI (One Command)
+
+```powershell
+# Windows PowerShell
+.\start-ui.ps1
+
+# Or Windows Command Prompt
+start-ui.bat
+```
+
+This will:
+1. ✅ Install all dependencies automatically
+2. ✅ Start backend API server (port 3001)
+3. ✅ Launch React UI in browser (port 3000)
+
+### Use the Workflow
+
+1. **Open browser**: `http://localhost:3000` (opens automatically)
+2. **Enter Story ID**: Type `ED-2` or any Jira story ID
+3. **Click "Run Workflow"**: Watch the magic! 🎉
+4. **View Results**: See live progress, logs, and metrics
+
+### What You Get
+
+- 📋 **Fetch Jira Story** - Automatic extraction of acceptance criteria
+- 🤖 **AI Test Generation** - Creates test cases from requirements
+- 📊 **TestRail Sync** - Pushes test cases automatically
+- ⚙️ **Script Generation** - Generates Playwright test code
+- 🚀 **Test Execution** - Runs tests automatically
+- ✅ **Results Update** - Posts results back to Jira
+
+**Complete end-to-end in ~26 seconds!**
+
+### Deploy to GitHub Pages
+
+```powershell
+git add .
+git commit -m "Deploy UI"
+git push origin main
+```
+
+Your UI will be live at: `https://viplove29.github.io/playwright-ai-framework`
+
+👉 **[Full Deployment Guide](UI_DEPLOYMENT_GUIDE.md)** | **[Setup Instructions](UI_SETUP_GUIDE.md)**
 
 ## 🚀 Quick Start (5 Minutes)
 
