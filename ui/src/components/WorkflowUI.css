@@ -111,6 +111,69 @@
   opacity: 0.6;
 }
 
+/* Backend Switcher */
+.backend-switcher {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+  border: 2px solid #14b8a6;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.backend-label {
+  font-weight: 600;
+  color: #0f766e;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.backend-select {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border: 2px solid #14b8a6;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: white;
+  color: #0f766e;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230f766e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.7rem top 50%;
+  background-size: 1.2rem auto;
+  padding-right: 2.5rem;
+}
+
+.backend-select:hover:not(:disabled) {
+  border-color: #0d9488;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+}
+
+.backend-select:focus {
+  outline: none;
+  border-color: #0d9488;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.2);
+}
+
+.backend-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background-color: #f1f5f9;
+}
+
+.backend-select option {
+  padding: 0.5rem;
+  background: white;
+  color: #0f766e;
+}
+
 /* Backend Status Indicator */
 .backend-status {
   display: flex;

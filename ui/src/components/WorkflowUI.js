@@ -1,14 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './WorkflowUI.css';
 import StepProgress from './StepProgress';
 import LogViewer from './LogViewer';
 
-// API Base URL - configurable via environment variable
-// For local development: http://localhost:3001
-// For production: Set REACT_APP_API_URL in .env.production or deployment config
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+// Backend API URLs
+const BACKEND_OPTIONS = {
+  cloud: 'https://ai-assisted-playwright-automation-framework-production.up.railway.app',
+  local: 'http://localhost:3001'
+};
 
 const WorkflowUI = () => {
+  // Load backend preference from localStorage, default to cloud
+  const [backendType, setBackendType] = useState(() => {
+    return localStorage.getItem('backendType') || 'cloud';
+  });
+  
   const [mode, setMode] = useState('jira-id'); // 'jira-id' or 'plain-english'
   const [storyId, setStoryId] = useState('');
   const [plainEnglish, setPlainEnglish] = useState('');
@@ -17,6 +23,16 @@ const WorkflowUI = () => {
   const [logs, setLogs] = useState([]);
   const [results, setResults] = useState(null);
   const [backendStatus, setBackendStatus] = useState('unknown'); // 'connected', 'disconnected', 'unknown'
+  
+  // Get current API URL based on selection
+  const API_BASE_URL = BACKEND_OPTIONS[backendType];
+  
+  // Save backend preference to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('backendType', backendType);
+    setBackendStatus('unknown'); // Reset status when switching
+    addLog(`Switched to ${backendType === 'cloud' ? 'Cloud' : 'Local'} backend: ${API_BASE_URL}`, 'info');
+  }, [backendType]);
 
   const steps = [
     { id: 1, name: 'Fetch/Create Story', icon: '📋' },
@@ -287,6 +303,23 @@ const WorkflowUI = () => {
   return (
     <div className="workflow-container">
       <div className="input-section">
+        {/* Backend Switcher */}
+        <div className="backend-switcher">
+          <label htmlFor="backendSelect">
+            <span className="backend-label">🔌 Backend API:</span>
+          </label>
+          <select 
+            id="backendSelect"
+            value={backendType} 
+            onChange={(e) => setBackendType(e.target.value)}
+            disabled={isRunning}
+            className="backend-select"
+          >
+            <option value="cloud">☁️ Cloud (Railway) - {BACKEND_OPTIONS.cloud}</option>
+            <option value="local">💻 Local (Development) - {BACKEND_OPTIONS.local}</option>
+          </select>
+        </div>
+        
         {/* Mode Selector */}
         <div className="mode-selector">
           <button 
