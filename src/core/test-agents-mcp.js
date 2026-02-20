@@ -114,10 +114,15 @@ Format as structured markdown.`;
         });
 
         // Extract code from markdown if present (MCP might return wrapped code)
+        logger.info(`[DEBUG] MCP raw code length: ${code.length}, starts with: ${code.substring(0, 100)}`);
         const codeMatch = code.match(/```(?:javascript|js)?\n?([\s\S]*?)```/);
         if (codeMatch) {
+          logger.info('[DEBUG] Found markdown wrapper, extracting code');
           code = codeMatch[1].trim();
+        } else {
+          logger.info('[DEBUG] No markdown wrapper found');
         }
+        logger.info(`[DEBUG] Final code length: ${code.length}, starts with: ${code.substring(0, 100)}`);
 
         // Save code if requested
         if (options.saveTo) {
