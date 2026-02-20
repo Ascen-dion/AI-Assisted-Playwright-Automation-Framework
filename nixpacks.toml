@@ -1,11 +1,11 @@
 [phases.setup]
-nixPkgs = ['nodejs', 'chromium', 'nss', 'nspr', 'atk', 'cups', 'dbus', 'libdrm', 'gtk3', 'pango', 'cairo', 'xorg.libX11', 'xorg.libXcomposite', 'xorg.libXdamage', 'xorg.libXext', 'xorg.libXfixes', 'xorg.libXrandr', 'mesa', 'libxkbcommon', 'alsaLib', 'expat']
+nixPkgs = ['nodejs']
 
 [phases.install]
 cmds = [
   'npm install --production=false', 
   'cd server && npm install',
-  'PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npx playwright install-deps || true'
+  'npx playwright install --with-deps chromium'
 ]
 
 [start]
