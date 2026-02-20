@@ -44,8 +44,9 @@ module.exports = defineConfig({
     // Screenshot on failure
     screenshot: 'only-on-failure',
     
-    // Video on failure
-    video: 'retain-on-failure',
+    // Video recording - enabled for all tests
+    // Videos saved to test-results/<test-name>-<browser>/video.webm
+    video: 'on',
     
     // Timeout for each action
     actionTimeout: 15000,
