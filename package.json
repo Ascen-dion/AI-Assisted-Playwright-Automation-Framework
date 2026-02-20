@@ -2,8 +2,9 @@
   "name": "playwright-ai-framework",
   "version": "1.0.0",
   "description": "AI-assisted UI automation framework using Playwright and Claude",
-  "main": "index.js",
+  "main": "server/workflow-api.js",
   "scripts": {
+    "start": "cd server && node workflow-api.js",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",

@@ -3,6 +3,11 @@ import './WorkflowUI.css';
 import StepProgress from './StepProgress';
 import LogViewer from './LogViewer';
 
+// API Base URL - configurable via environment variable
+// For local development: http://localhost:3001
+// For production: Set REACT_APP_API_URL in .env.production or deployment config
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 const WorkflowUI = () => {
   const [mode, setMode] = useState('jira-id'); // 'jira-id' or 'plain-english'
   const [storyId, setStoryId] = useState('');
@@ -11,6 +16,7 @@ const WorkflowUI = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [logs, setLogs] = useState([]);
   const [results, setResults] = useState(null);
+  const [backendStatus, setBackendStatus] = useState('unknown'); // 'connected', 'disconnected', 'unknown'
 
   const steps = [
     { id: 1, name: 'Fetch/Create Story', icon: '📋' },
@@ -24,6 +30,25 @@ const WorkflowUI = () => {
   const addLog = (message, type = 'info') => {
     const timestamp = new Date().toLocaleTimeString();
     setLogs(prev => [...prev, { timestamp, message, type }]);
+  };
+
+  // Check backend connectivity
+  const checkBackend = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/health`, { 
+        method: 'GET',
+        signal: AbortSignal.timeout(5000) // 5 second timeout
+      });
+      if (response.ok) {
+        setBackendStatus('connected');
+        return true;
+      }
+      setBackendStatus('disconnected');
+      return false;
+    } catch (error) {
+      setBackendStatus('disconnected');
+      return false;
+    }
   };
 
   const runWorkflow = async () => {
@@ -42,6 +67,33 @@ const WorkflowUI = () => {
     setLogs([]);
     setResults(null);
 
+    // Check backend connectivity first
+    addLog('Connecting to backend API...', 'info');
+    const isBackendAvailable = await checkBackend();
+    
+    if (!isBackendAvailable) {
+      addLog('❌ Cannot connect to backend API', 'error');
+      addLog(`   API URL: ${API_BASE_URL}`, 'error');
+      addLog('   ', 'error');
+      addLog('   ⚠️ Backend API is not running or not accessible', 'warning');
+      addLog('   ', 'warning');
+      if (API_BASE_URL.includes('localhost')) {
+        addLog('   💡 For local development:', 'info');
+        addLog('      1. Open a terminal', 'info');
+        addLog('      2. cd server', 'info');
+        addLog('      3. node workflow-api.js', 'info');
+      } else {
+        addLog('   💡 The backend API needs to be deployed separately', 'info');
+        addLog('      GitHub Pages only hosts the frontend (static files)', 'info');
+        addLog('      Deploy backend to: Azure, AWS, Heroku, Railway, etc.', 'info');
+        addLog('      See DEPLOYMENT_FIX.md for details', 'info');
+      }
+      setIsRunning(false);
+      return;
+    }
+
+    addLog('✓ Connected to backend API', 'success');
+
     let actualStoryId = storyId;
 
     try {
@@ -50,7 +102,7 @@ const WorkflowUI = () => {
         setCurrentStep(1);
         addLog('Creating Jira story from your requirements...', 'info');
         
-        const createResponse = await fetch('http://localhost:3001/api/workflow/create-story', {
+        const createResponse = await fetch(`${API_BASE_URL}/api/workflow/create-story`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ requirements: plainEnglish })
@@ -71,7 +123,7 @@ const WorkflowUI = () => {
       // Step 1: Fetch Jira Story
       setCurrentStep(1);
       addLog(mode === 'plain-english' ? 'Fetching created story details...' : 'Fetching user story from Jira...', 'info');
-      const jiraResponse = await fetch('http://localhost:3001/api/workflow/fetch-jira', {
+      const jiraResponse = await fetch(`${API_BASE_URL}/api/workflow/fetch-jira`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ storyId: actualStoryId })
@@ -84,7 +136,7 @@ const WorkflowUI = () => {
       // Step 2: Generate Test Cases
       setCurrentStep(2);
       addLog('AI generating test cases...', 'info');
-      const testCasesResponse = await fetch('http://localhost:3001/api/workflow/generate-tests', {
+      const testCasesResponse = await fetch(`${API_BASE_URL}/api/workflow/generate-tests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ story: jiraData.story })
@@ -95,7 +147,7 @@ const WorkflowUI = () => {
       // Step 3: Push to TestRail
       setCurrentStep(3);
       addLog('Syncing test cases to TestRail...', 'info');
-      const testrailResponse = await fetch('http://localhost:3001/api/workflow/push-testrail', {
+      const testrailResponse = await fetch(`${API_BASE_URL}/api/workflow/push-testrail`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ testCases: testCasesData.testCases, storyId: actualStoryId })
@@ -123,7 +175,7 @@ const WorkflowUI = () => {
       // Step 4: Generate Test Scripts
       setCurrentStep(4);
       addLog('Generating Playwright test scripts...', 'info');
-      const scriptsResponse = await fetch('http://localhost:3001/api/workflow/generate-scripts', {
+      const scriptsResponse = await fetch(`${API_BASE_URL}/api/workflow/generate-scripts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ testCases: testCasesData.testCases, storyId: actualStoryId })
@@ -134,7 +186,7 @@ const WorkflowUI = () => {
       // Step 5: Execute Tests
       setCurrentStep(5);
       addLog('Executing Playwright tests with self-healing...', 'info');
-      const executionResponse = await fetch('http://localhost:3001/api/workflow/execute-tests', {
+      const executionResponse = await fetch(`${API_BASE_URL}/api/workflow/execute-tests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -199,7 +251,7 @@ const WorkflowUI = () => {
       // Step 6: Update Results
       setCurrentStep(6);
       addLog('Updating results in Jira...', 'info');
-      const updateResponse = await fetch('http://localhost:3001/api/workflow/update-results', {
+      const updateResponse = await fetch(`${API_BASE_URL}/api/workflow/update-results`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -252,6 +304,25 @@ const WorkflowUI = () => {
             ✍️ Write Requirements
           </button>
         </div>
+
+        {/* Backend Status Indicator */}
+        {backendStatus !== 'unknown' && (
+          <div className={`backend-status ${backendStatus}`}>
+            {backendStatus === 'connected' ? (
+              <>
+                <span className="status-dot"></span>
+                <span>Backend API Connected</span>
+                <span className="status-url">{API_BASE_URL}</span>
+              </>
+            ) : (
+              <>
+                <span className="status-dot"></span>
+                <span>⚠️ Backend API Not Available</span>
+                <span className="status-url">{API_BASE_URL}</span>
+              </>
+            )}
+          </div>
+        )}
 
         {/* Mode 1: Jira ID Input */}
         {mode === 'jira-id' && (
