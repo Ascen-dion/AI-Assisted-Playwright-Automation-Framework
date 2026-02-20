@@ -1,1 +1,1 @@
-web: cd server && node workflow-api.js
+web: npm install && cd server && npm install && npm start
