@@ -57,6 +57,18 @@ async function ensureStory(storyId, story) {
       url: `${jiraClient.host}/browse/${storyId}`
     };
     
+    // If Jira ADF parser didn't find URLs, try extracting from description text
+    if (fetchedStory.extractedUrls.length === 0) {
+      const descText = `${fetchedStory.title} ${fetchedStory.description}`;
+      const urlPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s]*)/gi;
+      const matches = descText.match(urlPattern) || [];
+      const textUrls = matches.map(u => u.startsWith('http') ? u : `https://${u}`);
+      if (textUrls.length > 0) {
+        fetchedStory.extractedUrls = textUrls;
+        console.log(`[ensureStory] 🔗 URLs extracted from text: ${textUrls.join(', ')}`);
+      }
+    }
+    
     console.log(`[ensureStory] ✅ Fetched story from Jira: "${fetchedStory.title}"`);
     console.log(`[ensureStory] 🔗 Extracted URLs: ${fetchedStory.extractedUrls.join(', ') || 'none'}`);
     return fetchedStory;
@@ -91,6 +103,18 @@ app.post('/api/workflow/create-story', async (req, res) => {
 
     console.log(`[API] Creating Jira story from requirements (${requirements.length} chars)`);
 
+    // Extract URLs from the user's requirements text BEFORE AI processing
+    const urlPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+)(?:\/[^\s]*)*/gi;
+    const foundUrls = requirements.match(urlPattern) || [];
+    const extractedUrls = foundUrls.map(url => {
+      if (!url.startsWith('http')) {
+        return 'https://' + url;
+      }
+      return url;
+    });
+    console.log(`[API] 🔗 Extracted URLs from requirements: ${extractedUrls.join(', ') || 'none'}`);
+    const targetWebsite = extractedUrls.length > 0 ? extractedUrls[0] : null;
+
     // Use AI to convert plain English to structured user story
     const aiPrompt = `Convert the following requirements into a structured Jira user story format.
 
@@ -110,7 +134,9 @@ Generate a JSON object with this exact structure:
 
 Rules:
 - Title should be concise and descriptive (prefix with [UI], [API], [Backend] if applicable)
+${targetWebsite ? `- IMPORTANT: The target website is ${targetWebsite} - include this URL in the description and acceptance criteria` : ''}
 - Description should follow user story format
+- If a website URL is mentioned, include it explicitly in the description
 - Generate 3-5 clear, testable acceptance criteria
 - Each criterion should start with an action verb
 - Make criteria specific and measurable
@@ -170,6 +196,15 @@ Return ONLY the JSON object, no additional text.`;
 
     console.log(`[API] Created Jira story: ${newStoryId}`);
 
+    // Include extracted URLs from original requirements in the story
+    const storyExtractedUrls = extractedUrls.length > 0 ? extractedUrls : [];
+    
+    // Also try to extract URLs from the AI-generated description
+    const descUrls = (storyData.description || '').match(/https?:\/\/[^\s]+/g) || [];
+    const allUrls = [...new Set([...storyExtractedUrls, ...descUrls])];
+    
+    console.log(`[API] 📋 Story URLs for pipeline: ${allUrls.join(', ') || 'none'}`);
+
     res.json({
       success: true,
       storyId: newStoryId,
@@ -177,6 +212,7 @@ Return ONLY the JSON object, no additional text.`;
         title: storyData.title,
         description: storyData.description,
         acceptanceCriteria: storyData.acceptanceCriteria,
+        extractedUrls: allUrls,
         status: 'To Do',
         url: `${jiraClient.host}/browse/${newStoryId}`
       },

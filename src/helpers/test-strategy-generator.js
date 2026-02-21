@@ -218,18 +218,52 @@ class TestStrategyGenerator {
       return 'https://example.com';
     }
     
-    // Try extractedUrls first
+    // Priority 1: Try extractedUrls (from Jira or requirements flow)
     if (story.extractedUrls && story.extractedUrls.length > 0) {
-      return story.extractedUrls[0];
+      const url = story.extractedUrls[0];
+      console.log(`[TestStrategy] 🔗 URL from extractedUrls: ${url}`);
+      return url;
     }
     
-    // Try description
-    const urlMatch = (story.description || '').match(/https?:\/\/[^\s]+/);
-    if (urlMatch) {
-      return urlMatch[0].replace(/\/$/, ''); // Remove trailing slash
+    // Priority 2: Try title for URLs (users often put www.amazon.com in title)
+    const titleUrlMatch = (story.title || '').match(/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s]*)/i);
+    if (titleUrlMatch) {
+      const rawUrl = titleUrlMatch[0];
+      const url = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl.startsWith('www.') ? '' : 'www.'}${rawUrl}`;
+      console.log(`[TestStrategy] 🔗 URL from title: ${url}`);
+      return url.replace(/\/$/, '');
     }
     
-    // Fallback based on story ID
+    // Priority 3: Try description for URLs
+    const descUrlMatch = (story.description || '').match(/https?:\/\/[^\s]+/);
+    if (descUrlMatch) {
+      console.log(`[TestStrategy] 🔗 URL from description: ${descUrlMatch[0]}`);
+      return descUrlMatch[0].replace(/\/$/, '');
+    }
+    
+    // Priority 4: Try description for domain names (www.amazon.com style)
+    const descDomainMatch = (story.description || '').match(/(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s]*)/i);
+    if (descDomainMatch) {
+      const rawUrl = descDomainMatch[0];
+      const url = `https://${rawUrl.startsWith('www.') ? '' : 'www.'}${rawUrl}`;
+      console.log(`[TestStrategy] 🔗 URL from description domain: ${url}`);
+      return url.replace(/\/$/, '');
+    }
+    
+    // Priority 5: Try acceptance criteria for URLs
+    if (story.acceptanceCriteria && Array.isArray(story.acceptanceCriteria)) {
+      for (const criterion of story.acceptanceCriteria) {
+        const criterionUrl = (criterion || '').match(/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s]*)/i);
+        if (criterionUrl) {
+          const rawUrl = criterionUrl[0];
+          const url = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl.startsWith('www.') ? '' : 'www.'}${rawUrl}`;
+          console.log(`[TestStrategy] 🔗 URL from acceptance criteria: ${url}`);
+          return url.replace(/\/$/, '');
+        }
+      }
+    }
+    
+    // Priority 6: Fallback based on story ID pattern
     if (story.id && story.id.startsWith('ED-')) {
       return 'https://www.endpointclinical.com';
     }
