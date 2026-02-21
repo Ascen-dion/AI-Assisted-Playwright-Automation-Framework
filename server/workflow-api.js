@@ -1112,7 +1112,7 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
     // Priority 2: Use URLExtractor on story description
     if (!targetUrl && story) {
       const storyText = `${story.title || ''} ${story.description || ''}`;
-      const extractedUrls = URLExtractor.extract(storyText);
+      const extractedUrls = URLExtractor.extractURLs(storyText);
       if (extractedUrls.length > 0) {
         targetUrl = extractedUrls[0];
         console.log(`[SELF-HEAL] 🔗 URL from story text: ${targetUrl}`);
