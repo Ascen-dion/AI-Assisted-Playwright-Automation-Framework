@@ -1,5 +1,5 @@
-const { test, expect } = require('../core/ai-test-runner');
-const testAgents = require('../core/test-agents');
+const { test, expect } = require('../../core/ai-test-runner');
+const testAgents = require('../../core/test-agents');
 
 /**
  * Playwright Test Agents Examples

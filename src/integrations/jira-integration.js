@@ -84,12 +84,17 @@ class JiraIntegration {
     // Extract test scenarios
     const testScenarios = this.extractTestScenarios(description);
 
+    // Parse description and extract URLs
+    const parsedDescription = this.parseADF(description);
+    const extractedUrls = this._extractedUrls || [];
+
     return {
       key: issue.key,
       summary: fields.summary,
-      description: this.parseADF(description),
+      description: parsedDescription,
       acceptanceCriteria,
       testScenarios,
+      extractedUrls: extractedUrls, // Add extracted URLs
       status: fields.status.name,
       priority: fields.priority?.name || 'Medium',
       labels: fields.labels || [],
@@ -171,20 +176,49 @@ class JiraIntegration {
 
   /**
    * Parse Jira ADF (Atlassian Document Format) to plain text
+   * Enhanced to extract URLs and preserve formatting
    * @param {Array} content - ADF content
-   * @returns {string} Plain text
+   * @returns {string} Plain text with proper formatting
    */
   parseADF(content) {
     if (!Array.isArray(content)) return '';
     
     let text = '';
+    let urls = [];
+    
     for (const block of content) {
       if (block.type === 'text') {
         text += block.text;
+      } else if (block.type === 'paragraph') {
+        // Add proper paragraph breaks
+        if (text && !text.endsWith('\n')) {
+          text += '\n';
+        }
+        text += this.parseADF(block.content || []);
+        text += '\n';
+      } else if (block.type === 'bulletList' || block.type === 'orderedList') {
+        text += '\n';
+        text += this.parseADF(block.content || []);
+        text += '\n';
+      } else if (block.type === 'listItem') {
+        text += '• ';
+        text += this.parseADF(block.content || []);
+        text += '\n';
+      } else if (block.type === 'inlineCard' && block.attrs && block.attrs.url) {
+        // Extract URLs from inline cards
+        urls.push(block.attrs.url);
+        text += ` ${block.attrs.url} `;
       } else if (block.content) {
         text += this.parseADF(block.content);
       }
     }
+    
+    // Clean up extra newlines and spaces
+    text = text.replace(/\n{3,}/g, '\n\n').replace(/\s+/g, ' ').trim();
+    
+    // Store extracted URLs for later use
+    this._extractedUrls = urls;
+    
     return text;
   }
 

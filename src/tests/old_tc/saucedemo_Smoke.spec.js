@@ -1,4 +1,4 @@
-const { test, expect } = require('../core/ai-test-runner');
+const { test, expect } = require('../../core/ai-test-runner');
 
 /**
  * Smoke Test for SauceDemo E-Commerce Website

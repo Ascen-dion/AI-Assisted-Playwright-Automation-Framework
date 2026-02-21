@@ -1,4 +1,4 @@
-const { test, expect } = require('../core/ai-test-runner');
+const { test, expect } = require('../../core/ai-test-runner');
 
 /**
  * End-to-End Tests for SauceDemo E-Commerce Website

@@ -1,5 +1,5 @@
-const { test } = require('../core/ai-test-runner');
-const testAgents = require('../core/test-agents');
+const { test } = require('../../core/ai-test-runner');
+const testAgents = require('../../core/test-agents');
 const fs = require('fs');
 const path = require('path');
 

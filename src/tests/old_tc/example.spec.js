@@ -1,4 +1,4 @@
-const { test, expect } = require('../core/ai-test-runner');
+const { test, expect } = require('../../core/ai-test-runner');
 
 /**
  * Example tests demonstrating AI-assisted automation

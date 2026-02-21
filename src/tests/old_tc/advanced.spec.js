@@ -1,6 +1,6 @@
-const { test, expect } = require('../core/ai-test-runner');
-const visualAI = require('../helpers/visual-ai');
-const selfHealing = require('../helpers/self-healing');
+const { test, expect } = require('../../core/ai-test-runner');
+const visualAI = require('../../helpers/visual-ai');
+const selfHealing = require('../../helpers/self-healing');
 
 /**
  * Advanced real-world test scenarios

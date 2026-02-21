@@ -4,7 +4,7 @@
  */
 
 const { test } = require('@playwright/test');
-const AIPage = require('../../src/core/ai-page');
+const AIPage = require('../../core/ai-page');
 
 test('🔍 Explore Endpoint Clinical page structure', async ({ page }) => {
   const aiPage = new AIPage(page);

@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const mcpClient = require('../mcp/playwright-mcp-client');
+const mcpClient = require('../../mcp/playwright-mcp-client');
 const fs = require('fs').promises;
 const path = require('path');
 

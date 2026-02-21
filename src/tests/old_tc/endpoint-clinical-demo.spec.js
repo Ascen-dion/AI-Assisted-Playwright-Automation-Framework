@@ -15,7 +15,7 @@
  */
 
 const { test, expect } = require('@playwright/test');
-const AIPage = require('../../src/core/ai-page');
+const AIPage = require('../../core/ai-page');
 
 // Test configuration
 const TEST_CONFIG = {

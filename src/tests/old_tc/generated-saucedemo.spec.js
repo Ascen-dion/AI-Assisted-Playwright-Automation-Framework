@@ -1,5 +1,5 @@
 const { test, expect } = require('@playwright/test');
-const AIPage = require('../core/ai-page');
+const AIPage = require('../../core/ai-page');
 
 /**
  * 🎯 AUTO-GENERATED TEST
