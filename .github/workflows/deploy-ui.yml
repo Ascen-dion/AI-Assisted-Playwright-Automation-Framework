@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - mcp_rail_jira_ui
+      - adding_mcp_real_capbilities_jira_rail_ui
   workflow_dispatch:
 
 permissions:
