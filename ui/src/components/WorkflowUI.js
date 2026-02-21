@@ -194,7 +194,7 @@ const WorkflowUI = () => {
       const scriptsResponse = await fetch(`${API_BASE_URL}/api/workflow/generate-scripts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ testCases: testCasesData.testCases, storyId: actualStoryId })
+        body: JSON.stringify({ testCases: testCasesData.testCases, storyId: actualStoryId, story: jiraData.story })
       });
       const scriptsData = await scriptsResponse.json();
       addLog(`✓ Generated test script: ${scriptsData.filename}`, 'success');
@@ -208,7 +208,8 @@ const WorkflowUI = () => {
         body: JSON.stringify({ 
           filename: scriptsData.filename,
           testCases: testCasesData.testCases,
-          storyId: actualStoryId
+          storyId: actualStoryId,
+          story: jiraData.story
         })
       });
       const executionData = await executionResponse.json();

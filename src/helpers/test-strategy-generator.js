@@ -9,6 +9,12 @@ class TestStrategyGenerator {
    * Analyze story to determine test strategy
    */
   static analyzeStory(story) {
+    // Handle undefined story gracefully
+    if (!story) {
+      console.warn('[TestStrategy] Story is undefined, using default fallback strategy');
+      return this.getDefaultStrategy();
+    }
+    
     const title = (story.title || '').toLowerCase();
     const description = (story.description || '').toLowerCase();
     const allText = `${title} ${description}`.toLowerCase();
@@ -28,6 +34,34 @@ class TestStrategyGenerator {
       verificationApproach,
       testStrategy: this.generateTestStrategy(storyType, targetElements, verificationApproach),
       url: this.extractURL(story)
+    };
+  }
+  
+  /**
+   * Get default fallback strategy when story is undefined
+   */
+  static getDefaultStrategy() {
+    return {
+      storyType: 'VERIFY',
+      targetElements: {
+        uiElements: [
+          { type: 'heading', selectors: ['h1', 'h2', '.headline', '.title'] },
+          { type: 'content', selectors: ['main', '.main-content', '.hero'] }
+        ],
+        targetText: [],
+        contentArea: 'main'
+      },
+      verificationApproach: 'STRUCTURAL',
+      testStrategy: {
+        approach: 'Test basic page structure and functionality',
+        tests: [
+          'Verify page loads successfully',
+          'Verify main content areas are present',
+          'Test basic page navigation',
+          'Verify responsive behavior'
+        ]
+      },
+      url: 'https://example.com'
     };
   }
   
@@ -57,7 +91,20 @@ class TestStrategyGenerator {
    */
   static detectTargetElements(story) {
     const elements = [];
-    const allText = `${story.title} ${story.description}`.toLowerCase();
+    
+    // Handle undefined story
+    if (!story || !story.title) {
+      return {
+        uiElements: [
+          { type: 'heading', selectors: ['h1', 'h2', '.headline', '.title'] },
+          { type: 'content', selectors: ['main', '.main-content', '.hero'] }
+        ],
+        targetText: [],
+        contentArea: 'main'
+      };
+    }
+    
+    const allText = `${story.title} ${story.description || ''}`.toLowerCase();
     
     // Common UI elements
     if (allText.includes('headline') || allText.includes('title')) {
@@ -73,9 +120,11 @@ class TestStrategyGenerator {
       elements.push({ type: 'navigation', selectors: ['nav', '.navigation', '.menu'] });
     }
     
-    // Extract specific text to verify
-    const textMatches = story.description?.match(/"([^"]+)"/g) || [];
-    const targetText = textMatches.map(match => match.replace(/"/g, ''));
+    // Extract specific text to verify from BOTH title and description
+    const titleTextMatches = story.title?.match(/"([^"]+)"/g) || [];
+    const descTextMatches = story.description?.match(/"([^"]+)"/g) || [];
+    const allTextMatches = [...titleTextMatches, ...descTextMatches];
+    const targetText = allTextMatches.map(match => match.replace(/"/g, ''));
     
     return {
       uiElements: elements,
@@ -164,6 +213,11 @@ class TestStrategyGenerator {
    * Extract URL from story
    */
   static extractURL(story) {
+    // Handle undefined story
+    if (!story) {
+      return 'https://example.com';
+    }
+    
     // Try extractedUrls first
     if (story.extractedUrls && story.extractedUrls.length > 0) {
       return story.extractedUrls[0];
@@ -243,9 +297,10 @@ class TestStrategyGenerator {
    * Generate structural test code (for ADD stories)
    */
   static generateStructuralTest(story, url, targetElements) {
+    const storyTitle = story?.title || 'Page Structure Test';
     return `const { test, expect } = require('@playwright/test');
 
-test.describe('${story.title} - Page Structure Verification', () => {
+test.describe('${storyTitle} - Page Structure Verification', () => {
   test('Verify page structure supports new content', async ({ page }) => {
     // Navigate to target page
     await page.goto('${url}', { 
@@ -300,9 +355,10 @@ test.describe('${story.title} - Page Structure Verification', () => {
    * Generate content test code (for VERIFY/MODIFY stories)
    */
   static generateContentTest(story, url, targetText, targetElements) {
+    const storyTitle = story?.title || 'Content Verification Test';
     return `const { test, expect } = require('@playwright/test');
 
-test.describe('${story.title} - Content Verification', () => {
+test.describe('${storyTitle} - Content Verification', () => {
   test('Verify "${targetText}" content is displayed', async ({ page }) => {
     // Navigate with retry logic
     let retries = 3;
@@ -368,8 +424,7 @@ test.describe('${story.title} - Content Verification', () => {
   /**
    * Generate accessibility test code
    */
-  static generateAccessibilityTest(story, url, targetElements) {
-    return `const { test, expect } = require('@playwright/test');
+  static generateAccessibilityTest(story, url, targetElements) {    const storyTitle = story?.title || 'Accessibility Test';    return `const { test, expect } = require('@playwright/test');
 
 test.describe('${story.title} - Accessibility Verification', () => {
   test('Verify content area accessibility', async ({ page }) => {

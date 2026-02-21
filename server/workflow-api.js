@@ -26,6 +26,46 @@ app.use('/test-results', express.static(path.join(__dirname, '..', 'test-results
 const jiraClient = new JiraIntegration();
 const testrailClient = new TestRailIntegration();
 
+/**
+ * Ensures a story object is available - fetches from Jira if not provided.
+ * This is the critical failsafe that prevents falling back to example.com
+ * when the UI doesn't pass the story object.
+ */
+async function ensureStory(storyId, story) {
+  if (story && story.title) {
+    console.log(`[ensureStory] ✅ Story provided by client: "${story.title}"`);
+    return story;
+  }
+  
+  if (!storyId) {
+    console.warn('[ensureStory] ⚠️ No storyId provided, cannot fetch from Jira');
+    return null;
+  }
+
+  try {
+    console.log(`[ensureStory] 🔄 Story missing from request, fetching from Jira: ${storyId}`);
+    const userStory = await jiraClient.fetchUserStory(storyId);
+    
+    const fetchedStory = {
+      id: storyId,
+      title: userStory.summary,
+      description: userStory.description || '',
+      acceptanceCriteria: userStory.acceptanceCriteria || [],
+      extractedUrls: userStory.extractedUrls || [],
+      status: userStory.status,
+      type: userStory.issueType,
+      url: `${jiraClient.host}/browse/${storyId}`
+    };
+    
+    console.log(`[ensureStory] ✅ Fetched story from Jira: "${fetchedStory.title}"`);
+    console.log(`[ensureStory] 🔗 Extracted URLs: ${fetchedStory.extractedUrls.join(', ') || 'none'}`);
+    return fetchedStory;
+  } catch (error) {
+    console.error(`[ensureStory] ❌ Failed to fetch story from Jira: ${error.message}`);
+    return null;
+  }
+}
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
@@ -467,13 +507,16 @@ app.post('/api/workflow/push-testrail', async (req, res) => {
 // Step 4: Generate Test Scripts using Smart Strategy Generator
 app.post('/api/workflow/generate-scripts', async (req, res) => {
   try {
-    const { testCases, storyId, plan, story } = req.body;
+    const { testCases, storyId, plan, story: clientStory } = req.body;
 
     if (!testCases || !storyId) {
       return res.status(400).json({ error: 'Test cases and story ID are required' });
     }
 
     console.log(`[API] 🧪 Using Smart Strategy Generator for ${storyId}`);
+    
+    // Auto-fetch story from Jira if not provided by client
+    const story = await ensureStory(storyId, clientStory);
 
     // Step 1: Analyze story to determine test strategy
     const strategy = TestStrategyGenerator.analyzeStory(story);
@@ -490,8 +533,8 @@ app.post('/api/workflow/generate-scripts', async (req, res) => {
     let testScript;
     let targetUrl = strategy.url;
     
-    if (strategy.storyType === 'ADD' && strategy.targetElements.targetText.length > 0) {
-      // For ADD stories, generate structural tests instead of content tests
+    if (strategy.storyType === 'ADD' && smartTestCases.length > 0) {
+      // For ADD stories, ALWAYS generate structural tests (don't verify content that doesn't exist yet)
       console.log(`[API] 🏗️ Generating STRUCTURAL test for ADD story`);
       testScript = smartTestCases[0].testCode;
       
@@ -507,8 +550,8 @@ STORY ANALYSIS:
 
 STORY DETAILS:
 Story ID: ${storyId}
-Title: ${story.title}
-Description: ${story.description}
+Title: ${story?.title || storyId}
+Description: ${story?.description || 'No description available'}
 
 TEST STRATEGY:
 ${strategy.testStrategy.approach}
@@ -573,13 +616,16 @@ Generate a comprehensive Playwright test with multiple selector strategies and p
 // Step 5: Execute Tests with Self-Healing
 app.post('/api/workflow/execute-tests', async (req, res) => {
   try {
-    const { filename, testCases, storyId, story } = req.body;
+    const { filename, testCases, storyId, story: clientStory } = req.body;
 
     if (!filename) {
       return res.status(400).json({ error: 'Filename is required' });
     }
 
     console.log(`[API] Executing tests with self-healing: ${filename}`);
+    
+    // Auto-fetch story from Jira if not provided by client
+    const story = await ensureStory(storyId, clientStory);
 
     const testPath = `src/tests/${filename}`;
     const fullTestPath = path.join(__dirname, '..', testPath);
@@ -945,9 +991,12 @@ function parseTestCases(testPlan) {
  * Apply self-healing to failed tests using Smart Strategy Healer Agent
  * Analyzes failures and regenerates tests with smart strategy and improved selectors
  */
-async function applyTestHealing({ filename, testCases, storyId, story, errorOutput, attempt }) {
+async function applyTestHealing({ filename, testCases, storyId, story: inputStory, errorOutput, attempt }) {
   try {
     console.log('[SELF-HEAL] 🔧 Using Smart Strategy Healer Agent to analyze and fix test failures...');
+    
+    // Ensure we have the story object (auto-fetch from Jira if missing)
+    const story = inputStory || await ensureStory(storyId, inputStory);
     
     // Get story strategy first for smarter healing
     let strategy = null;
@@ -1015,38 +1064,61 @@ async function applyTestHealing({ filename, testCases, storyId, story, errorOutp
     const filepath = path.join(__dirname, '..', 'src', 'tests', filename);
     const failingCode = await fs.readFile(filepath, 'utf-8');
 
-    // Extract URL from the failing test code (look for page.goto calls)
+    // === SMART URL EXTRACTION (story-first approach) ===
+    // Priority 1: Use story's extracted URLs (from Jira)
     let targetUrl = null;
-    const gotoMatch = failingCode.match(/page\.goto\s*\(\s*['"]([^'"]+)['"]/);
-    if (gotoMatch) {
-      targetUrl = gotoMatch[1];
+    
+    if (story && story.extractedUrls && story.extractedUrls.length > 0) {
+      targetUrl = story.extractedUrls[0];
+      console.log(`[SELF-HEAL] 🔗 URL from story.extractedUrls: ${targetUrl}`);
     }
     
-    // If not found in code, try to extract from test cases
+    // Priority 2: Use URLExtractor on story description
+    if (!targetUrl && story) {
+      const storyText = `${story.title || ''} ${story.description || ''}`;
+      const extractedUrls = URLExtractor.extract(storyText);
+      if (extractedUrls.length > 0) {
+        targetUrl = extractedUrls[0];
+        console.log(`[SELF-HEAL] 🔗 URL from story text: ${targetUrl}`);
+      }
+    }
+    
+    // Priority 3: Infer URL from story ID patterns (e.g., ED- → endpointclinical.com)
+    if (!targetUrl && storyId) {
+      if (storyId.toUpperCase().startsWith('ED-')) {
+        targetUrl = 'https://www.endpointclinical.com';
+        console.log(`[SELF-HEAL] 🔗 URL inferred from story ID pattern: ${targetUrl}`);
+      }
+    }
+    
+    // Priority 4: Extract from failing code (but SKIP example.com)
+    if (!targetUrl) {
+      const gotoMatch = failingCode.match(/page\.goto\s*\(\s*['"]([^'"]+)['"]/);
+      if (gotoMatch && !gotoMatch[1].includes('example.com')) {
+        targetUrl = gotoMatch[1];
+        console.log(`[SELF-HEAL] 🔗 URL from test code (non-example.com): ${targetUrl}`);
+      }
+    }
+    
+    // Priority 5: Check test cases for URLs (but SKIP example.com)
     if (!targetUrl) {
       const urlPattern = /https?:\/\/[^\s<>"{}|\\^`\[\]]+/gi;
       for (const tc of testCases) {
-        const titleMatch = (tc.title || '').match(urlPattern);
-        const stepsMatch = (tc.steps || '').match(urlPattern);
-        const expectedMatch = (tc.expected || '').match(urlPattern);
-        if (titleMatch) {
-          targetUrl = titleMatch[0];
-          break;
-        }
-        if (stepsMatch) {
-          targetUrl = stepsMatch[0];
-          break;
-        }
-        if (expectedMatch) {
-          targetUrl = expectedMatch[0];
-          break;
+        const matches = `${tc.title || ''} ${tc.steps || ''} ${tc.expected || ''}`.match(urlPattern);
+        if (matches) {
+          const validUrl = matches.find(u => !u.includes('example.com'));
+          if (validUrl) {
+            targetUrl = validUrl;
+            console.log(`[SELF-HEAL] 🔗 URL from test cases: ${targetUrl}`);
+            break;
+          }
         }
       }
     }
     
-    // If still not found, check for common website names
+    // Priority 6: Keyword-based fallback from all available text
     if (!targetUrl) {
-      const allText = `${failingCode} ${testCases.map(tc => `${tc.title} ${tc.steps} ${tc.expected}`).join(' ')}`.toLowerCase();
+      const allText = `${story?.title || ''} ${story?.description || ''} ${failingCode} ${testCases.map(tc => `${tc.title} ${tc.steps} ${tc.expected}`).join(' ')}`.toLowerCase();
       
       if (allText.includes('facebook')) {
         targetUrl = 'https://www.facebook.com';
@@ -1058,6 +1130,7 @@ async function applyTestHealing({ filename, testCases, storyId, story, errorOutp
         targetUrl = 'https://www.endpointclinical.com';
       } else {
         targetUrl = 'https://example.com';
+        console.warn(`[SELF-HEAL] ⚠️ Could not determine target URL, falling back to example.com`);
       }
     }
     

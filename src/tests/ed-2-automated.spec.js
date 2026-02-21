@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test.describe('[UI] Add "Your hidden advantage in RTSM" headline - Page Structure Verification', () => {
+test.describe('[UI] Add “Your hidden advantage in RTSM” headline - Page Structure Verification', () => {
   test('Verify page structure supports new content', async ({ page }) => {
     // Navigate to target page
     await page.goto('https://www.endpointclinical.com', { 
