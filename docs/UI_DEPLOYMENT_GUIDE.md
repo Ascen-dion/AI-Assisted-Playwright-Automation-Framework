@@ -186,7 +186,7 @@ Navigate to: https://viplove29.github.io/playwright-ai-framework
 
 ### Step 2: Enter Story ID
 
-- Type a Jira story ID (e.g., `ED-2`, `PROJ-123`)
+- Type a Jira story ID (e.g., `ED-2`, `ED-3`)
 - Press Enter or click "Run Workflow"
 
 ### Step 3: Watch Progress

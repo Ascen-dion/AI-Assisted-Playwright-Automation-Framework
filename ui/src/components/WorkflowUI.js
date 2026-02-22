@@ -377,7 +377,7 @@ const WorkflowUI = () => {
             <input
               id="storyId"
               type="text"
-              placeholder="e.g., ED-2, PROJ-123"
+              placeholder="e.g., ED-2, Ed-3"
               value={storyId}
               onChange={(e) => setStoryId(e.target.value)}
               disabled={isRunning}
