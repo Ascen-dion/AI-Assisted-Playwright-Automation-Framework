@@ -69,7 +69,16 @@ class TestStrategyGenerator {
    * Detect story type (ADD, MODIFY, VERIFY, REMOVE)
    */
   static detectStoryType(text) {
-    if (text.includes('add') || text.includes('create') || text.includes('implement') || text.includes('new')) {
+    // VERIFY patterns first (most common for test automation)
+    if (text.includes('verify') || text.includes('check') || text.includes('ensure') || 
+        text.includes('confirm') || text.includes('test ') || text.includes('validate') ||
+        text.includes('functionality') || text.includes('should') || text.includes('assert') ||
+        text.includes('expect')) {
+      return 'VERIFY';
+    }
+    // Use word boundary checks for short keywords to avoid false positives
+    // e.g., 'new' in 'renewal' or 'news' should NOT trigger ADD
+    if (/\badd\b/.test(text) || /\bcreate\b/.test(text) || text.includes('implement') || /\bnew\s/.test(text)) {
       return 'ADD';
     }
     if (text.includes('modify') || text.includes('change') || text.includes('update') || text.includes('edit')) {
@@ -78,12 +87,9 @@ class TestStrategyGenerator {
     if (text.includes('remove') || text.includes('delete') || text.includes('hide')) {
       return 'REMOVE';
     }
-    if (text.includes('verify') || text.includes('check') || text.includes('ensure') || text.includes('confirm')) {
-      return 'VERIFY';
-    }
     
-    // Default for UI stories
-    return 'ADD';
+    // Default: VERIFY is safest for test automation (tests existing functionality)
+    return 'VERIFY';
   }
   
   /**
@@ -226,19 +232,20 @@ class TestStrategyGenerator {
     }
     
     // Priority 2: Try title for URLs (users often put www.amazon.com in title)
-    const titleUrlMatch = (story.title || '').match(/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s]*)/i);
+    const titleUrlMatch = (story.title || '').match(/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s)\]>,]*)/i);
     if (titleUrlMatch) {
-      const rawUrl = titleUrlMatch[0];
+      const rawUrl = titleUrlMatch[0].replace(/[)\].,;:!?]+$/, '');
       const url = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl.startsWith('www.') ? '' : 'www.'}${rawUrl}`;
       console.log(`[TestStrategy] 🔗 URL from title: ${url}`);
       return url.replace(/\/$/, '');
     }
     
     // Priority 3: Try description for URLs
-    const descUrlMatch = (story.description || '').match(/https?:\/\/[^\s]+/);
+    const descUrlMatch = (story.description || '').match(/https?:\/\/[^\s)\]>,]+/);
     if (descUrlMatch) {
-      console.log(`[TestStrategy] 🔗 URL from description: ${descUrlMatch[0]}`);
-      return descUrlMatch[0].replace(/\/$/, '');
+      const cleanDescUrl = descUrlMatch[0].replace(/[)\].,;:!?]+$/, '').replace(/\/$/, '');
+      console.log(`[TestStrategy] 🔗 URL from description: ${cleanDescUrl}`);
+      return cleanDescUrl;
     }
     
     // Priority 4: Try description for domain names (www.amazon.com style)
@@ -253,9 +260,9 @@ class TestStrategyGenerator {
     // Priority 5: Try acceptance criteria for URLs
     if (story.acceptanceCriteria && Array.isArray(story.acceptanceCriteria)) {
       for (const criterion of story.acceptanceCriteria) {
-        const criterionUrl = (criterion || '').match(/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s]*)/i);
+        const criterionUrl = (criterion || '').match(/(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s)\]>,]*)/i);
         if (criterionUrl) {
-          const rawUrl = criterionUrl[0];
+          const rawUrl = criterionUrl[0].replace(/[)\].,;:!?]+$/, '');
           const url = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl.startsWith('www.') ? '' : 'www.'}${rawUrl}`;
           console.log(`[TestStrategy] 🔗 URL from acceptance criteria: ${url}`);
           return url.replace(/\/$/, '');

@@ -26,8 +26,11 @@ class URLExtractor {
   static cleanURL(url) {
     if (!url) return url;
 
+    let cleanedURL = url;
+    
     // Remove trailing characters that are likely not part of the URL
-    const invalidTrailingChars = /[\/I]$/; // Remove trailing /I specifically
+    // Strip trailing punctuation/brackets that get captured from surrounding text
+    cleanedURL = cleanedURL.replace(/[)\]>,;:!?.]+$/, '');
     
     // Common patterns where URLs get concatenated with text
     const patterns = [
@@ -39,7 +42,6 @@ class URLExtractor {
       { pattern: /\/[A-Z][a-z]+$/, replacement: '/' } // Any word starting with capital
     ];
 
-    let cleanedURL = url;
     for (const { pattern, replacement } of patterns) {
       cleanedURL = cleanedURL.replace(pattern, replacement);
     }

@@ -9,6 +9,7 @@ const aiEngine = require('../src/core/ai-engine');
 const testAgents = require('../src/core/test-agents-mcp'); // MCP-enhanced test agents
 const URLExtractor = require('../src/helpers/url-extractor'); // Enhanced URL extraction
 const TestStrategyGenerator = require('../src/helpers/test-strategy-generator'); // Smart test strategies
+const PageInspector = require('../src/helpers/page-inspector'); // Live page inspection before code gen
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -60,9 +61,12 @@ async function ensureStory(storyId, story) {
     // If Jira ADF parser didn't find URLs, try extracting from description text
     if (fetchedStory.extractedUrls.length === 0) {
       const descText = `${fetchedStory.title} ${fetchedStory.description}`;
-      const urlPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s]*)/gi;
+      const urlPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s)\]>,]*)/gi;
       const matches = descText.match(urlPattern) || [];
-      const textUrls = matches.map(u => u.startsWith('http') ? u : `https://${u}`);
+      const textUrls = matches.map(u => {
+        u = u.replace(/[)\].,;:!?]+$/, '');
+        return u.startsWith('http') ? u : `https://${u}`;
+      });
       if (textUrls.length > 0) {
         fetchedStory.extractedUrls = textUrls;
         console.log(`[ensureStory] 🔗 URLs extracted from text: ${textUrls.join(', ')}`);
@@ -104,9 +108,11 @@ app.post('/api/workflow/create-story', async (req, res) => {
     console.log(`[API] Creating Jira story from requirements (${requirements.length} chars)`);
 
     // Extract URLs from the user's requirements text BEFORE AI processing
-    const urlPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+)(?:\/[^\s]*)*/gi;
+    const urlPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+)(?:\/[^\s)\]>,]*)*/gi;
     const foundUrls = requirements.match(urlPattern) || [];
     const extractedUrls = foundUrls.map(url => {
+      // Clean trailing punctuation/parens from URLs
+      url = url.replace(/[)\].,;:!?]+$/, '');
       if (!url.startsWith('http')) {
         return 'https://' + url;
       }
@@ -200,7 +206,7 @@ Return ONLY the JSON object, no additional text.`;
     const storyExtractedUrls = extractedUrls.length > 0 ? extractedUrls : [];
     
     // Also try to extract URLs from the AI-generated description
-    const descUrls = (storyData.description || '').match(/https?:\/\/[^\s]+/g) || [];
+    const descUrls = ((storyData.description || '').match(/https?:\/\/[^\s)\]>,]+/g) || []).map(u => u.replace(/[)\].,;:!?]+$/, ''));
     const allUrls = [...new Set([...storyExtractedUrls, ...descUrls])];
     
     console.log(`[API] 📋 Story URLs for pipeline: ${allUrls.join(', ') || 'none'}`);
@@ -351,8 +357,9 @@ ${story.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
               return `${i + 1}. ${cleanStep}`;
             }).join('\n');
           } else {
-            // Fallback
-            steps = `1. Navigate to https://www.endpointclinical.com/\n2. ${scenario.description || scenario.scenario}`;
+            // Fallback - use story's extracted URL or generic navigation
+            const fallbackUrl = (story.extractedUrls && story.extractedUrls.length > 0) ? story.extractedUrls[0] : 'the target application';
+            steps = `1. Navigate to ${fallbackUrl}\n2. ${scenario.description || scenario.scenario}`;
           }
           
           // Handle expectedResults similarly
@@ -424,9 +431,10 @@ ${story.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
       console.log('[DEBUG] No structured format found, creating detailed test cases from acceptance criteria...');
       
       // Generate detailed test cases from acceptance criteria
+      const storyUrl = (story.extractedUrls && story.extractedUrls.length > 0) ? story.extractedUrls[0] : 'the target application';
       story.acceptanceCriteria.forEach((criteria, index) => {
         const steps = [
-          'Navigate to https://www.endpointclinical.com/',
+          `Navigate to ${storyUrl}`,
           `Verify that: ${criteria}`,
           'Ensure the requirement is fully satisfied'
         ].join('\n');
@@ -442,8 +450,8 @@ ${story.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
       if (story.description && story.description.toLowerCase().includes('screen size')) {
         testCases.push({
           title: `Test Case ${testCases.length + 1}: Responsive Design Verification`,
-          steps: '1. Navigate to https://www.endpointclinical.com/\n2. Test on desktop viewport (1920x1080)\n3. Test on tablet viewport (768x1024)\n4. Test on mobile viewport (375x667)\n5. Verify text "Your hidden advantage in RTSM" is visible on all screen sizes',
-          expected: 'Text is properly displayed and formatted across all device sizes'
+          steps: `1. Navigate to ${storyUrl}\n2. Test on desktop viewport (1920x1080)\n3. Test on tablet viewport (768x1024)\n4. Test on mobile viewport (375x667)\n5. Verify page content is visible on all screen sizes`,
+          expected: 'Page content is properly displayed and formatted across all device sizes'
         });
       }
       
@@ -568,6 +576,26 @@ app.post('/api/workflow/generate-scripts', async (req, res) => {
     
     let testScript;
     let targetUrl = strategy.url;
+
+    // Step 2.5: Live page inspection - inspect actual DOM before code generation
+    let pageInspection = { success: false, summary: '' };
+    if (targetUrl && targetUrl !== 'https://example.com') {
+      try {
+        console.log(`[API] 🔍 Running live page inspection on: ${targetUrl}`);
+        const credentials = PageInspector.extractCredentials(story);
+        pageInspection = await PageInspector.inspect(targetUrl, {
+          timeout: 30000,
+          credentials: credentials
+        });
+        if (pageInspection.success) {
+          console.log(`[API] ✅ Page inspection complete - DOM structure captured`);
+        } else {
+          console.warn(`[API] ⚠️ Page inspection failed: ${pageInspection.error}`);
+        }
+      } catch (inspectErr) {
+        console.warn(`[API] ⚠️ Page inspection error: ${inspectErr.message}`);
+      }
+    }
     
     if (strategy.storyType === 'ADD' && smartTestCases.length > 0) {
       // For ADD stories, ALWAYS generate structural tests (don't verify content that doesn't exist yet)
@@ -589,20 +617,33 @@ Story ID: ${storyId}
 Title: ${story?.title || storyId}
 Description: ${story?.description || 'No description available'}
 
+TEST CASES TO GENERATE:
+${testCases.map((tc, i) => `${i + 1}. ${tc.title}\n   Steps: ${tc.steps}\n   Expected: ${tc.expected}`).join('\n')}
+
 TEST STRATEGY:
 ${strategy.testStrategy.approach}
 
 Required Tests:
 ${strategy.testStrategy.tests.map((test, i) => `${i + 1}. ${test}`).join('\n')}
+${pageInspection.success ? `
+--- LIVE PAGE INSPECTION (ACTUAL DOM STRUCTURE) ---
+${pageInspection.summary}
+--- END PAGE INSPECTION ---
 
+CRITICAL: The page inspection above shows the REAL elements on the page.
+- Use the EXACT selectors, IDs, data-test attributes, placeholders, and text shown above.
+- Do NOT guess or assume element tags/roles - use what the inspection found.
+- If an element has a data-test attribute, prefer that: page.locator('[data-test="value"]')
+- If a heading text exists in a <span> not <h1>, do NOT use getByRole('heading') for it.
+` : ''}
 IMPORTANT INSTRUCTIONS:
+- Generate a SEPARATE test() for EACH test case listed above
 - If this is an ADD story, test page structure and areas, NOT the final content
 - Use robust selectors with fallback strategies
 - Include proper error handling and retries
-- Test multiple viewport sizes for responsive design
-- Use appropriate timeouts (30s for navigation, 10s for elements)
+- Use appropriate timeouts (60s for navigation, 15s for elements)
 
-Generate a comprehensive Playwright test with multiple selector strategies and proper error handling.`;
+Generate a comprehensive Playwright test with one test() per test case and proper error handling.`;
 
       testScript = await testAgents.generateTest(enhancedDescription, {
         url: targetUrl,
@@ -638,6 +679,17 @@ Generate a comprehensive Playwright test with multiple selector strategies and p
       },
       agentUsed: 'smart-generator',
       mcpEnabled: process.env.USE_MCP === 'true',
+      pageInspection: pageInspection.success ? {
+        inspected: true,
+        elementsFound: {
+          headings: pageInspection.pageInfo?.headings?.length || 0,
+          buttons: pageInspection.pageInfo?.buttons?.length || 0,
+          inputs: pageInspection.pageInfo?.inputs?.length || 0,
+          images: pageInspection.pageInfo?.images?.length || 0,
+          forms: pageInspection.pageInfo?.forms?.length || 0,
+          postLoginPage: !!pageInspection.postLoginPageInfo
+        }
+      } : { inspected: false, error: pageInspection.error || 'Skipped' },
       message: `Generated smart test script (${strategy.storyType} strategy): ${filename}`
     });
   } catch (error) {
@@ -702,7 +754,9 @@ app.post('/api/workflow/execute-tests', async (req, res) => {
         
         try {
           const result = await execPromise(command, {
-            cwd: path.join(__dirname, '..')
+            cwd: path.join(__dirname, '..'),
+            timeout: 180000, // 3 minute max per test run to prevent hanging
+            maxBuffer: 10 * 1024 * 1024 // 10MB buffer for large outputs
           });
           stdout = result.stdout;
           stderr = result.stderr;
@@ -710,6 +764,9 @@ app.post('/api/workflow/execute-tests', async (req, res) => {
           // Capture output even when process fails
           stdout = execError.stdout || '';
           stderr = execError.stderr || '';
+          if (execError.killed) {
+            console.error('[SELF-HEAL] ⚠️ Test execution timed out after 180 seconds');
+          }
           throw execError;
         }
         
@@ -1056,11 +1113,13 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
     // Extract error details from Playwright output
     const errorPatterns = {
       selectorTimeout: /Timeout.*waiting for (selector|locator)/i,
-      selectorNotFound: /locator\('([^']+)'\).*not found/i,
-      textNotFound: /expected.*to contain.*but received/i,
-      navigationFailed: /(Navigation|net::ERR_|timeout.*navigation|Timeout.*goto)/i,
+      selectorNotFound: /locator\('([^']+)'\).*not found|element\(s\) not found|waiting for locator/i,
+      textNotFound: /expected.*to contain.*but received|toContainText|toHaveText/i,
+      navigationFailed: /(Navigation|net::ERR_|timeout.*navigation|Timeout.*goto|page\.goto)/i,
       strictModeViolation: /strict mode violation.*resolved to (\d+) elements/i,
-      cssAssertion: /toHaveCSS|font-size|font-family/i
+      cssAssertion: /toHaveCSS|font-size|font-family/i,
+      urlAssertion: /toHaveURL|Expected.*URL/i,
+      consentPage: /consent\.google|cookie.*consent|accept.*cookie|Before you continue/i
     };
 
     const errors = {
@@ -1068,7 +1127,9 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
       textMismatches: [],
       navigationIssues: errorOutput.match(errorPatterns.navigationFailed) ? true : false,
       strictModeViolations: [],
-      cssIssues: []
+      cssIssues: [],
+      urlIssues: [],
+      consentPageDetected: errorOutput.match(errorPatterns.consentPage) ? true : false
     };
 
     // Parse error lines
@@ -1086,6 +1147,14 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
       if (errorPatterns.cssAssertion.test(line)) {
         errors.cssIssues.push(line.trim());
       }
+      if (errorPatterns.urlAssertion && errorPatterns.urlAssertion.test(line)) {
+        errors.urlIssues.push(line.trim());
+      }
+    }
+    
+    // Also check full error text for selector issues (Playwright collapses errors across lines)
+    if (errors.selectorIssues.length === 0 && errorOutput.match(/element\(s\) not found/i)) {
+      errors.selectorIssues.push('element(s) not found - detected from full error output');
     }
 
     console.log('[SELF-HEAL] Error analysis:', {
@@ -1093,7 +1162,9 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
       textMismatches: errors.textMismatches.length,
       navigationIssues: errors.navigationIssues,
       strictModeViolations: errors.strictModeViolations.length,
-      cssIssues: errors.cssIssues.length
+      cssIssues: errors.cssIssues.length,
+      urlIssues: errors.urlIssues.length,
+      consentPageDetected: errors.consentPageDetected
     });
 
     // Read the failing test file
@@ -1138,11 +1209,11 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
     
     // Priority 5: Check test cases for URLs (but SKIP example.com)
     if (!targetUrl) {
-      const urlPattern = /https?:\/\/[^\s<>"{}|\\^`\[\]]+/gi;
+      const urlPattern = /https?:\/\/[^\s<>"{}|\\^`\[\])>,]+/gi;
       for (const tc of testCases) {
         const matches = `${tc.title || ''} ${tc.steps || ''} ${tc.expected || ''}`.match(urlPattern);
         if (matches) {
-          const validUrl = matches.find(u => !u.includes('example.com'));
+          const validUrl = matches.map(u => u.replace(/[)\].,;:!?]+$/, '')).find(u => !u.includes('example.com'));
           if (validUrl) {
             targetUrl = validUrl;
             console.log(`[SELF-HEAL] 🔗 URL from test cases: ${targetUrl}`);
@@ -1192,7 +1263,9 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
         textMismatches: errors.textMismatches,
         navigationIssues: errors.navigationIssues,
         strictModeViolations: errors.strictModeViolations,
-        cssIssues: errors.cssIssues
+        cssIssues: errors.cssIssues,
+        urlIssues: errors.urlIssues,
+        consentPageDetected: errors.consentPageDetected
       }
     };
 
@@ -1261,6 +1334,9 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
 FAILURE ANALYSIS:
 ${analysisText}
 
+FAILED SELECTORS (DO NOT USE THESE AGAIN - they caused the failure):
+${errors.selectorIssues.map(s => '- ' + s).join('\n') || 'None captured'}
+
 ${strategy ? `STORY STRATEGY:
 - Type: ${strategy.storyType}
 - Verification: ${strategy.verificationApproach}
@@ -1278,9 +1354,12 @@ ${isLogicError ? '- STRATEGY FIX: Generate STRUCTURAL/INFRASTRUCTURE tests, NOT 
 ${errors.strictModeViolations.length > 0 ? '- Add .first() to all multi-match locators to handle strict mode violations' : ''}
 ${errors.navigationIssues ? '- Increase navigation timeout to 30000ms' : ''}
 ${errors.cssIssues.length > 0 ? '- Remove CSS exact value assertions, use visibility/existence checks instead' : ''}
-${errors.selectorIssues.length > 0 ? '- Use more reliable selectors with proper wait conditions' : ''}
+${errors.selectorIssues.length > 0 ? '- The previous selectors FAILED. Use DIFFERENT, more reliable selectors. Prefer Playwright built-in locators: getByRole(), getByText(), getByPlaceholder(), getByLabel()' : ''}
 ${errors.textMismatches.length > 0 ? '- Use flexible text matching (contains, not exact match)' : ''}
 ${strategy && strategy.storyType === 'ADD' ? '- For ADD stories: Test page structure, forms, navigation - NOT final content' : ''}
+${errors.consentPageDetected || true ? '- CONSENT/COOKIE DIALOGS: After page.goto(), ALWAYS try to dismiss consent dialogs before interacting with the page. Use: try { await page.getByRole("button", { name: /accept|agree|consent|got it/i }).first().click({ timeout: 5000 }); } catch(e) {}' : ''}
+- URL ASSERTIONS: Never use exact URL match (sites redirect). Use regex: await expect(page).toHaveURL(/keyword/i)
+- PAGE TITLE: NEVER use page.locator('title') — <title> is in <head>, not visible DOM. Use: await expect(page).toHaveTitle(/keyword/i)
 
 REQUIREMENTS:
 1. Generate COMPLETE test code (not snippets)
