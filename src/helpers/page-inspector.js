@@ -54,8 +54,9 @@ class PageInspector {
           navigation: []
         };
 
-        // Headings
-        document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => {
+        // Headings — cap at 15 for token efficiency
+        const allHeadings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        Array.from(allHeadings).slice(0, 15).forEach(el => {
           result.headings.push({
             tag: el.tagName.toLowerCase(),
             text: el.textContent.trim().substring(0, 100),
@@ -64,8 +65,9 @@ class PageInspector {
           });
         });
 
-        // Buttons (including elements with role="button")
-        document.querySelectorAll('button, [role="button"], input[type="submit"], input[type="button"]').forEach(el => {
+        // Buttons (including elements with role="button") — cap at 20 for token efficiency
+        const allButtons = document.querySelectorAll('button, [role="button"], input[type="submit"], input[type="button"]');
+        Array.from(allButtons).slice(0, 20).forEach(el => {
           result.buttons.push({
             tag: el.tagName.toLowerCase(),
             text: (el.textContent || el.value || '').trim().substring(0, 80),
@@ -102,8 +104,9 @@ class PageInspector {
           }
         });
 
-        // Images
-        document.querySelectorAll('img').forEach(el => {
+        // Images — cap at 10 for token efficiency
+        const allImages = document.querySelectorAll('img');
+        Array.from(allImages).slice(0, 10).forEach(el => {
           result.images.push({
             alt: el.alt || null,
             src: el.src ? el.src.substring(0, 120) : null,

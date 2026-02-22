@@ -428,6 +428,12 @@ Provide analysis in JSON:
       }
       
     } catch (error) {
+      // Handle 402 (insufficient credits) by retrying with fewer tokens
+      if (error.status === 402 && maxTokens > 2000) {
+        const reducedTokens = Math.min(Math.floor(maxTokens * 0.5), 2000);
+        logger.warn(`AI 402 error: Retrying with reduced max_tokens (${maxTokens} → ${reducedTokens})`);
+        return this.query(prompt, { ...options, maxTokens: reducedTokens });
+      }
       logger.error(`AI query error: ${error.message}`);
       throw error;
     }

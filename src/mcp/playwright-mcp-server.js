@@ -313,7 +313,14 @@ CRITICAL REQUIREMENTS - MUST FOLLOW:
    - ✅ RIGHT: await expect(page).toHaveTitle('Swag Labs')
    - ✅ RIGHT: await expect(page).toHaveTitle(/swag/i)  // regex for flexible match
 
-9. STRUCTURE:
+10. STRICT MODE: Playwright strict mode fails when a locator matches multiple elements.
+   - ALWAYS add .first() to text locators that might match multiple elements
+   - ❌ WRONG: page.getByText('Sign in')  — may match multiple occurrences
+   - ✅ RIGHT: page.getByText('Sign in').first()
+   - ✅ BETTER: page.getByRole('link', { name: 'Sign in' }).first()  — more specific
+   - For buttons/links, prefer getByRole over getByText for specificity
+
+11. STRUCTURE:
 \`\`\`javascript
 const { test, expect } = require('@playwright/test');
 
@@ -349,7 +356,7 @@ test.describe('Test Suite Name', () => {
 Return ONLY the complete, valid JavaScript code. No markdown wrappers, no explanations.`;
 
       const response = await this.aiEngine.query(prompt, { 
-        maxTokens: 8000,  // Increased for complete test file generation
+        maxTokens: 4000,  // Sufficient for complete test file, conserves credits
         temperature: 0.1 
       });
 
