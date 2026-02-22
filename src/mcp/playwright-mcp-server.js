@@ -10,6 +10,7 @@
 
 const aiEngine = require('../core/ai-engine');
 const logger = require('../../utils/logger');
+const PageInspector = require('../helpers/page-inspector');
 
 class PlaywrightMCPServer {
   constructor() {
@@ -245,11 +246,27 @@ Format as structured markdown.`;
       const framework = args.framework || 'playwright-ai';
       const useAIPage = framework === 'playwright-ai';
 
+      // Live page inspection if URL is provided
+      let pageContext = '';
+      if (args.url && args.url !== 'https://example.com') {
+        try {
+          logger.info(`🔍 MCP: Running live page inspection on ${args.url}`);
+          const inspection = await PageInspector.inspect(args.url, { timeout: 25000 });
+          if (inspection.success) {
+            pageContext = `\n--- LIVE PAGE INSPECTION (ACTUAL DOM STRUCTURE) ---\n${inspection.summary}\n--- END PAGE INSPECTION ---\n\nCRITICAL: Use the EXACT selectors from the page inspection above. Do NOT guess element types.\nIf the inspection shows a <span class="title"> not a <h1>, use page.locator('.title') NOT getByRole('heading').\nIf data-test attributes exist, ALWAYS prefer: page.locator('[data-test="value"]')\n`;
+            logger.info('✅ MCP: Page inspection successful');
+          }
+        } catch (inspErr) {
+          logger.warn(`⚠️ MCP: Page inspection failed: ${inspErr.message}`);
+        }
+      }
+
       const prompt = `You are an expert Playwright automation engineer. Generate production-ready test code.
 
 Test Description: ${args.testDescription}
 ${args.url ? `Target URL: ${args.url}` : ''}
 Framework: ${framework}
+${pageContext}
 
 CRITICAL REQUIREMENTS - MUST FOLLOW:
 
@@ -270,14 +287,28 @@ CRITICAL REQUIREMENTS - MUST FOLLOW:
    - toBeVisible(): timeout: 15000
 
 5. SELECTORS: Use flexible, reliable selectors:
-   - Prefer text content: page.locator('text="exact text"')
-   - Use partial matches: page.locator('h1:has-text("partial")')
+   - PREFER Playwright built-in locators: page.getByRole('button', { name: 'Submit' }), page.getByText('text'), page.getByPlaceholder('Search'), page.getByLabel('Email')
+   - Use CSS selectors as fallback: page.locator('input[type="text"]'), page.locator('[aria-label="Search"]')
    - Add .first() for multi-match elements
-   - Never assume specific class names
+   - Never assume specific class names or exact attribute values
+   - For search inputs use: page.getByRole('searchbox') or page.getByRole('combobox') or page.locator('textarea[name], input[type="text"]')
 
-6. ERROR HANDLING: Wrap all test code in try/catch with console.log
+6. CONSENT/COOKIE DIALOGS: Many sites (especially Google, EU sites) show cookie consent dialogs.
+   - ALWAYS handle potential consent pages BEFORE interacting with the main page:
+   - After page.goto(), add this block:
+     // Dismiss any consent/cookie dialogs
+     try {
+       const consentButton = page.getByRole('button', { name: /accept|agree|consent|got it|I agree/i }).first();
+       await consentButton.click({ timeout: 5000 });
+       await page.waitForTimeout(1000);
+     } catch (e) { /* No consent dialog present */ }
 
-7. STRUCTURE:
+7. ERROR HANDLING: Wrap all test code in try/catch with console.log
+
+8. URL ASSERTIONS: Never use exact URL matching. URLs can redirect (e.g., google.com → google.co.in).
+   - Use: await expect(page).toHaveURL(/keyword/i) instead of exact strings
+
+9. STRUCTURE:
 \`\`\`javascript
 const { test, expect } = require('@playwright/test');
 
@@ -290,8 +321,15 @@ test.describe('Test Suite Name', () => {
         timeout: 60000 
       });
       
-      // Find elements with flexible selectors
-      const element = page.locator('text="content"').first();
+      // Dismiss any consent/cookie dialogs
+      try {
+        const consentBtn = page.getByRole('button', { name: /accept|agree|consent|got it|I agree/i }).first();
+        await consentBtn.click({ timeout: 5000 });
+        await page.waitForTimeout(1000);
+      } catch (e) { /* No consent dialog */ }
+      
+      // Find elements with Playwright built-in locators
+      const element = page.getByRole('heading', { name: /text/i }).first();
       await expect(element).toBeVisible({ timeout: 15000 });
       
       console.log('✓ Test passed');
