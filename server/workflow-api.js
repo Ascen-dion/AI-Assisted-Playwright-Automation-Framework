@@ -61,9 +61,12 @@ async function ensureStory(storyId, story) {
     // If Jira ADF parser didn't find URLs, try extracting from description text
     if (fetchedStory.extractedUrls.length === 0) {
       const descText = `${fetchedStory.title} ${fetchedStory.description}`;
-      const urlPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s]*)/gi;
+      const urlPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+\.(?:com|org|net|io|co|edu|gov|ai|dev)[^\s)\]>,]*)/gi;
       const matches = descText.match(urlPattern) || [];
-      const textUrls = matches.map(u => u.startsWith('http') ? u : `https://${u}`);
+      const textUrls = matches.map(u => {
+        u = u.replace(/[)\].,;:!?]+$/, '');
+        return u.startsWith('http') ? u : `https://${u}`;
+      });
       if (textUrls.length > 0) {
         fetchedStory.extractedUrls = textUrls;
         console.log(`[ensureStory] 🔗 URLs extracted from text: ${textUrls.join(', ')}`);
@@ -105,9 +108,11 @@ app.post('/api/workflow/create-story', async (req, res) => {
     console.log(`[API] Creating Jira story from requirements (${requirements.length} chars)`);
 
     // Extract URLs from the user's requirements text BEFORE AI processing
-    const urlPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+)(?:\/[^\s]*)*/gi;
+    const urlPattern = /(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]{2,})+)(?:\/[^\s)\]>,]*)*/gi;
     const foundUrls = requirements.match(urlPattern) || [];
     const extractedUrls = foundUrls.map(url => {
+      // Clean trailing punctuation/parens from URLs
+      url = url.replace(/[)\].,;:!?]+$/, '');
       if (!url.startsWith('http')) {
         return 'https://' + url;
       }
@@ -201,7 +206,7 @@ Return ONLY the JSON object, no additional text.`;
     const storyExtractedUrls = extractedUrls.length > 0 ? extractedUrls : [];
     
     // Also try to extract URLs from the AI-generated description
-    const descUrls = (storyData.description || '').match(/https?:\/\/[^\s]+/g) || [];
+    const descUrls = ((storyData.description || '').match(/https?:\/\/[^\s)\]>,]+/g) || []).map(u => u.replace(/[)\].,;:!?]+$/, ''));
     const allUrls = [...new Set([...storyExtractedUrls, ...descUrls])];
     
     console.log(`[API] 📋 Story URLs for pipeline: ${allUrls.join(', ') || 'none'}`);
@@ -1204,11 +1209,11 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
     
     // Priority 5: Check test cases for URLs (but SKIP example.com)
     if (!targetUrl) {
-      const urlPattern = /https?:\/\/[^\s<>"{}|\\^`\[\]]+/gi;
+      const urlPattern = /https?:\/\/[^\s<>"{}|\\^`\[\])>,]+/gi;
       for (const tc of testCases) {
         const matches = `${tc.title || ''} ${tc.steps || ''} ${tc.expected || ''}`.match(urlPattern);
         if (matches) {
-          const validUrl = matches.find(u => !u.includes('example.com'));
+          const validUrl = matches.map(u => u.replace(/[)\].,;:!?]+$/, '')).find(u => !u.includes('example.com'));
           if (validUrl) {
             targetUrl = validUrl;
             console.log(`[SELF-HEAL] 🔗 URL from test cases: ${targetUrl}`);
