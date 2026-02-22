@@ -2,60 +2,56 @@ const { test, expect } = require('@playwright/test');
 
 test('Load GitHub Homepage', async ({ page }) => {
   try {
-    await page.goto('https://github.com', { timeout: 60000 });
-
+    await page.goto('https://github.com', { 
+      waitUntil: 'domcontentloaded', 
+      timeout: 60000 
+    });
+    
     // Dismiss any consent/cookie dialogs
     try {
-      const consentButton = page.getByRole('button', { name: /accept|agree|consent|got it|I agree/i }).first();
-      await consentButton.click({ timeout: 5000 });
+      const consentBtn = page.getByRole('button', { name: /accept|agree|consent|got it|I agree/i }).first();
+      await consentBtn.click({ timeout: 5000 });
       await page.waitForTimeout(1000);
-    } catch (e) { /* No consent dialog present */ }
+    } catch (e) { /* No consent dialog */ }
 
+    await expect(page).toHaveURL(/github/i);
     await expect(page).toHaveTitle(/GitHub/i);
     console.log('✓ GitHub homepage loaded successfully');
   } catch (error) {
-    console.error('❌ Error loading GitHub homepage:', error);
+    console.error('❌ Error:', error);
     throw error;
   }
 });
 
-test('Check for Sign in Button Presence', async ({ page }) => {
+test('Check for Sign in Button', async ({ page }) => {
   try {
-    await page.goto('https://github.com', { timeout: 60000 });
-
-    // Dismiss any consent/cookie dialogs
-    try {
-      const consentButton = page.getByRole('button', { name: /accept|agree|consent|got it|I agree/i }).first();
-      await consentButton.click({ timeout: 5000 });
-      await page.waitForTimeout(1000);
-    } catch (e) { /* No consent dialog present */ }
+    await page.goto('https://github.com', { 
+      waitUntil: 'domcontentloaded', 
+      timeout: 60000 
+    });
 
     const signInButton = page.getByRole('link', { name: 'Sign in' }).first();
     await expect(signInButton).toBeVisible({ timeout: 15000 });
-    console.log('✓ Sign in button is present on the homepage');
+    console.log('✓ Sign in button is present in the top navigation area');
   } catch (error) {
-    console.error('❌ Error checking for Sign in button presence:', error);
+    console.error('❌ Error:', error);
     throw error;
   }
 });
 
-test('Check Visibility of Sign in Button', async ({ page }) => {
+test('Verify Visibility of Sign in Button', async ({ page }) => {
   try {
-    await page.goto('https://github.com', { timeout: 60000 });
-
-    // Dismiss any consent/cookie dialogs
-    try {
-      const consentButton = page.getByRole('button', { name: /accept|agree|consent|got it|I agree/i }).first();
-      await consentButton.click({ timeout: 5000 });
-      await page.waitForTimeout(1000);
-    } catch (e) { /* No consent dialog present */ }
+    await page.goto('https://github.com', { 
+      waitUntil: 'domcontentloaded', 
+      timeout: 60000 
+    });
 
     const signInButton = page.getByRole('link', { name: 'Sign in' }).first();
     await expect(signInButton).toBeVisible({ timeout: 15000 });
     await expect(signInButton).toBeEnabled();
-    console.log('✓ Sign in button is visible and clickable');
+    console.log('✓ Sign in button is clearly visible and accessible to users');
   } catch (error) {
-    console.error('❌ Error checking visibility of Sign in button:', error);
+    console.error('❌ Error:', error);
     throw error;
   }
 });

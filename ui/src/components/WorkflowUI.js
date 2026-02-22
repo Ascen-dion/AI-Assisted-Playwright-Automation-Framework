@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './WorkflowUI.css';
 import StepProgress from './StepProgress';
 import LogViewer from './LogViewer';
@@ -23,6 +23,9 @@ const WorkflowUI = () => {
   const [logs, setLogs] = useState([]);
   const [results, setResults] = useState(null);
   const [backendStatus, setBackendStatus] = useState('unknown'); // 'connected', 'disconnected', 'unknown'
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const workflowStartTime = useRef(null);
+  const timerInterval = useRef(null);
   
   // Get current API URL based on selection
   const API_BASE_URL = BACKEND_OPTIONS[backendType];
@@ -82,6 +85,12 @@ const WorkflowUI = () => {
     setCurrentStep(0);
     setLogs([]);
     setResults(null);
+    setElapsedTime(0);
+    workflowStartTime.current = Date.now();
+    // Start live timer
+    timerInterval.current = setInterval(() => {
+      setElapsedTime(Math.floor((Date.now() - workflowStartTime.current) / 1000));
+    }, 1000);
 
     // Check backend connectivity first
     addLog('Connecting to backend API...', 'info');
@@ -104,6 +113,7 @@ const WorkflowUI = () => {
         addLog('      Deploy backend to: Azure, AWS, Heroku, Railway, etc.', 'info');
         addLog('      See DEPLOYMENT_FIX.md for details', 'info');
       }
+      if (timerInterval.current) clearInterval(timerInterval.current);
       setIsRunning(false);
       return;
     }
@@ -292,12 +302,15 @@ const WorkflowUI = () => {
       addLog(`✓ Results posted to Jira ticket ${actualStoryId}`, 'success');
 
       // Store final results
+      const totalWorkflowTime = ((Date.now() - workflowStartTime.current) / 1000).toFixed(1);
+      addLog(`⏱️ Total workflow time: ${Math.floor(totalWorkflowTime / 60)}m ${Math.round(totalWorkflowTime % 60)}s`, 'info');
       setResults({
         storyId: actualStoryId,
         testCases: testCasesData.testCases.length,
         passed: executionData.passed,
         failed: executionData.failed,
         duration: executionData.duration,
+        totalDuration: totalWorkflowTime,
         testrailCreated: testrailData.created,
         testrailUpdated: testrailData.updated,
         healingApplied: executionData.healingApplied || false,
@@ -309,6 +322,7 @@ const WorkflowUI = () => {
       addLog(`❌ Error: ${error.message}`, 'error');
       console.error('Workflow error:', error);
     } finally {
+      if (timerInterval.current) clearInterval(timerInterval.current);
       setIsRunning(false);
     }
   };
@@ -413,7 +427,7 @@ Acceptance Criteria:
           onClick={runWorkflow}
           disabled={isRunning || (mode === 'jira-id' ? !storyId.trim() : !plainEnglish.trim())}
         >
-          {isRunning ? '⏳ Running...' : (mode === 'plain-english' ? '🚀 Create Story & Run Tests' : '🚀 Run Workflow')}
+          {isRunning ? `⏳ Running... (${Math.floor(elapsedTime / 60)}:${String(elapsedTime % 60).padStart(2, '0')})` : (mode === 'plain-english' ? '🚀 Create Story & Run Tests' : '🚀 Run Workflow')}
         </button>
       </div>
 
@@ -444,7 +458,11 @@ Acceptance Criteria:
               <span className="result-value success">{results.passed}/{results.passed + results.failed}</span>
             </div>
             <div className="result-item">
-              <span className="result-label">Duration:</span>
+              <span className="result-label">Total Duration:</span>
+              <span className="result-value">{results.totalDuration ? `${Math.floor(results.totalDuration / 60)}m ${Math.round(results.totalDuration % 60)}s` : `${results.duration}s`}</span>
+            </div>
+            <div className="result-item">
+              <span className="result-label">Test Execution:</span>
               <span className="result-value">{results.duration}s</span>
             </div>
             {results.healingApplied && (
