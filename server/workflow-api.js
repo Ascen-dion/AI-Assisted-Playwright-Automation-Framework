@@ -1359,6 +1359,7 @@ ${errors.textMismatches.length > 0 ? '- Use flexible text matching (contains, no
 ${strategy && strategy.storyType === 'ADD' ? '- For ADD stories: Test page structure, forms, navigation - NOT final content' : ''}
 ${errors.consentPageDetected || true ? '- CONSENT/COOKIE DIALOGS: After page.goto(), ALWAYS try to dismiss consent dialogs before interacting with the page. Use: try { await page.getByRole("button", { name: /accept|agree|consent|got it/i }).first().click({ timeout: 5000 }); } catch(e) {}' : ''}
 - URL ASSERTIONS: Never use exact URL match (sites redirect). Use regex: await expect(page).toHaveURL(/keyword/i)
+- PAGE TITLE: NEVER use page.locator('title') — <title> is in <head>, not visible DOM. Use: await expect(page).toHaveTitle(/keyword/i)
 
 REQUIREMENTS:
 1. Generate COMPLETE test code (not snippets)

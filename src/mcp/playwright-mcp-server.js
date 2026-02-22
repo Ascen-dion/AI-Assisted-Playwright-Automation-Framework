@@ -308,6 +308,11 @@ CRITICAL REQUIREMENTS - MUST FOLLOW:
 8. URL ASSERTIONS: Never use exact URL matching. URLs can redirect (e.g., google.com → google.co.in).
    - Use: await expect(page).toHaveURL(/keyword/i) instead of exact strings
 
+9. PAGE TITLE ASSERTIONS: NEVER use page.locator('title') — the <title> tag is in <head>, not the visible DOM.
+   - ❌ WRONG: page.locator('title').toHaveText('Swag Labs')
+   - ✅ RIGHT: await expect(page).toHaveTitle('Swag Labs')
+   - ✅ RIGHT: await expect(page).toHaveTitle(/swag/i)  // regex for flexible match
+
 9. STRUCTURE:
 \`\`\`javascript
 const { test, expect } = require('@playwright/test');
