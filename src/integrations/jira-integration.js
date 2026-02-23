@@ -114,7 +114,8 @@ class JiraIntegration {
     let inCriteriaSection = false;
 
     for (const block of content) {
-      if (block.type === 'paragraph') {
+      // Detect "Acceptance Criteria" in both paragraph and heading blocks
+      if (block.type === 'paragraph' || block.type === 'heading') {
         const text = this.parseADF([block]);
         
         // Look for "Acceptance Criteria" header
@@ -129,7 +130,18 @@ class JiraIntegration {
         }
       }
 
+      // Collect bullet list items when inside criteria section
       if (block.type === 'bulletList' && inCriteriaSection) {
+        for (const item of block.content) {
+          const text = this.parseADF(item.content);
+          if (text.trim()) {
+            criteria.push(text.trim());
+          }
+        }
+      }
+
+      // Also collect ordered list items (some stories use numbered lists)
+      if (block.type === 'orderedList' && inCriteriaSection) {
         for (const item of block.content) {
           const text = this.parseADF(item.content);
           if (text.trim()) {
@@ -139,7 +151,8 @@ class JiraIntegration {
       }
     }
 
-    return criteria.length > 0 ? criteria : ['No acceptance criteria defined'];
+    // Return empty array instead of placeholder - callers handle the empty case
+    return criteria;
   }
 
   /**

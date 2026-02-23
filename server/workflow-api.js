@@ -283,6 +283,11 @@ app.post('/api/workflow/generate-tests', async (req, res) => {
     console.log(`[API] 🎭 Using Planner Agent to generate test cases for: ${story.id}`);
     
     // Use Test Agents Planner for comprehensive test planning
+    // Filter out placeholder values like "No acceptance criteria defined"
+    const realCriteria = Array.isArray(story.acceptanceCriteria)
+      ? story.acceptanceCriteria.filter(c => c && !/no acceptance criteria/i.test(c))
+      : [];
+
     const testDescription = `
 User Story: ${story.title}
 
@@ -290,9 +295,10 @@ Description:
 ${story.description}
 
 Acceptance Criteria:
-${Array.isArray(story.acceptanceCriteria) && story.acceptanceCriteria.length > 0
-  ? story.acceptanceCriteria.map((c, i) => `${i + 1}. ${c}`).join('\n')
-  : '- Verify the feature works as described'}
+${realCriteria.length > 0
+  ? realCriteria.map((c, i) => `${i + 1}. ${c}`).join('\n')
+  : `- Derive testable acceptance criteria from the story title and description above
+- Focus on verifiable UI behaviors and expected page content`}
 
 ${story.extractedUrls && story.extractedUrls.length > 0 ? 
 `Target URL(s):
@@ -428,24 +434,74 @@ ${story.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
     
     // Enhanced fallback for better test case generation
     if (testCases.length === 0) {
-      console.log('[DEBUG] No structured format found, creating detailed test cases from acceptance criteria...');
-      
-      // Generate detailed test cases from acceptance criteria
       const storyUrl = (story.extractedUrls && story.extractedUrls.length > 0) ? story.extractedUrls[0] : 'the target application';
-      story.acceptanceCriteria.forEach((criteria, index) => {
-        const steps = [
-          `Navigate to ${storyUrl}`,
-          `Verify that: ${criteria}`,
-          'Ensure the requirement is fully satisfied'
-        ].join('\n');
-        
-        testCases.push({
-          title: `Test Case ${index + 1}: ${criteria}`,
-          steps: steps,
-          expected: criteria
+      const hasRealCriteria = Array.isArray(story.acceptanceCriteria) &&
+        story.acceptanceCriteria.length > 0 &&
+        !story.acceptanceCriteria.some(c => /no acceptance criteria/i.test(c));
+
+      if (hasRealCriteria) {
+        // Good acceptance criteria exist — build test cases directly
+        console.log('[DEBUG] Creating test cases from acceptance criteria...');
+        story.acceptanceCriteria.forEach((criteria, index) => {
+          testCases.push({
+            title: `Test Case ${index + 1}: ${criteria}`,
+            steps: [
+              `Navigate to ${storyUrl}`,
+              `Verify that: ${criteria}`,
+              'Ensure the requirement is fully satisfied'
+            ].join('\n'),
+            expected: criteria
+          });
         });
-      });
-      
+      } else {
+        // No usable acceptance criteria — use AI to derive test cases from title + description
+        console.log('[DEBUG] No usable acceptance criteria, using AI to generate test cases from story description...');
+        try {
+          const fallbackPrompt = `Generate test cases for this user story. Return a JSON array.
+
+Title: ${story.title}
+Description: ${story.description || 'N/A'}
+Target URL: ${storyUrl}
+
+Return ONLY a JSON array like:
+[
+  { "title": "Verify page title", "steps": "1. Navigate to URL\n2. Check title", "expected": "Page title matches expected" }
+]
+
+Rules:
+- 3-5 practical, specific test cases
+- Each step must reference the actual URL: ${storyUrl}
+- Expected results must be concrete and verifiable
+- Include navigation, visual checks, and edge cases`;
+
+          const aiTestCases = await aiEngine.query(fallbackPrompt, { maxTokens: 1500 });
+          const cleaned = aiTestCases.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+          const parsed = JSON.parse(cleaned);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            parsed.forEach((tc, i) => {
+              testCases.push({
+                title: `Test Case ${i + 1}: ${tc.title || tc.name || 'Verification'}`,
+                steps: tc.steps || `Navigate to ${storyUrl}`,
+                expected: tc.expected || tc.expectedResult || 'Passes successfully'
+              });
+            });
+            console.log(`[DEBUG] AI generated ${testCases.length} fallback test cases`);
+          }
+        } catch (aiFallbackErr) {
+          console.warn('[DEBUG] AI fallback also failed:', aiFallbackErr.message);
+        }
+      }
+
+      // Last resort — if AI fallback also failed, create basic test from story title
+      if (testCases.length === 0) {
+        console.log('[DEBUG] Using last-resort test case from story title');
+        testCases.push({
+          title: `Test Case 1: ${story.title}`,
+          steps: `1. Navigate to ${storyUrl}\n2. Verify the page loads correctly\n3. Verify: ${story.title}`,
+          expected: `The feature described in "${story.title}" works as expected`
+        });
+      }
+
       // Add responsive design test case if mentioned in scenarios
       if (story.description && story.description.toLowerCase().includes('screen size')) {
         testCases.push({
@@ -454,8 +510,8 @@ ${story.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
           expected: 'Page content is properly displayed and formatted across all device sizes'
         });
       }
-      
-      console.log(`[DEBUG] Created ${testCases.length} test cases from acceptance criteria`);
+
+      console.log(`[DEBUG] Created ${testCases.length} test cases (fallback path)`);
     }
 
     res.json({
