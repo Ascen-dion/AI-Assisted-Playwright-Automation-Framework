@@ -41,6 +41,13 @@ class AIEngine {
     this.currentModelIndex = -1; // -1 = using primary model from env
     this.failedModels = new Set(); // track models that 402'd in this session
 
+    // Token utilization tracking
+    this.tokenUsage = {
+      session: { promptTokens: 0, completionTokens: 0, totalTokens: 0, calls: 0 },
+      byModel: {},        // breakdown per model
+      byMethod: {},       // breakdown per method (findElement, query, etc.)
+    };
+
     this.initializeProvider();
   }
 
@@ -136,6 +143,87 @@ class AIEngine {
   }
 
   /**
+   * Record token usage from an API response.
+   * Handles both Anthropic format (input_tokens / output_tokens) and
+   * OpenAI / OpenRouter format (prompt_tokens / completion_tokens).
+   * @param {Object} response - Raw API response
+   * @param {string} method   - Calling method label e.g. 'findElement'
+   */
+  _trackUsage(response, method = 'unknown') {
+    const usage = response?.usage;
+    if (!usage) return;
+
+    // Normalise field names across providers
+    const prompt     = usage.prompt_tokens     ?? usage.input_tokens     ?? 0;
+    const completion = usage.completion_tokens ?? usage.output_tokens    ?? 0;
+    const total      = usage.total_tokens      ?? (prompt + completion);
+    const model      = this.model;
+
+    // Session totals
+    this.tokenUsage.session.promptTokens     += prompt;
+    this.tokenUsage.session.completionTokens += completion;
+    this.tokenUsage.session.totalTokens      += total;
+    this.tokenUsage.session.calls            += 1;
+
+    // Per-model breakdown
+    if (!this.tokenUsage.byModel[model]) {
+      this.tokenUsage.byModel[model] = { promptTokens: 0, completionTokens: 0, totalTokens: 0, calls: 0 };
+    }
+    this.tokenUsage.byModel[model].promptTokens     += prompt;
+    this.tokenUsage.byModel[model].completionTokens += completion;
+    this.tokenUsage.byModel[model].totalTokens      += total;
+    this.tokenUsage.byModel[model].calls            += 1;
+
+    // Per-method breakdown
+    if (!this.tokenUsage.byMethod[method]) {
+      this.tokenUsage.byMethod[method] = { promptTokens: 0, completionTokens: 0, totalTokens: 0, calls: 0 };
+    }
+    this.tokenUsage.byMethod[method].promptTokens     += prompt;
+    this.tokenUsage.byMethod[method].completionTokens += completion;
+    this.tokenUsage.byMethod[method].totalTokens      += total;
+    this.tokenUsage.byMethod[method].calls            += 1;
+
+    logger.info(
+      `📊 Token usage [${method}] model=${model} ` +
+      `prompt=${prompt} completion=${completion} total=${total} ` +
+      `| session_total=${this.tokenUsage.session.totalTokens}`
+    );
+  }
+
+  /**
+   * Return a full token utilization summary for the current session.
+   * @returns {Object} Token usage report
+   */
+  getTokenUsage() {
+    const s = this.tokenUsage.session;
+    const report = {
+      session: { ...s },
+      byModel: { ...this.tokenUsage.byModel },
+      byMethod: { ...this.tokenUsage.byMethod },
+      summary: [
+        `🔢 Total calls   : ${s.calls}`,
+        `📥 Prompt tokens : ${s.promptTokens.toLocaleString()}`,
+        `📤 Completion    : ${s.completionTokens.toLocaleString()}`,
+        `💬 Grand total   : ${s.totalTokens.toLocaleString()}`,
+      ].join('\n'),
+    };
+    logger.info('\n' + report.summary);
+    return report;
+  }
+
+  /**
+   * Reset all token usage counters (e.g. between test suites).
+   */
+  resetTokenUsage() {
+    this.tokenUsage = {
+      session: { promptTokens: 0, completionTokens: 0, totalTokens: 0, calls: 0 },
+      byModel: {},
+      byMethod: {},
+    };
+    logger.info('🔄 Token usage counters reset');
+  }
+
+  /**
    * Strip <think>...</think> blocks from reasoning/thinking models
    */
   cleanThinkingTags(text) {
@@ -226,7 +314,7 @@ Provide your response in JSON format with the following structure:
           max_tokens: 1000,
           messages: [{ role: 'user', content: prompt }]
         });
-        
+        this._trackUsage(response, 'findElementSelector');
         const result = JSON.parse(response.content[0].text);
         logger.info(`AI found selector with ${result.confidence} confidence`);
         return result;
@@ -246,7 +334,7 @@ Provide your response in JSON format with the following structure:
             response_format: { type: "json_object" }
           })
         );
-        
+        this._trackUsage(response, 'findElementSelector');
         const rawContent = this.cleanThinkingTags(response.choices[0].message.content);
         const result = JSON.parse(rawContent);
         logger.info(`AI found selector with ${result.confidence || 0.8} confidence`);
@@ -379,6 +467,7 @@ Response format:
           max_tokens: 1000,
           messages: [{ role: 'user', content: prompt }]
         });
+        this._trackUsage(response, 'selfHealSelector');
         return JSON.parse(response.content[0].text);
         
       } else if (this.provider === 'openrouter' || this.provider === 'local') {
@@ -393,6 +482,7 @@ Response format:
             response_format: { type: "json_object" }
           })
         );
+        this._trackUsage(response, 'selfHealSelector');
         return JSON.parse(this.cleanThinkingTags(response.choices[0].message.content));
       }
       
@@ -453,6 +543,7 @@ Provide analysis in JSON:
           max_tokens: 1500,
           messages: [{ role: 'user', content }]
         });
+        this._trackUsage(response, 'analyzeTestFailure');
         return JSON.parse(response.content[0].text);
         
       } else if (this.provider === 'openrouter' || this.provider === 'local') {
@@ -467,6 +558,7 @@ Provide analysis in JSON:
             response_format: { type: "json_object" }
           })
         );
+        this._trackUsage(response, 'analyzeTestFailure');
         return JSON.parse(this.cleanThinkingTags(response.choices[0].message.content));
       }
       
@@ -501,7 +593,7 @@ Provide analysis in JSON:
           temperature: temperature,
           messages: messages
         });
-        
+        this._trackUsage(response, 'query');
         return response.content[0].text;
         
       } else if (this.provider === 'openrouter' || this.provider === 'local') {
@@ -526,7 +618,7 @@ Provide analysis in JSON:
             max_tokens: maxTokens
           })
         );
-        
+        this._trackUsage(response, 'query');
         return this.cleanThinkingTags(response.choices[0].message.content);
       }
       
@@ -573,7 +665,7 @@ Return ONLY the JavaScript code for the test file, no markdown, no explanations,
             { role: 'user', content: `${systemMessage}\n\n${prompt}` }
           ]
         });
-        
+        this._trackUsage(response, 'generateTestScript');
         const script = response.content[0].text;
         logger.info('Test script generated successfully');
         return this.cleanGeneratedScript(script);
@@ -590,7 +682,7 @@ Return ONLY the JavaScript code for the test file, no markdown, no explanations,
             max_tokens: 4000
           })
         );
-        
+        this._trackUsage(response, 'generateTestScript');
         const script = this.cleanThinkingTags(response.choices[0].message.content);
         logger.info('Test script generated successfully');
         return this.cleanGeneratedScript(script);
