@@ -6,7 +6,21 @@ tools: Bash(playwright-cli:*), Bash(npx:*), Bash(npm:*), Read, Grep, Glob
 
 # CLI Agent — Browser Automation via playwright-cli
 
+> **Official Playwright recommendation:** Use CLI + SKILLS for coding agents. CLI invocations avoid loading large MCP tool schemas and verbose accessibility trees into model context — making it better suited for agents that balance browser automation with large codebases, tests, and reasoning within limited context windows. Use MCP only for exploratory automation, self-healing tests, or long-running autonomous workflows where persistent browser state outweighs token cost.
+
 This agent performs all browser operations using the `playwright-cli` tool from the `.claude/skills/playwright-cli` skill. It does **not** use Playwright MCP, keeping token usage low.
+
+## When to use this agent (CLI) vs Playwright MCP
+
+| Scenario | Use |
+|---|---|
+| Run / debug Playwright tests | **This agent (CLI)** |
+| Fill forms, click, navigate known flows | **This agent (CLI)** |
+| Generate test code (codegen) | **This agent (CLI)** |
+| Manage cookies, session state, storage | **This agent (CLI)** |
+| Exploratory automation on unknown pages | MCP |
+| Self-healing tests needing DOM introspection | MCP |
+| Long-running autonomous browser workflows | MCP |
 
 ## Skill
 
