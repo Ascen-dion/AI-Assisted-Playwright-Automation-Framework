@@ -2,14 +2,11 @@
  * Locator definitions for https://www.zs.com
  * Each exported function takes 'page' and returns a Playwright Locator.
  */
-const zsLogo = (page) => page.locator('img[alt="ZS Logo"]').first();
-const headerSection = (page) => page.locator('header').first();
-const homepageLink = (page) => page.locator('a[href="https://www.zs.com/"]').first();
-const aboveFoldContent = (page) => page.locator('body > :is(header, main, section):first-child');
-
-module.exports = {
-  zsLogo,
-  headerSection,
-  homepageLink,
-  aboveFoldContent
+const locators = {
+  zsLogo: (page) => page.locator('img[alt="ZS Logo"]').first(),
+  header: (page) => page.locator('header').first(),
+  homepageLink: (page) => page.locator('a:has(img[alt="ZS Logo"])').first(),
+  mainContent: (page) => page.locator('[id="main-content"]').first()
 };
+
+module.exports = locators;
