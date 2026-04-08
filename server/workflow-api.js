@@ -627,10 +627,6 @@ app.post('/api/workflow/generate-scripts', async (req, res) => {
     console.log(`   Target Elements: ${strategy.targetElements.targetText.join(', ')}`);
     
     // Step 2: Generate smart test cases based on strategy
-    const smartTestCases = TestStrategyGenerator.generateSmartTestCases(story, strategy);
-    console.log(`[API] 🧪 Generated ${smartTestCases.length} smart test cases`);
-    
-    let testScript;
     let targetUrl = strategy.url;
 
     // Step 2.5: Live page inspection - inspect actual DOM before code generation
@@ -653,73 +649,22 @@ app.post('/api/workflow/generate-scripts', async (req, res) => {
       }
     }
     
-    if (strategy.storyType === 'ADD' && smartTestCases.length > 0) {
-      // For ADD stories, ALWAYS generate structural tests (don't verify content that doesn't exist yet)
-      console.log(`[API] 🏗️ Generating STRUCTURAL test for ADD story`);
-      testScript = smartTestCases[0].testCode;
-      
-    } else {
-      // For other story types or fallback, use enhanced Generator Agent
-      console.log(`[API] 🤖 Using Enhanced Generator Agent`);
-      
-      const enhancedDescription = `
-STORY ANALYSIS:
-- Type: ${strategy.storyType}
-- Verification Approach: ${strategy.verificationApproach}
-- Target URL: ${targetUrl}
+    // Generate POM-structured test files (locators + page object + spec)
+    console.log(`[API] 🏛️ Generating POM-structured test suite (strategy: ${strategy.storyType})`);
+    const { specFilename: filename, specFilepath: filepath, specCode } = await generatePOMTestFiles({
+      story,
+      storyId,
+      strategy,
+      testCases,
+      targetUrl,
+      pageInspection
+    });
 
-STORY DETAILS:
-Story ID: ${storyId}
-Title: ${story?.title || storyId}
-Description: ${story?.description || 'No description available'}
-
-TEST CASES TO GENERATE:
-${testCases.map((tc, i) => `${i + 1}. ${tc.title}\n   Steps: ${tc.steps}\n   Expected: ${tc.expected}`).join('\n')}
-
-TEST STRATEGY:
-${strategy.testStrategy.approach}
-
-Required Tests:
-${strategy.testStrategy.tests.map((test, i) => `${i + 1}. ${test}`).join('\n')}
-${pageInspection.success ? `
---- LIVE PAGE INSPECTION (ACTUAL DOM STRUCTURE) ---
-${pageInspection.summary}
---- END PAGE INSPECTION ---
-
-CRITICAL: The page inspection above shows the REAL elements on the page.
-- Use the EXACT selectors, IDs, data-test attributes, placeholders, and text shown above.
-- Do NOT guess or assume element tags/roles - use what the inspection found.
-- If an element has a data-test attribute, prefer that: page.locator('[data-test="value"]')
-- If a heading text exists in a <span> not <h1>, do NOT use getByRole('heading') for it.
-` : ''}
-IMPORTANT INSTRUCTIONS:
-- Generate a SEPARATE test() for EACH test case listed above
-- If this is an ADD story, test page structure and areas, NOT the final content
-- Use robust selectors with fallback strategies
-- Include proper error handling and retries
-- Use appropriate timeouts (60s for navigation, 15s for elements)
-
-Generate a comprehensive Playwright test with one test() per test case and proper error handling.`;
-
-      testScript = await testAgents.generateTest(enhancedDescription, {
-        url: targetUrl,
-        framework: 'playwright',
-        useAIPage: false,
-        includeComments: true
-      });
-    }
-    
-    console.log('[DEBUG] Test script generated using smart strategy');
-    
-    // Save the generated script
-    const filename = `${storyId.toLowerCase()}-automated.spec.js`;
-    const filepath = path.join(__dirname, '..', 'src', 'tests', filename);
-    console.log(`[DEBUG] Saving test file to: ${filepath}`);
+    console.log('[DEBUG] POM test files generated using smart strategy');
     console.log(`[DEBUG] Strategy used: ${strategy.storyType} with ${strategy.verificationApproach} verification`);
-    await fs.writeFile(filepath, testScript);
-    console.log(`[DEBUG] File saved successfully, size: ${testScript.length} bytes`);
-    
-    // Verify file exists
+    console.log(`[DEBUG] File saved successfully, size: ${specCode.length} bytes`);
+
+    // Verify spec file exists
     const fileExists = await fs.access(filepath).then(() => true).catch(() => false);
     console.log(`[DEBUG] File exists check: ${fileExists}`);
 
@@ -986,6 +931,204 @@ app.post('/api/workflow/update-results', async (req, res) => {
     });
   }
 });
+
+// ─── POM Generation Helpers ───────────────────────────────────────────────────
+
+/**
+ * Builds a slug from a storyId (e.g. "ED-62" → "ed-62")
+ */
+function storySlug(storyId) {
+  return storyId.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
+/**
+ * Converts slug to a PascalCase class name (e.g. "ed-62" → "Ed62Page")
+ */
+function slugToClassName(slug) {
+  return slug.split('-').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('') + 'Page';
+}
+
+/**
+ * Parses the AI response into three POM files (locators, page object, spec).
+ * Falls back to minimal stubs if the AI did not include the expected markers.
+ */
+function parsePOMFiles(rawCode, slug, storyId) {
+  const lMarker = `// === FILE: src/pages/locators/${slug}.locators.js ===`;
+  const pMarker = `// === FILE: src/pages/${slug}.page.js ===`;
+  const sMarker = `// === FILE: src/tests/${slug}-automated.spec.js ===`;
+
+  const lIdx = rawCode.indexOf(lMarker);
+  const pIdx = rawCode.indexOf(pMarker);
+  const sIdx = rawCode.indexOf(sMarker);
+
+  const clean = (s) => s.replace(/```javascript\n?/g, '').replace(/```js\n?/g, '').replace(/```\n?/g, '').trim();
+
+  if (lIdx !== -1 && pIdx !== -1 && sIdx !== -1) {
+    return {
+      locatorsCode:   clean(rawCode.slice(lIdx + lMarker.length, pIdx)),
+      pageObjectCode: clean(rawCode.slice(pIdx + pMarker.length, sIdx)),
+      specCode:       clean(rawCode.slice(sIdx + sMarker.length))
+    };
+  }
+
+  // Fallback: treat full response as the spec, generate minimal stubs
+  console.warn('[POM] AI did not return expected file markers – using spec-only fallback');
+  const className = slugToClassName(slug);
+  const specCode = clean(rawCode);
+  const locatorsCode = `// Auto-generated locators for ${storyId}\n// TODO: replace with real selectors after inspecting the page\n\nmodule.exports = {};\n`;
+  const pageObjectCode = `const loc = require('./locators/${slug}.locators');\n\nclass ${className} {\n  constructor(page) { this.page = page; }\n}\n\nmodule.exports = ${className};\n`;
+  return { locatorsCode, pageObjectCode, specCode };
+}
+
+/**
+ * Calls the Generator Agent with a POM-aware prompt and saves all three files.
+ * Returns the spec filename so callers can reference it.
+ */
+async function generatePOMTestFiles({ story, storyId, strategy, testCases, targetUrl, pageInspection }) {
+  const slug = storySlug(storyId);
+  const className = slugToClassName(slug);
+  const isAddStory = strategy.storyType === 'ADD';
+
+  const pomPrompt = `You are an expert Playwright automation engineer. Generate a Page Object Model (POM) structured test suite split into THREE files.
+
+STORY DETAILS:
+ID: ${storyId}
+Title: ${story?.title || storyId}
+Description: ${story?.description || 'N/A'}
+Story Type: ${strategy.storyType} (${strategy.verificationApproach})
+Target URL: ${targetUrl}
+
+TEST CASES:
+${testCases.map((tc, i) => `${i + 1}. ${tc.title}\n   Steps: ${tc.steps}\n   Expected: ${tc.expected}`).join('\n\n')}
+
+${isAddStory ? `⚠️ ADD STORY: Do NOT test for end-state content that does not exist yet. Test PAGE STRUCTURE only (page loads, header/nav/main visible, responsive behaviour).` : ''}
+
+${pageInspection && pageInspection.success ? `LIVE PAGE INSPECTION – use these EXACT selectors:\n${pageInspection.summary}` : ''}
+
+OUTPUT EXACTLY THREE SECTIONS using these markers (copy the markers verbatim):
+
+// === FILE: src/pages/locators/${slug}.locators.js ===
+/**
+ * Locator definitions for ${targetUrl}
+ * Each exported function takes 'page' and returns a Playwright Locator.
+ */
+// …locator functions…
+module.exports = { … };
+
+// === FILE: src/pages/${slug}.page.js ===
+const loc = require('./locators/${slug}.locators');
+const URL = '${targetUrl}';
+
+class ${className} {
+  constructor(page) { this.page = page; }
+  async goto() { await this.page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60000 }); }
+  // …getter and action methods…
+}
+module.exports = ${className};
+
+// === FILE: src/tests/${slug}-automated.spec.js ===
+const { test, expect } = require('@playwright/test');
+const ${className} = require('../pages/${slug}.page');
+
+test.describe('${story?.title || storyId}', () => {
+  let page${className};
+
+  test.beforeEach(async ({ page }) => {
+    page${className} = new ${className}(page);
+    await page${className}.goto();
+    // Dismiss cookie / consent dialogs
+    try { await page.getByRole('button', { name: /accept|agree|consent|got it/i }).first().click({ timeout: 3000 }); } catch (e) {}
+  });
+
+  // one test() per test case
+});
+
+RULES – PLAYWRIGHT API CORRECTNESS (strictly enforced):
+
+FORBIDDEN – these do NOT exist in Playwright and will cause immediate test failure:
+✗ locator.contains()           → does not exist. Use parentLocator.locator('child').isVisible() instead.
+✗ locator.isClickable()        → does not exist. Use locator.isEnabled() or click() inside try/catch.
+✗ locator.getText()            → does not exist. Use await locator.textContent() or await locator.innerText().
+✗ locator.getProperty()        → does not exist. Use locator.getAttribute('attr') or locator.evaluate(el => el.prop).
+✗ page.locator('title')        → <title> is in <head> and NOT in the visible DOM. Use expect(page).toHaveTitle(/regex/i).
+✗ locator.isVisible() without waiting → will return false on dynamic pages. Always waitFor first.
+✗ Getting href/src from <img>  → <img> has no href. Wrap anchor: page.locator('a:has(img[alt="..."])').getAttribute('href').
+✗ Exact URL string assertions  → sites redirect. Use expect(page).toHaveURL(/keyword/i) regex only.
+✗ CSS selector svg[*|*="..."]  → invalid CSS. Use svg[class*="logo"] or svg[aria-label*="logo"] instead.
+✗ test.beforeAll/afterAll with ({ page }) fixture → fixtures only work inside test(). Use page from test() arg.
+
+CORRECT PATTERNS – use these exact forms:
+
+  // Waiting for visibility (ALWAYS waitFor before isVisible on dynamic content)
+  async isElementVisible(page) {
+    await loc.myElement(page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.myElement(page).isVisible();
+  }
+
+  // Checking element is inside a parent
+  async isLogoInHeader(page) {
+    return await loc.header(page).locator('img[alt="ZS Logo"]').first().isVisible();
+  }
+
+  // Getting href – always from anchor, not from img/svg
+  async getLogoHref(page) {
+    return await page.locator('a:has(img[alt="ZS Logo"])').first().getAttribute('href');
+  }
+
+  // Above-fold check via bounding box
+  async isAboveFold(page) {
+    const box = await loc.myElement(page).boundingBox();
+    const vh = page.viewportSize()?.height ?? 768;
+    return box !== null && box.y < vh;
+  }
+
+  // Checking element is enabled/clickable
+  async isClickable(page) {
+    return await loc.myButton(page).isEnabled();
+  }
+
+  // Reading text content
+  async getHeadingText(page) {
+    return await loc.heading(page).textContent();
+  }
+
+STRUCTURE RULES:
+- The spec file MUST NOT contain raw Playwright selectors – all selectors stay in the locators file.
+- Locators file exports plain functions: const zsLogo = (page) => page.locator('img[alt="ZS Logo"]').first();
+- Page object methods wrap locator functions and return primitives (boolean/string/number) – never Locator objects to the spec.
+- Use .first() on every locator to prevent strict-mode violations when multiple elements match.
+- Navigation: waitUntil: 'domcontentloaded', timeout: 60000.
+- URL assertions: expect(page).toHaveURL(/keyword/i) – never exact string.
+- Title assertions: expect(page).toHaveTitle(/keyword/i) – NEVER page.locator('title').
+- Each test() must have try/catch with console.error and re-throw, plus console.log('✓ …') for each passing assertion.
+- Consent dialogs: always attempt dismissal in beforeEach after goto().
+- Return ONLY executable JavaScript – no markdown fences, no prose.`;
+
+  const rawCode = await testAgents.generateTest(pomPrompt, {
+    url: targetUrl,
+    framework: 'playwright',
+    useAIPage: false,
+    includeComments: true
+  });
+
+  const { locatorsCode, pageObjectCode, specCode } = parsePOMFiles(rawCode, slug, storyId);
+
+  // Save all three POM files
+  const locatorsDir = path.join(__dirname, '..', 'src', 'pages', 'locators');
+  await fs.mkdir(locatorsDir, { recursive: true });
+  await fs.writeFile(path.join(locatorsDir, `${slug}.locators.js`), locatorsCode);
+  await fs.writeFile(path.join(__dirname, '..', 'src', 'pages', `${slug}.page.js`), pageObjectCode);
+
+  const specFilename = `${slug}-automated.spec.js`;
+  const specFilepath = path.join(__dirname, '..', 'src', 'tests', specFilename);
+  await fs.writeFile(specFilepath, specCode);
+
+  console.log(`[POM] ✅ Saved locators  → src/pages/locators/${slug}.locators.js`);
+  console.log(`[POM] ✅ Saved page obj   → src/pages/${slug}.page.js`);
+  console.log(`[POM] ✅ Saved spec       → src/tests/${specFilename}`);
+
+  return { specFilename, specFilepath, locatorsCode, pageObjectCode, specCode };
+}
 
 // Helper Functions
 
@@ -1362,73 +1505,73 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
       let regeneratePrompt;
       
       if (isLogicError && strategy) {
-        // For logic errors (ADD stories testing for end content), use smart strategy
-        console.log('[SELF-HEAL] 🏗️ Applying STRUCTURAL test strategy for ADD story logic error');
+        // For logic errors (ADD stories testing for end content), regenerate via POM
+        console.log('[SELF-HEAL] 🏗️ Applying STRUCTURAL POM strategy for ADD story logic error');
         
-        const smartTestCases = TestStrategyGenerator.generateSmartTestCases(story, strategy);
-        if (smartTestCases && smartTestCases.length > 0) {
-          // Use the smart test case code directly
-          healedScript = smartTestCases[0].testCode;
-          
-          // Save and return early
-          const filepath = path.join(__dirname, '..', 'src', 'tests', filename);
-          await fs.writeFile(filepath, healedScript);
+        try {
+          const { specCode: healedSpecCode } = await generatePOMTestFiles({
+            story,
+            storyId,
+            strategy,
+            testCases,
+            targetUrl,
+            pageInspection: { success: false }
+          });
           
           return {
             success: true,
-            action: 'structural-test-regeneration',
+            action: 'structural-pom-regeneration',
             strategy: strategy.storyType,
-            details: `Fixed logic error: Generated structural test for ${strategy.storyType} story instead of content verification`,
-            attempt: attempt,
-            filename: filename
+            details: `Fixed logic error: Generated POM structural test for ${strategy.storyType} story`,
+            attempt,
+            filename
           };
+        } catch (pomErr) {
+          console.warn('[SELF-HEAL] POM regeneration failed, falling through to prompt-based healing:', pomErr.message);
         }
       }
       
-      regeneratePrompt = `You are a Playwright test code generator. Based on this test failure analysis, generate a COMPLETE, WORKING test file.
+      regeneratePrompt = `You are a Playwright automation engineer applying self-healing fixes. Generate a COMPLETE POM-structured test file.
+
+The previous test failed. Apply the fixes below and regenerate the SPEC FILE ONLY (the page object already exists – do not regenerate it, just import it).
 
 FAILURE ANALYSIS:
 ${analysisText}
 
-FAILED SELECTORS (DO NOT USE THESE AGAIN - they caused the failure):
+FAILED SELECTORS (DO NOT USE THESE AGAIN):
 ${errors.selectorIssues.map(s => '- ' + s).join('\n') || 'None captured'}
 
-${strategy ? `STORY STRATEGY:
-- Type: ${strategy.storyType}
-- Verification: ${strategy.verificationApproach}
-- Test Approach: ${strategy.testStrategy.approach}
-${isLogicError ? '\n⚠️ CRITICAL: This ADD story should NOT test for end content that doesn\'t exist yet!' : ''}
-` : ''}
+${strategy ? `STORY STRATEGY: ${strategy.storyType} – ${strategy.verificationApproach}
+${isLogicError ? '⚠️ CRITICAL: ADD story – test PAGE STRUCTURE only, NOT end-state content.' : ''}` : ''}
 
-ORIGINAL TEST REQUIREMENTS:
+STORY DETAILS:
 Story ID: ${storyId}
 Test Cases:
 ${JSON.stringify(testCases, null, 2)}
 
-CRITICAL FIXES TO APPLY:
-${isLogicError ? '- STRATEGY FIX: Generate STRUCTURAL/INFRASTRUCTURE tests, NOT content verification tests' : ''}
-${errors.strictModeViolations.length > 0 ? '- Add .first() to all multi-match locators to handle strict mode violations' : ''}
-${errors.navigationIssues ? '- Increase navigation timeout to 30000ms' : ''}
-${errors.cssIssues.length > 0 ? '- Remove CSS exact value assertions, use visibility/existence checks instead' : ''}
-${errors.selectorIssues.length > 0 ? '- The previous selectors FAILED. Use DIFFERENT, more reliable selectors. Prefer Playwright built-in locators: getByRole(), getByText(), getByPlaceholder(), getByLabel()' : ''}
-${errors.textMismatches.length > 0 ? '- Use flexible text matching (contains, not exact match)' : ''}
-${strategy && strategy.storyType === 'ADD' ? '- For ADD stories: Test page structure, forms, navigation - NOT final content' : ''}
-${errors.consentPageDetected || true ? '- CONSENT/COOKIE DIALOGS: After page.goto(), ALWAYS try to dismiss consent dialogs before interacting with the page. Use: try { await page.getByRole("button", { name: /accept|agree|consent|got it/i }).first().click({ timeout: 5000 }); } catch(e) {}' : ''}
-- URL ASSERTIONS: Never use exact URL match (sites redirect). Use regex: await expect(page).toHaveURL(/keyword/i)
-- PAGE TITLE: NEVER use page.locator('title') — <title> is in <head>, not visible DOM. Use: await expect(page).toHaveTitle(/keyword/i)
-- STRICT MODE: ALWAYS add .first() to getByText() and getByRole() locators. Playwright strict mode fails when multiple elements match.
-  Example: page.getByText('Sign in').first() or page.getByRole('link', { name: 'Sign in' }).first()
+POM IMPORT (use this exact path):
+const PageObject = require('../pages/${storySlug(storyId)}.page');
+
+FIXES TO APPLY:
+${isLogicError ? '- STRATEGY FIX: Test page structure / navigation – NOT content that does not exist yet\n' : ''}\
+${errors.strictModeViolations.length > 0 ? '- Add .first() to all multi-match locators\n' : ''}\
+${errors.navigationIssues ? '- Increase navigation timeout to 60000ms\n' : ''}\
+${errors.cssIssues.length > 0 ? '- Remove CSS exact value assertions; use visibility checks instead\n' : ''}\
+${errors.selectorIssues.length > 0 ? '- Use different, more reliable selectors (getByRole, getByText, getByLabel)\n' : ''}\
+${errors.textMismatches.length > 0 ? '- Use flexible text matching (contains, not exact)\n' : ''}\
+- After goto(), dismiss consent dialogs: try { await page.getByRole('button', { name: /accept|agree|consent|got it/i }).first().click({ timeout: 3000 }); } catch (e) {}
+- URL assertions: expect(page).toHaveURL(/keyword/i) – never exact string
+- Title assertions: expect(page).toHaveTitle(/keyword/i) – NEVER page.locator('title')
+- .first() on every multi-match locator
 
 REQUIREMENTS:
-1. Generate COMPLETE test code (not snippets)
-2. Include all imports: const { test, expect } = require('@playwright/test');
-3. Include test.describe() wrapper
-4. Apply ALL the fixes listed above
-5. Add proper error handling with try/catch
-6. Add console.log for debugging
-7. Return ONLY executable JavaScript code (no markdown, no explanations)
+1. Output ONLY the spec file (src/tests/${storySlug(storyId)}-automated.spec.js)
+2. Import the page object: const PageObject = require('../pages/${storySlug(storyId)}.page');
+3. Use test.describe() + test.beforeEach() + individual test() per test case
+4. All locator calls go through the page object – no raw selectors in the spec
+5. Return ONLY executable JavaScript – no markdown, no explanations
 
-Generate the fixed test file now:`;
+Generate the fixed spec file now:`;
 
       healedScript = await testAgents.generateTest(regeneratePrompt, {
         url: targetUrl,
@@ -1451,33 +1594,38 @@ Generate the fixed test file now:`;
       console.error('[SELF-HEAL] Attempting emergency regeneration...');
       
       // Emergency regeneration with explicit instructions
-      const emergencyPrompt = `Generate a complete Playwright test file for these requirements:
+      const emergencyPrompt = `Generate a complete Playwright POM spec file for these requirements:
 
 Story: ${storyId}
 Test Cases: ${JSON.stringify(testCases, null, 2)}
 URL: ${targetUrl}
 
-CRITICAL: Return ONLY executable JavaScript code. Do NOT return JSON analysis.
+CRITICAL: Return ONLY executable JavaScript code. Do NOT return JSON.
 
 Must include:
 - const { test, expect } = require('@playwright/test');
 - test.describe() block
-- test() functions
-- Proper error handling
+- test.beforeEach() with page.goto() and consent dialog dismissal
+- One test() per test case with try/catch and console.log
 
-Example structure:
-\`\`\`javascript
+Example:
 const { test, expect } = require('@playwright/test');
 
-test.describe('Test Suite', () => {
+test.describe('${storyId} Test Suite', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('${targetUrl}', { waitUntil: 'domcontentloaded', timeout: 60000 });
+    try { await page.getByRole('button', { name: /accept|agree|consent|got it/i }).first().click({ timeout: 3000 }); } catch (e) {}
+  });
+
   test('Test Case 1', async ({ page }) => {
-    await page.goto('URL');
-    // test code
+    try {
+      // test code using page.getByRole / page.locator().first()
+      console.log('✓ Test Case 1 passed');
+    } catch (error) { console.error('❌ Error:', error); throw error; }
   });
 });
-\`\`\`
 
-Generate the complete test file now:`;
+Generate the complete spec file now:`;
 
       healedScript = await testAgents.generateTest(emergencyPrompt, {
         url: targetUrl,
