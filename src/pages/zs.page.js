@@ -71,11 +71,8 @@ class ZSPage {
   }
 
   async waitForPageLoad() {
-    // Wait for network to be mostly idle
-    await this.page.waitForLoadState('networkidle', { timeout: 30000 });
-    
-    // Additional wait for any JavaScript-rendered content
-    await this.page.waitForTimeout(3000);
+    // Wait for page load event - networkidle is unreliable on sites with continuous trackers
+    await this.page.waitForLoadState('load', { timeout: 30000 });
   }
 }
 

@@ -17,6 +17,9 @@ test.describe('ZS.com Logo Verification', () => {
     await zsPage.waitForPageLoad();
     console.log('✓ Page loaded completely');
 
+    // Wait for logo to be present in DOM
+    await zsPage.page.waitForSelector('img[alt="ZS Logo"]', { timeout: 15000 });
+
     // 3. Verify the ZS logo is visible on the page
     const isLogoVisible = await zsPage.isLogoVisible();
     expect(isLogoVisible).toBe(true);
