@@ -10,6 +10,13 @@ const testAgents = require('../src/core/test-agents-mcp'); // MCP-enhanced test 
 const URLExtractor = require('../src/helpers/url-extractor'); // Enhanced URL extraction
 const TestStrategyGenerator = require('../src/helpers/test-strategy-generator'); // Smart test strategies
 const PageInspector = require('../src/helpers/page-inspector'); // Live page inspection before code gen
+const {
+  DEFAULT_BROWNFIELD_URL,
+  normalizeProjectContext,
+  hasProjectContext,
+  buildContextPromptBlock,
+  mergeStoryWithProjectContext
+} = require('../src/helpers/project-context');
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -18,7 +25,7 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '5mb' }));
 
 // Serve test-results folder as static files (for video access)
 app.use('/test-results', express.static(path.join(__dirname, '..', 'test-results')));
@@ -29,7 +36,7 @@ const testrailClient = new TestRailIntegration();
 
 /**
  * Ensures a story object is available - fetches from Jira if not provided.
- * This is the critical failsafe that prevents falling back to example.com
+ * This is the critical failsafe that prevents falling back to generic placeholders
  * when the UI doesn't pass the story object.
  */
 async function ensureStory(storyId, story) {
@@ -99,7 +106,8 @@ app.get('/api/health', (req, res) => {
 // Step 0: Create Jira Story from Plain English
 app.post('/api/workflow/create-story', async (req, res) => {
   try {
-    const { requirements } = req.body;
+    const { requirements, projectContext } = req.body;
+    const normalizedContext = normalizeProjectContext(projectContext);
     
     if (!requirements) {
       return res.status(400).json({ error: 'Requirements text is required' });
@@ -119,7 +127,8 @@ app.post('/api/workflow/create-story', async (req, res) => {
       return url;
     });
     console.log(`[API] 🔗 Extracted URLs from requirements: ${extractedUrls.join(', ') || 'none'}`);
-    const targetWebsite = extractedUrls.length > 0 ? extractedUrls[0] : null;
+    const targetWebsite = extractedUrls.length > 0 ? extractedUrls[0] : normalizedContext.targetUrl;
+    const contextPrompt = buildContextPromptBlock(normalizedContext);
 
     // Use AI to convert plain English to structured user story
     const aiPrompt = `Convert the following requirements into a structured Jira user story format.
@@ -149,7 +158,9 @@ ${targetWebsite ? `- IMPORTANT: The target website is ${targetWebsite} - include
 
 Return ONLY the JSON object, no additional text.`;
 
-    const aiResponse = await aiEngine.query(aiPrompt, { maxTokens: 1500 });
+  const aiPromptWithContext = `${aiPrompt}\n\n${contextPrompt}`;
+
+  const aiResponse = await aiEngine.query(aiPromptWithContext, { maxTokens: 1500 });
     
     // Parse AI response
     let storyData;
@@ -207,21 +218,23 @@ Return ONLY the JSON object, no additional text.`;
     
     // Also try to extract URLs from the AI-generated description
     const descUrls = ((storyData.description || '').match(/https?:\/\/[^\s)\]>,]+/g) || []).map(u => u.replace(/[)\].,;:!?]+$/, ''));
-    const allUrls = [...new Set([...storyExtractedUrls, ...descUrls])];
+    const allUrls = [...new Set([...storyExtractedUrls, ...descUrls, normalizedContext.targetUrl])];
     
     console.log(`[API] 📋 Story URLs for pipeline: ${allUrls.join(', ') || 'none'}`);
+
+    const storyWithContext = mergeStoryWithProjectContext({
+      title: storyData.title,
+      description: storyData.description,
+      acceptanceCriteria: storyData.acceptanceCriteria,
+      extractedUrls: allUrls,
+      status: 'To Do',
+      url: `${jiraClient.host}/browse/${newStoryId}`
+    }, normalizedContext);
 
     res.json({
       success: true,
       storyId: newStoryId,
-      story: {
-        title: storyData.title,
-        description: storyData.description,
-        acceptanceCriteria: storyData.acceptanceCriteria,
-        extractedUrls: allUrls,
-        status: 'To Do',
-        url: `${jiraClient.host}/browse/${newStoryId}`
-      },
+      story: storyWithContext,
       message: `Successfully created story ${newStoryId}`
     });
   } catch (error) {
@@ -236,7 +249,8 @@ Return ONLY the JSON object, no additional text.`;
 // Step 1: Fetch Jira Story
 app.post('/api/workflow/fetch-jira', async (req, res) => {
   try {
-    const { storyId } = req.body;
+    const { storyId, projectContext } = req.body;
+    const normalizedContext = normalizeProjectContext(projectContext);
     
     if (!storyId) {
       return res.status(400).json({ error: 'Story ID is required' });
@@ -245,7 +259,7 @@ app.post('/api/workflow/fetch-jira', async (req, res) => {
     console.log(`[API] Fetching Jira story: ${storyId}`);
     const userStory = await jiraClient.fetchUserStory(storyId);
 
-    const story = {
+    const story = mergeStoryWithProjectContext({
       id: storyId,
       title: userStory.summary,
       description: userStory.description || '',
@@ -254,7 +268,7 @@ app.post('/api/workflow/fetch-jira', async (req, res) => {
       status: userStory.status,
       type: userStory.issueType,
       url: `${jiraClient.host}/browse/${storyId}`
-    };
+    }, normalizedContext);
 
     res.json({ 
       success: true, 
@@ -274,25 +288,29 @@ app.post('/api/workflow/fetch-jira', async (req, res) => {
 // Step 2: Generate Test Cases using Planner Agent
 app.post('/api/workflow/generate-tests', async (req, res) => {
   try {
-    const { story } = req.body;
+    const { story, projectContext } = req.body;
 
     if (!story) {
       return res.status(400).json({ error: 'Story data is required' });
     }
 
-    console.log(`[API] 🎭 Using Planner Agent to generate test cases for: ${story.id}`);
+    const normalizedContext = normalizeProjectContext(projectContext || story.projectContext);
+    const storyWithContext = mergeStoryWithProjectContext(story, normalizedContext);
+
+    console.log(`[API] 🎭 Using Planner Agent to generate test cases for: ${storyWithContext.id}`);
     
     // Use Test Agents Planner for comprehensive test planning
     // Filter out placeholder values like "No acceptance criteria defined"
-    const realCriteria = Array.isArray(story.acceptanceCriteria)
-      ? story.acceptanceCriteria.filter(c => c && !/no acceptance criteria/i.test(c))
+    const realCriteria = Array.isArray(storyWithContext.acceptanceCriteria)
+      ? storyWithContext.acceptanceCriteria.filter(c => c && !/no acceptance criteria/i.test(c))
       : [];
+    const contextPrompt = buildContextPromptBlock(normalizedContext);
 
     const testDescription = `
-User Story: ${story.title}
+User Story: ${storyWithContext.title}
 
 Description: 
-${story.description}
+${storyWithContext.description}
 
 Acceptance Criteria:
 ${realCriteria.length > 0
@@ -300,9 +318,11 @@ ${realCriteria.length > 0
   : `- Derive testable acceptance criteria from the story title and description above
 - Focus on verifiable UI behaviors and expected page content`}
 
-${story.extractedUrls && story.extractedUrls.length > 0 ? 
+${storyWithContext.extractedUrls && storyWithContext.extractedUrls.length > 0 ? 
 `Target URL(s):
-${story.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
+${storyWithContext.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
+
+${contextPrompt}
 `;
 
     // Generate test plan using Planner Agent with MCP support
@@ -364,7 +384,7 @@ ${story.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
             }).join('\n');
           } else {
             // Fallback - use story's extracted URL or generic navigation
-            const fallbackUrl = (story.extractedUrls && story.extractedUrls.length > 0) ? story.extractedUrls[0] : 'the target application';
+            const fallbackUrl = (storyWithContext.extractedUrls && storyWithContext.extractedUrls.length > 0) ? storyWithContext.extractedUrls[0] : normalizedContext.targetUrl;
             steps = `1. Navigate to ${fallbackUrl}\n2. ${scenario.description || scenario.scenario}`;
           }
           
@@ -410,7 +430,7 @@ ${story.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
       
       groupedSteps.forEach((group, index) => {
         testCases.push({
-          title: `Test Case ${index + 1}: ${parsedPlan.testName || story.title}`,
+          title: `Test Case ${index + 1}: ${parsedPlan.testName || storyWithContext.title}`,
           steps: group.steps.join('\n'),
           expected: parsedPlan.assertions?.[index]?.description || 'Test passes successfully'
         });
@@ -434,15 +454,15 @@ ${story.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
     
     // Enhanced fallback for better test case generation
     if (testCases.length === 0) {
-      const storyUrl = (story.extractedUrls && story.extractedUrls.length > 0) ? story.extractedUrls[0] : 'the target application';
-      const hasRealCriteria = Array.isArray(story.acceptanceCriteria) &&
-        story.acceptanceCriteria.length > 0 &&
-        !story.acceptanceCriteria.some(c => /no acceptance criteria/i.test(c));
+      const storyUrl = (storyWithContext.extractedUrls && storyWithContext.extractedUrls.length > 0) ? storyWithContext.extractedUrls[0] : normalizedContext.targetUrl;
+      const hasRealCriteria = Array.isArray(storyWithContext.acceptanceCriteria) &&
+        storyWithContext.acceptanceCriteria.length > 0 &&
+        !storyWithContext.acceptanceCriteria.some(c => /no acceptance criteria/i.test(c));
 
       if (hasRealCriteria) {
         // Good acceptance criteria exist — build test cases directly
         console.log('[DEBUG] Creating test cases from acceptance criteria...');
-        story.acceptanceCriteria.forEach((criteria, index) => {
+        storyWithContext.acceptanceCriteria.forEach((criteria, index) => {
           testCases.push({
             title: `Test Case ${index + 1}: ${criteria}`,
             steps: [
@@ -459,9 +479,11 @@ ${story.extractedUrls.map(url => `- ${url}`).join('\n')}` : ''}
         try {
           const fallbackPrompt = `Generate test cases for this user story. Return a JSON array.
 
-Title: ${story.title}
-Description: ${story.description || 'N/A'}
+Title: ${storyWithContext.title}
+Description: ${storyWithContext.description || 'N/A'}
 Target URL: ${storyUrl}
+
+${contextPrompt}
 
 Return ONLY a JSON array like:
 [
@@ -496,14 +518,14 @@ Rules:
       if (testCases.length === 0) {
         console.log('[DEBUG] Using last-resort test case from story title');
         testCases.push({
-          title: `Test Case 1: ${story.title}`,
-          steps: `1. Navigate to ${storyUrl}\n2. Verify the page loads correctly\n3. Verify: ${story.title}`,
-          expected: `The feature described in "${story.title}" works as expected`
+          title: `Test Case 1: ${storyWithContext.title}`,
+          steps: `1. Navigate to ${storyUrl}\n2. Verify the page loads correctly\n3. Verify: ${storyWithContext.title}`,
+          expected: `The feature described in "${storyWithContext.title}" works as expected`
         });
       }
 
       // Add responsive design test case if mentioned in scenarios
-      if (story.description && story.description.toLowerCase().includes('screen size')) {
+      if (storyWithContext.description && storyWithContext.description.toLowerCase().includes('screen size')) {
         testCases.push({
           title: `Test Case ${testCases.length + 1}: Responsive Design Verification`,
           steps: `1. Navigate to ${storyUrl}\n2. Test on desktop viewport (1920x1080)\n3. Test on tablet viewport (768x1024)\n4. Test on mobile viewport (375x667)\n5. Verify page content is visible on all screen sizes`,
@@ -518,6 +540,8 @@ Rules:
       success: true,
       testCases,
       plan: planResult,
+      projectContextApplied: hasProjectContext(normalizedContext),
+      targetUrl: normalizedContext.targetUrl,
       agentUsed: 'planner',
       mcpEnabled: process.env.USE_MCP === 'true',
       message: `Generated ${testCases.length} test cases using Planner Agent`
@@ -607,7 +631,7 @@ app.post('/api/workflow/push-testrail', async (req, res) => {
 // Step 4: Generate Test Scripts using Smart Strategy Generator
 app.post('/api/workflow/generate-scripts', async (req, res) => {
   try {
-    const { testCases, storyId, plan, story: clientStory } = req.body;
+    const { testCases, storyId, plan, story: clientStory, projectContext } = req.body;
 
     if (!testCases || !storyId) {
       return res.status(400).json({ error: 'Test cases and story ID are required' });
@@ -616,7 +640,9 @@ app.post('/api/workflow/generate-scripts', async (req, res) => {
     console.log(`[API] 🧪 Using Smart Strategy Generator for ${storyId}`);
     
     // Auto-fetch story from Jira if not provided by client
-    const story = await ensureStory(storyId, clientStory);
+    const rawStory = await ensureStory(storyId, clientStory);
+    const normalizedContext = normalizeProjectContext(projectContext || rawStory?.projectContext);
+    const story = mergeStoryWithProjectContext(rawStory, normalizedContext);
 
     // Step 1: Analyze story to determine test strategy
     const strategy = TestStrategyGenerator.analyzeStory(story);
@@ -631,7 +657,7 @@ app.post('/api/workflow/generate-scripts', async (req, res) => {
 
     // Step 2.5: Live page inspection - inspect actual DOM before code generation
     let pageInspection = { success: false, summary: '' };
-    if (targetUrl && targetUrl !== 'https://example.com') {
+    if (targetUrl && /^https?:\/\//i.test(targetUrl)) {
       try {
         console.log(`[API] 🔍 Running live page inspection on: ${targetUrl}`);
         const credentials = PageInspector.extractCredentials(story);
@@ -657,7 +683,8 @@ app.post('/api/workflow/generate-scripts', async (req, res) => {
       strategy,
       testCases,
       targetUrl,
-      pageInspection
+      pageInspection,
+      projectContext: normalizedContext
     });
 
     console.log('[DEBUG] POM test files generated using smart strategy');
@@ -705,7 +732,7 @@ app.post('/api/workflow/generate-scripts', async (req, res) => {
 // Step 5: Execute Tests with Self-Healing
 app.post('/api/workflow/execute-tests', async (req, res) => {
   try {
-    const { filename, testCases, storyId, story: clientStory } = req.body;
+    const { filename, testCases, storyId, story: clientStory, projectContext } = req.body;
 
     if (!filename) {
       return res.status(400).json({ error: 'Filename is required' });
@@ -714,7 +741,9 @@ app.post('/api/workflow/execute-tests', async (req, res) => {
     console.log(`[API] Executing tests with self-healing: ${filename}`);
     
     // Auto-fetch story from Jira if not provided by client
-    const story = await ensureStory(storyId, clientStory);
+    const rawStory = await ensureStory(storyId, clientStory);
+    const normalizedContext = normalizeProjectContext(projectContext || rawStory?.projectContext);
+    const story = mergeStoryWithProjectContext(rawStory, normalizedContext);
 
     const testPath = `src/tests/${filename}`;
     const fullTestPath = path.join(__dirname, '..', testPath);
@@ -935,14 +964,14 @@ app.post('/api/workflow/update-results', async (req, res) => {
 // ─── POM Generation Helpers ───────────────────────────────────────────────────
 
 /**
- * Builds a slug from a storyId (e.g. "ED-62" → "ed-62")
+ * Builds a slug from a storyId (e.g. "ECOM-101" -> "ecom-101")
  */
 function storySlug(storyId) {
   return storyId.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
 }
 
 /**
- * Converts slug to a PascalCase class name (e.g. "ed-62" → "Ed62Page")
+ * Converts slug to a PascalCase class name (e.g. "ecom-101" -> "Ecom101Page")
  */
 function slugToClassName(slug) {
   return slug.split('-').map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('') + 'Page';
@@ -984,10 +1013,11 @@ function parsePOMFiles(rawCode, slug, storyId) {
  * Calls the Generator Agent with a POM-aware prompt and saves all three files.
  * Returns the spec filename so callers can reference it.
  */
-async function generatePOMTestFiles({ story, storyId, strategy, testCases, targetUrl, pageInspection }) {
+async function generatePOMTestFiles({ story, storyId, strategy, testCases, targetUrl, pageInspection, projectContext }) {
   const slug = storySlug(storyId);
   const className = slugToClassName(slug);
   const isAddStory = strategy.storyType === 'ADD';
+  const contextPrompt = buildContextPromptBlock(projectContext || story?.projectContext || {});
 
   const pomPrompt = `You are an expert Playwright automation engineer. Generate a Page Object Model (POM) structured test suite split into THREE files.
 
@@ -1000,6 +1030,8 @@ Target URL: ${targetUrl}
 
 TEST CASES:
 ${testCases.map((tc, i) => `${i + 1}. ${tc.title}\n   Steps: ${tc.steps}\n   Expected: ${tc.expected}`).join('\n\n')}
+
+${contextPrompt}
 
 ${isAddStory ? `⚠️ ADD STORY: Do NOT test for end-state content that does not exist yet. Test PAGE STRUCTURE only (page loads, header/nav/main visible, responsive behaviour).` : ''}
 
@@ -1389,30 +1421,28 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
       }
     }
     
-    // Priority 3: Infer URL from story ID patterns (e.g., ED- → endpointclinical.com)
-    if (!targetUrl && storyId) {
-      if (storyId.toUpperCase().startsWith('ED-')) {
-        targetUrl = 'https://www.endpointclinical.com';
-        console.log(`[SELF-HEAL] 🔗 URL inferred from story ID pattern: ${targetUrl}`);
-      }
-    }
-    
-    // Priority 4: Extract from failing code (but SKIP example.com)
+    // Priority 3: Use branch default brownfield URL when no URL is present yet
     if (!targetUrl) {
+      targetUrl = DEFAULT_BROWNFIELD_URL;
+      console.log(`[SELF-HEAL] 🔗 URL fallback from brownfield default: ${targetUrl}`);
+    }
+    
+    // Priority 4: Extract from failing code
+    if (!targetUrl || targetUrl === DEFAULT_BROWNFIELD_URL) {
       const gotoMatch = failingCode.match(/page\.goto\s*\(\s*['"]([^'"]+)['"]/);
-      if (gotoMatch && !gotoMatch[1].includes('example.com')) {
+      if (gotoMatch) {
         targetUrl = gotoMatch[1];
-        console.log(`[SELF-HEAL] 🔗 URL from test code (non-example.com): ${targetUrl}`);
+        console.log(`[SELF-HEAL] 🔗 URL from test code: ${targetUrl}`);
       }
     }
     
-    // Priority 5: Check test cases for URLs (but SKIP example.com)
+    // Priority 5: Check test cases for URLs
     if (!targetUrl) {
       const urlPattern = /https?:\/\/[^\s<>"{}|\\^`\[\])>,]+/gi;
       for (const tc of testCases) {
         const matches = `${tc.title || ''} ${tc.steps || ''} ${tc.expected || ''}`.match(urlPattern);
         if (matches) {
-          const validUrl = matches.map(u => u.replace(/[)\].,;:!?]+$/, '')).find(u => !u.includes('example.com'));
+          const validUrl = matches.map(u => u.replace(/[)\].,;:!?]+$/, ''))[0];
           if (validUrl) {
             targetUrl = validUrl;
             console.log(`[SELF-HEAL] 🔗 URL from test cases: ${targetUrl}`);
@@ -1432,11 +1462,9 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
         targetUrl = 'https://www.google.com';
       } else if (allText.includes('yahoo')) {
         targetUrl = 'https://www.yahoo.com';
-      } else if (allText.includes('endpoint') || allText.includes('endpointclinical')) {
-        targetUrl = 'https://www.endpointclinical.com';
       } else {
-        targetUrl = 'https://example.com';
-        console.warn(`[SELF-HEAL] ⚠️ Could not determine target URL, falling back to example.com`);
+        targetUrl = DEFAULT_BROWNFIELD_URL;
+        console.warn(`[SELF-HEAL] ⚠️ Could not infer URL from context, using brownfield default`);
       }
     }
     

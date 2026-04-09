@@ -8,6 +8,7 @@ const axios = require('axios');
 
 async function testJiraConnection() {
   console.log('\n🔍 Testing Jira Connection...\n');
+  const sampleIssueKey = process.env.JIRA_SAMPLE_ISSUE_KEY || process.argv[2] || 'ECOM-1';
   
   const host = process.env.JIRA_HOST;
   const email = process.env.JIRA_EMAIL;
@@ -41,16 +42,16 @@ async function testJiraConnection() {
     const myselfResponse = await client.get('/myself');
     console.log(`   ✅ Authenticated as: ${myselfResponse.data.displayName} (${myselfResponse.data.emailAddress})\n`);
     
-    // Test 2: Try to fetch ED-2
-    console.log('📄 Test 2: Fetching issue ED-2...');
-    const issueResponse = await client.get('/issue/ED-2');
+    // Test 2: Try to fetch a sample issue key
+    console.log(`📄 Test 2: Fetching issue ${sampleIssueKey}...`);
+    const issueResponse = await client.get(`/issue/${sampleIssueKey}`);
     const issue = issueResponse.data;
     
     console.log(`   ✅ Issue found!`);
     console.log(`   📝 Summary: ${issue.fields.summary}`);
     console.log(`   📊 Status: ${issue.fields.status.name}`);
     console.log(`   🏷️  Type: ${issue.fields.issuetype.name}`);
-    console.log(`   🔗 URL: ${host}/browse/ED-2\n`);
+    console.log(`   🔗 URL: ${host}/browse/${sampleIssueKey}\n`);
     
     // Test 3: Show description
     console.log('📋 Test 3: Issue Description:');
@@ -73,8 +74,8 @@ async function testJiraConnection() {
         console.error('   https://id.atlassian.com/manage-profile/security/api-tokens');
       } else if (error.response.status === 404) {
         console.error('\n💡 Suggestions:');
-        console.error('   1. Verify issue ED-2 exists at: ' + host + '/browse/ED-2');
-        console.error('   2. Check if you have permission to view the ED project');
+        console.error(`   1. Verify issue ${sampleIssueKey} exists at: ${host}/browse/${sampleIssueKey}`);
+        console.error('   2. Check if you have permission to view the target project');
         console.error('   3. Try with a different issue key');
       }
     } else {

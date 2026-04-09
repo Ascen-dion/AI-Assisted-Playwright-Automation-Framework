@@ -4,6 +4,7 @@
  */
 
 class TestStrategyGenerator {
+  static DEFAULT_BROWNFIELD_URL = 'https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/';
   
   /**
    * Analyze story to determine test strategy
@@ -61,7 +62,7 @@ class TestStrategyGenerator {
           'Verify responsive behavior'
         ]
       },
-      url: 'https://example.com'
+      url: this.DEFAULT_BROWNFIELD_URL
     };
   }
   
@@ -274,8 +275,8 @@ class TestStrategyGenerator {
     if (story.id && story.id.startsWith('ED-')) {
       return 'https://www.endpointclinical.com';
     }
-    
-    return 'https://example.com';
+
+    return this.DEFAULT_BROWNFIELD_URL;
   }
   
   /**

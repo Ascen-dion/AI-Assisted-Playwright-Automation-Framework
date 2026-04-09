@@ -8,6 +8,7 @@ const BACKEND_OPTIONS = {
   cloud: 'https://ai-assisted-playwright-automation-framework-production.up.railway.app',
   local: 'http://localhost:3001'
 };
+const DEFAULT_BROWNFIELD_URL = 'https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/';
 
 const WorkflowUI = () => {
   // Load backend preference from localStorage, default to cloud
@@ -24,6 +25,18 @@ const WorkflowUI = () => {
   const [results, setResults] = useState(null);
   const [backendStatus, setBackendStatus] = useState('unknown'); // 'connected', 'disconnected', 'unknown'
   const [elapsedTime, setElapsedTime] = useState(0);
+  const [projectContext, setProjectContext] = useState({
+    targetUrl: DEFAULT_BROWNFIELD_URL,
+    projectPrompt: '',
+    applicationKnowledge: '',
+    frameworkKnowledge: '',
+    domainKnowledge: '',
+    jiraStoryIds: '',
+    wikiLinks: '',
+    additionalContext: '',
+    documents: []
+  });
+  const [documentUploadError, setDocumentUploadError] = useState('');
   const workflowStartTime = useRef(null);
   const timerInterval = useRef(null);
   
@@ -51,6 +64,61 @@ const WorkflowUI = () => {
     setLogs(prev => [...prev, { timestamp, message, type }]);
   };
 
+  const handleContextChange = (field, value) => {
+    setProjectContext(prev => ({ ...prev, [field]: value }));
+  };
+
+  const parseMultiLineInput = (value) => {
+    if (!value) return [];
+    return value
+      .split(/[,\n]/)
+      .map(item => item.trim())
+      .filter(Boolean);
+  };
+
+  const getProjectContextPayload = () => ({
+    targetUrl: projectContext.targetUrl || DEFAULT_BROWNFIELD_URL,
+    projectPrompt: projectContext.projectPrompt,
+    applicationKnowledge: projectContext.applicationKnowledge,
+    frameworkKnowledge: projectContext.frameworkKnowledge,
+    domainKnowledge: projectContext.domainKnowledge,
+    jiraStoryIds: parseMultiLineInput(projectContext.jiraStoryIds),
+    wikiLinks: parseMultiLineInput(projectContext.wikiLinks),
+    additionalContext: projectContext.additionalContext,
+    documents: projectContext.documents
+  });
+
+  const handleDocumentUpload = async (event) => {
+    setDocumentUploadError('');
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+
+    try {
+      const docs = await Promise.all(
+        files.slice(0, 5).map(async (file) => ({
+          name: file.name,
+          content: (await file.text()).slice(0, 12000)
+        }))
+      );
+
+      setProjectContext(prev => ({
+        ...prev,
+        documents: [...prev.documents, ...docs].slice(0, 5)
+      }));
+    } catch (error) {
+      setDocumentUploadError('Could not read one or more files. Please upload text-based files.');
+    } finally {
+      event.target.value = '';
+    }
+  };
+
+  const removeDocument = (docName) => {
+    setProjectContext(prev => ({
+      ...prev,
+      documents: prev.documents.filter(doc => doc.name !== docName)
+    }));
+  };
+
   // Check backend connectivity
   const checkBackend = async () => {
     try {
@@ -71,6 +139,8 @@ const WorkflowUI = () => {
   };
 
   const runWorkflow = async () => {
+    const contextPayload = getProjectContextPayload();
+
     // Validate input based on mode
     if (mode === 'jira-id' && !storyId.trim()) {
       addLog('Please enter a valid Story ID', 'error');
@@ -94,6 +164,10 @@ const WorkflowUI = () => {
 
     // Check backend connectivity first
     addLog('Connecting to backend API...', 'info');
+    addLog(`Target app: ${contextPayload.targetUrl}`, 'info');
+    if (contextPayload.documents.length > 0) {
+      addLog(`Context docs attached: ${contextPayload.documents.length}`, 'info');
+    }
     const isBackendAvailable = await checkBackend();
     
     if (!isBackendAvailable) {
@@ -131,7 +205,7 @@ const WorkflowUI = () => {
         const createResponse = await fetch(`${API_BASE_URL}/api/workflow/create-story`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ requirements: plainEnglish })
+          body: JSON.stringify({ requirements: plainEnglish, projectContext: contextPayload })
         });
         const createData = await createResponse.json();
         
@@ -152,7 +226,7 @@ const WorkflowUI = () => {
       const jiraResponse = await fetch(`${API_BASE_URL}/api/workflow/fetch-jira`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ storyId: actualStoryId })
+        body: JSON.stringify({ storyId: actualStoryId, projectContext: contextPayload })
       });
       const jiraData = await jiraResponse.json();
       addLog(`✓ Fetched: ${jiraData.story.title}`, 'success');
@@ -165,7 +239,7 @@ const WorkflowUI = () => {
       const testCasesResponse = await fetch(`${API_BASE_URL}/api/workflow/generate-tests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ story: jiraData.story })
+        body: JSON.stringify({ story: jiraData.story, projectContext: contextPayload })
       });
       const testCasesData = await testCasesResponse.json();
       addLog(`✓ Generated ${testCasesData.testCases.length} test cases`, 'success');
@@ -204,7 +278,7 @@ const WorkflowUI = () => {
       const scriptsResponse = await fetch(`${API_BASE_URL}/api/workflow/generate-scripts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ testCases: testCasesData.testCases, storyId: actualStoryId, story: jiraData.story })
+        body: JSON.stringify({ testCases: testCasesData.testCases, storyId: actualStoryId, story: jiraData.story, projectContext: contextPayload })
       });
       const scriptsData = await scriptsResponse.json();
       addLog(`✓ Generated test script: ${scriptsData.filename}`, 'success');
@@ -219,7 +293,8 @@ const WorkflowUI = () => {
           filename: scriptsData.filename,
           testCases: testCasesData.testCases,
           storyId: actualStoryId,
-          story: jiraData.story
+          story: jiraData.story,
+          projectContext: contextPayload
         })
       });
       const executionData = await executionResponse.json();
@@ -391,7 +466,7 @@ const WorkflowUI = () => {
             <input
               id="storyId"
               type="text"
-              placeholder="e.g., ED-2, ED-3"
+              placeholder="e.g., ECOM-101"
               value={storyId}
               onChange={(e) => setStoryId(e.target.value)}
               disabled={isRunning}
@@ -408,12 +483,12 @@ const WorkflowUI = () => {
               id="plainEnglish"
               placeholder={`Example:
 
-As a user, I want to see a headline 'Your hidden advantage in RTSM' on the homepage.
+As a shopper, I want to search and open product details quickly.
 
 Acceptance Criteria:
-- The headline should be visible without scrolling
-- It should display on desktop, tablet, and mobile
-- The text should be clear and prominent`}
+- Search input accepts product keywords
+- Product list renders relevant items
+- Product details page opens with price and add-to-cart action`}
               value={plainEnglish}
               onChange={(e) => setPlainEnglish(e.target.value)}
               disabled={isRunning}
@@ -421,6 +496,132 @@ Acceptance Criteria:
             />
           </div>
         )}
+
+        <div className="project-context-panel">
+          <h3>Project Context (Brownfield POM)</h3>
+          <p>Keep this branch focused on your e-commerce app by supplying project knowledge and references.</p>
+
+          <div className="input-group">
+            <label htmlFor="targetUrl">Target Application URL</label>
+            <input
+              id="targetUrl"
+              type="text"
+              value={projectContext.targetUrl}
+              onChange={(e) => handleContextChange('targetUrl', e.target.value)}
+              disabled={isRunning}
+            />
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="projectPrompt">Project-Specific Prompt</label>
+            <textarea
+              id="projectPrompt"
+              rows={3}
+              placeholder="Add guidance for deterministic output, coding conventions, and priorities for this app"
+              value={projectContext.projectPrompt}
+              onChange={(e) => handleContextChange('projectPrompt', e.target.value)}
+              disabled={isRunning}
+            />
+          </div>
+
+          <div className="context-grid">
+            <div className="input-group">
+              <label htmlFor="applicationKnowledge">Application Knowledge</label>
+              <textarea
+                id="applicationKnowledge"
+                rows={4}
+                value={projectContext.applicationKnowledge}
+                onChange={(e) => handleContextChange('applicationKnowledge', e.target.value)}
+                disabled={isRunning}
+              />
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="frameworkKnowledge">Framework Knowledge</label>
+              <textarea
+                id="frameworkKnowledge"
+                rows={4}
+                value={projectContext.frameworkKnowledge}
+                onChange={(e) => handleContextChange('frameworkKnowledge', e.target.value)}
+                disabled={isRunning}
+              />
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="domainKnowledge">Domain Knowledge</label>
+              <textarea
+                id="domainKnowledge"
+                rows={4}
+                value={projectContext.domainKnowledge}
+                onChange={(e) => handleContextChange('domainKnowledge', e.target.value)}
+                disabled={isRunning}
+              />
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="jiraStoryIds">Related Jira Story IDs (comma/new line)</label>
+              <textarea
+                id="jiraStoryIds"
+                rows={4}
+                placeholder="ECOM-101, ECOM-102"
+                value={projectContext.jiraStoryIds}
+                onChange={(e) => handleContextChange('jiraStoryIds', e.target.value)}
+                disabled={isRunning}
+              />
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="wikiLinks">Wiki Links (comma/new line)</label>
+              <textarea
+                id="wikiLinks"
+                rows={4}
+                placeholder="https://wiki.company.com/ecomm-checkout"
+                value={projectContext.wikiLinks}
+                onChange={(e) => handleContextChange('wikiLinks', e.target.value)}
+                disabled={isRunning}
+              />
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="additionalContext">Additional Context</label>
+              <textarea
+                id="additionalContext"
+                rows={4}
+                value={projectContext.additionalContext}
+                onChange={(e) => handleContextChange('additionalContext', e.target.value)}
+                disabled={isRunning}
+              />
+            </div>
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="projectDocs">Upload Project Documents (text, md, json, csv)</label>
+            <input
+              id="projectDocs"
+              type="file"
+              multiple
+              accept=".txt,.md,.json,.csv,.log"
+              onChange={handleDocumentUpload}
+              disabled={isRunning}
+            />
+            {documentUploadError && <span className="upload-error">{documentUploadError}</span>}
+            {projectContext.documents.length > 0 && (
+              <div className="document-chips">
+                {projectContext.documents.map((doc) => (
+                  <button
+                    key={doc.name}
+                    type="button"
+                    className="document-chip"
+                    onClick={() => removeDocument(doc.name)}
+                    disabled={isRunning}
+                  >
+                    {doc.name} ×
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
 
         <button 
           className="run-button" 
