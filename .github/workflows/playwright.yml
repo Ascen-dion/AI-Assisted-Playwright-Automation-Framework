@@ -1,0 +1,211 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+  #schedule:
+    # Run tests daily at 9 AM UTC
+  #  - cron: '0 9 * * *'
+
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+
+    - name: Run Playwright tests
+      continue-on-error: true
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: npx playwright test saucedemo_Smoke.spec.js 
+
+    - name: Generate test report
+      if: always()
+      run: |
+        echo "Test execution completed"
+        if [ -d "playwright-report" ]; then
+          echo "Report generated successfully"
+        fi
+
+    - name: Upload Playwright Report as Artifact
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-${{ github.run_number }}
+        path: playwright-report/
+        retention-days: 30
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ github.run_number }}
+        path: test-results/
+        retention-days: 30
+
+    - name: Prepare email content
+      if: always()
+      run: |
+        echo "Preparing email content..."
+        
+        # Create email body
+        cat > email-body.html << 'EOF'
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; }
+            .header { background-color: #0066cc; color: white; padding: 20px; }
+            .content { padding: 20px; }
+            .success { color: #28a745; }
+            .failure { color: #dc3545; }
+            .info { background-color: #f8f9fa; padding: 15px; margin: 10px 0; border-left: 4px solid #0066cc; }
+            table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+            th { background-color: #0066cc; color: white; }
+            .footer { background-color: #f8f9fa; padding: 15px; margin-top: 20px; font-size: 12px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>🎭 Playwright AI Framework - Test Results</h1>
+          </div>
+          
+          <div class="content">
+            <div class="info">
+              <strong>Repository:</strong> ${{ github.repository }}<br>
+              <strong>Branch:</strong> ${{ github.ref_name }}<br>
+              <strong>Commit:</strong> ${{ github.sha }}<br>
+              <strong>Triggered by:</strong> ${{ github.actor }}<br>
+              <strong>Workflow:</strong> ${{ github.workflow }}<br>
+              <strong>Run Number:</strong> #${{ github.run_number }}
+            </div>
+
+            <h2>Test Execution Summary</h2>
+            <p>The automated Playwright tests have been executed. Please find the details below:</p>
+
+            <table>
+              <tr>
+                <th>Metric</th>
+                <th>Details</th>
+              </tr>
+              <tr>
+                <td>Status</td>
+                <td class="${{ job.status == 'success' && 'success' || 'failure' }}">${{ job.status }}</td>
+              </tr>
+              <tr>
+                <td>Run ID</td>
+                <td>${{ github.run_id }}</td>
+              </tr>
+              <tr>
+                <td>Event</td>
+                <td>${{ github.event_name }}</td>
+              </tr>
+              <tr>
+                <td>Timestamp</td>
+                <td>${{ github.event.head_commit.timestamp }}</td>
+              </tr>
+            </table>
+
+            <h3>📊 View Full Report</h3>
+            <p>
+              <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" 
+                 style="background-color: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                View GitHub Actions Run
+              </a>
+            </p>
+
+            <h3>📦 Download Artifacts</h3>
+            <ul>
+              <li><a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Playwright HTML Report</a></li>
+              <li><a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Test Results & Screenshots</a></li>
+            </ul>
+
+            <div class="info">
+              <strong>💡 Note:</strong> Download the artifacts from the GitHub Actions page to view detailed test reports, screenshots, and failure analysis.
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>This is an automated email from Playwright AI Framework CI/CD Pipeline.</p>
+            <p>© ${{ github.repository }} - Powered by GitHub Actions</p>
+          </div>
+        </body>
+        </html>
+        EOF
+
+    - name: Send Email Notification
+      if: always()
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+        subject: |
+          [Playwright Tests] ${{ job.status == 'success' && '✅ PASSED' || '❌ FAILED' }} - Run #${{ github.run_number }}
+        to: ${{ secrets.EMAIL_TO }}
+        from: Playwright AI Framework <${{ secrets.EMAIL_USERNAME }}>
+        html_body: file://email-body.html
+        attachments: |
+          playwright-report/**/*
+          test-results/**/*.png
+
+    - name: Comment PR with Results
+      if: github.event_name == 'pull_request' && always()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const status = '${{ job.status }}';
+          const runUrl = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+          
+          const comment = `## 🎭 Playwright Test Results
+          
+          **Status:** ${status === 'success' ? '✅ Passed' : '❌ Failed'}
+          **Run:** [#${{ github.run_number }}](${runUrl})
+          
+          ### 📊 Reports Available
+          - [View Playwright HTML Report](${runUrl})
+          - [Download Test Screenshots](${runUrl})
+          
+          ---
+          *Automated by Playwright AI Framework*`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+
+    - name: Publish Test Results Summary
+      if: always()
+      run: |
+        echo "## 🎭 Playwright Test Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Run:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "- Playwright Report: playwright-report-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Test Results: test-results-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "[View Full Results](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY

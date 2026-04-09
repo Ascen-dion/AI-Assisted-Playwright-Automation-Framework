@@ -1,0 +1,18 @@
+- generic [ref=e2]:
+  - separator [ref=e3]
+  - iframe [ref=e8]:
+    - generic [ref=f2e2]:
+      - generic [ref=f2e3]:
+        - checkbox "I'm not a robot" [ref=f2e7]
+        - generic [ref=f2e11]: I'm not a robot
+      - generic [ref=f2e15]: reCAPTCHA
+  - separator [ref=e9]
+  - generic [ref=e10]:
+    - text: About this page
+    - text: Our systems have detected unusual traffic from your computer network. This page checks to see if it's really you sending the requests, and not a robot.
+    - link "Why did this happen?" [ref=e11] [cursor=pointer]:
+      - /url: "#"
+    - generic [ref=e12]:
+      - text: "IP address: 136.226.233.23"
+      - text: "Time: 2026-04-05T12:36:55Z"
+      - text: "URL: https://www.google.com/search?safe=active&q=Playwright+automation+testing&sca_esv=86eabc19a59bfc61&source=hp&ei=WlfSab_-D6SR5OUPg_Gu-QM&iflsig=AFdpzrgAAAAAadJlam40LYYE7xXSH9H-WSan58G_2QZO&ved=0ahUKEwi_k5Tr3NaTAxWkCLkGHYO4Kz8Q4dUDCA8&uact=5&oq=Playwright+automation+testing&gs_lp=Egdnd3Mtd2l6Ih1QbGF5d3JpZ2h0IGF1dG9tYXRpb24gdGVzdGluZ0gRUABYAHAAeACQAQCYAQCgAQCqAQC4AQPIAQD4AQGYAgCgAgCYAwCSBwCgBwCyBwC4BwDCBwDIBwCACAA&sclient=gws-wiz&sei=ZVfSabO5KaT65OUP8KqSyQ8&safe=active"
