@@ -5,6 +5,7 @@ on:
     branches:
       - mcp_rail_jira_ui
       - adding_mcp_real_capbilities_jira_rail_ui
+      - brown_field_ecommerce
   workflow_dispatch:
 
 permissions:

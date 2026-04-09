@@ -4,9 +4,9 @@
   "private": true,
   "homepage": "https://ascen-dion.github.io/AI-Assisted-Playwright-Automation-Framework",
   "dependencies": {
+    "axios": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "axios": "^1.6.0",
     "react-scripts": "5.0.1"
   },
   "scripts": {
@@ -35,6 +35,6 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^6.1.0"
+    "gh-pages": "^6.3.0"
   }
 }
