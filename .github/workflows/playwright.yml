@@ -85,9 +85,19 @@ jobs:
           const raw = fs.readFileSync('test-results/results.json', 'utf8');
           const report = JSON.parse(raw);
 
-          const statusIcon = s => s === 'passed' ? '✅' : s === 'failed' ? '❌' : s === 'skipped' ? '⏭️' : '⚠️';
+          const statusIcon  = s => s === 'passed' ? '✅' : s === 'failed' ? '❌' : s === 'skipped' ? '⏭️' : '⚠️';
           const statusColor = s => s === 'passed' ? '#28a745' : s === 'failed' ? '#dc3545' : '#6c757d';
           const ms = n => n >= 1000 ? (n/1000).toFixed(1)+'s' : n+'ms';
+
+          // Playwright JSON: test.status = "expected"|"unexpected"|"flaky"|"skipped"
+          // Actual pass/fail is in test.results[last].status = "passed"|"failed"|"timedOut"|"skipped"
+          const resolveStatus = (test) => {
+            const lastResult = (test.results || []).at(-1);
+            if (lastResult) return lastResult.status; // "passed", "failed", "timedOut", "skipped"
+            // fallback: map Playwright outcome words
+            const map = { expected: 'passed', unexpected: 'failed', flaky: 'flaky', skipped: 'skipped' };
+            return map[test.status] || test.status || 'unknown';
+          };
 
           const walk = (suites, suiteName) => {
             for (const suite of (suites || [])) {
@@ -95,7 +105,7 @@ jobs:
               walk(suite.suites || [], name);
               for (const spec of (suite.specs || [])) {
                 for (const test of (spec.tests || [])) {
-                  const status   = test.status || 'unknown';
+                  const status   = resolveStatus(test);
                   const fullName = [name, spec.title].filter(Boolean).join(' › ');
                   const dur      = (test.results || []).reduce((a, r) => a + (r.duration || 0), 0);
                   const errMsg   = (test.results || [])
@@ -105,7 +115,7 @@ jobs:
                     .join('<br>');
 
                   if (status === 'passed')  passed++;
-                  else if (status === 'failed')  failed++;
+                  else if (status === 'failed' || status === 'timedOut') failed++;
                   else skipped++;
                   duration += dur;
 
