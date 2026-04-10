@@ -15,7 +15,8 @@ const {
   normalizeProjectContext,
   hasProjectContext,
   buildContextPromptBlock,
-  mergeStoryWithProjectContext
+  mergeStoryWithProjectContext,
+  loadContextFiles
 } = require('../src/helpers/project-context');
 const fs = require('fs').promises;
 const path = require('path');
@@ -33,6 +34,12 @@ app.use('/test-results', express.static(path.join(__dirname, '..', 'test-results
 // Initialize integrations
 const jiraClient = new JiraIntegration();
 const testrailClient = new TestRailIntegration();
+
+// Load file-based project context on startup (context/*.md files)
+// This runs once so all requests benefit from rich pre-loaded context
+loadContextFiles()
+  .then(() => console.log('[CONTEXT] ✅ Project context files loaded from context/ folder'))
+  .catch(err => console.warn('[CONTEXT] ⚠️ Could not load context files:', err.message));
 
 /**
  * Ensures a story object is available - fetches from Jira if not provided.

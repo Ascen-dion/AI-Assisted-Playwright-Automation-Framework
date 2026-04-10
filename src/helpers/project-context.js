@@ -1,4 +1,33 @@
+const fs = require('fs').promises;
+const path = require('path');
+
 const DEFAULT_BROWNFIELD_URL = 'https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/';
+
+// Cache for file-based context loaded once on API startup
+let _fileContext = null;
+
+async function loadContextFiles() {
+  const contextDir = path.join(__dirname, '..', '..', 'context');
+  const readFile = async (filename) => {
+    try {
+      const content = await fs.readFile(path.join(contextDir, filename), 'utf8');
+      return content.trim();
+    } catch {
+      return '';
+    }
+  };
+  _fileContext = {
+    applicationKnowledge: await readFile('application.md'),
+    frameworkKnowledge:   await readFile('framework.md'),
+    domainKnowledge:      await readFile('domain.md'),
+    projectPrompt:        await readFile('project-prompt.md')
+  };
+  return _fileContext;
+}
+
+function getFileContext() {
+  return _fileContext || {};
+}
 
 function toArray(value) {
   if (!value) return [];
@@ -29,6 +58,7 @@ function normalizeDocument(doc) {
 }
 
 function normalizeProjectContext(input = {}) {
+  const fileCtx = getFileContext();
   const wikiLinks = toArray(input.wikiLinks)
     .map(normalizeUrl)
     .filter(Boolean)
@@ -40,10 +70,11 @@ function normalizeProjectContext(input = {}) {
     .slice(0, 5);
 
   return {
-    applicationKnowledge: String(input.applicationKnowledge || '').trim(),
-    frameworkKnowledge: String(input.frameworkKnowledge || '').trim(),
-    domainKnowledge: String(input.domainKnowledge || '').trim(),
-    projectPrompt: String(input.projectPrompt || '').trim(),
+    // UI input takes priority; fall back to file-based context if UI left the field blank
+    applicationKnowledge: String(input.applicationKnowledge || fileCtx.applicationKnowledge || '').trim(),
+    frameworkKnowledge:   String(input.frameworkKnowledge   || fileCtx.frameworkKnowledge   || '').trim(),
+    domainKnowledge:      String(input.domainKnowledge      || fileCtx.domainKnowledge      || '').trim(),
+    projectPrompt:        String(input.projectPrompt        || fileCtx.projectPrompt        || '').trim(),
     jiraStoryIds: toArray(input.jiraStoryIds).slice(0, 20),
     wikiLinks,
     additionalContext: String(input.additionalContext || '').trim(),
@@ -128,5 +159,6 @@ module.exports = {
   normalizeProjectContext,
   hasProjectContext,
   buildContextPromptBlock,
-  mergeStoryWithProjectContext
+  mergeStoryWithProjectContext,
+  loadContextFiles
 };
