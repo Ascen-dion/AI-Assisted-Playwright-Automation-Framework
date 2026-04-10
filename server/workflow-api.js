@@ -89,6 +89,38 @@ async function ensureStory(storyId, story) {
   }
 }
 
+function normalizeCandidateText(value) {
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  if (/^(undefined|null|n\/a|na)$/i.test(trimmed)) return null;
+  return trimmed;
+}
+
+function getTestCaseTitle(candidate, index, fallback = 'Verification') {
+  const rawTitle = [
+    candidate?.title,
+    candidate?.name,
+    candidate?.scenario,
+    candidate?.scenarioName,
+    candidate?.description,
+    fallback
+  ].map(normalizeCandidateText).find(Boolean);
+
+  return `Test Case ${index + 1}: ${rawTitle}`;
+}
+
+function getScenarioText(candidate, fallback = 'Verify the requirement') {
+  return [
+    candidate?.scenario,
+    candidate?.scenarioName,
+    candidate?.title,
+    candidate?.name,
+    candidate?.description,
+    fallback
+  ].map(normalizeCandidateText).find(Boolean);
+}
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({ 
@@ -359,37 +391,6 @@ ${contextPrompt}
     
     // Convert plan to test cases format using correct field mapping
     const testCases = [];
-    const normalizeCandidateText = (value) => {
-      if (typeof value !== 'string') return null;
-      const trimmed = value.trim();
-      if (!trimmed) return null;
-      if (/^(undefined|null|n\/a|na)$/i.test(trimmed)) return null;
-      return trimmed;
-    };
-
-    const getTestCaseTitle = (candidate, index, fallback = 'Verification') => {
-      const rawTitle = [
-        candidate?.title,
-        candidate?.name,
-        candidate?.scenario,
-        candidate?.scenarioName,
-        candidate?.description,
-        fallback
-      ].map(normalizeCandidateText).find(Boolean);
-
-      return `Test Case ${index + 1}: ${rawTitle}`;
-    };
-
-    const getScenarioText = (candidate, fallback = 'Verify the requirement') => {
-      return [
-        candidate?.scenario,
-        candidate?.scenarioName,
-        candidate?.title,
-        candidate?.name,
-        candidate?.description,
-        fallback
-      ].map(normalizeCandidateText).find(Boolean);
-    };
     
     // Try different response structures based on MCP response format
     if (parsedPlan.testPlan) {
