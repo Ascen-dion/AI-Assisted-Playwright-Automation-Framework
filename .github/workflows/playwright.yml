@@ -2,9 +2,9 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [ master, main, brown_field_ecommerce ]
   pull_request:
-    branches: [ master, main ]
+    branches: [ master, main, brown_field_ecommerce ]
   workflow_dispatch:
   #schedule:
     # Run tests daily at 9 AM UTC
@@ -26,16 +26,18 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm ci
+      run: npm install
 
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      run: npx playwright install --with-deps chromium
 
     - name: Run Playwright tests
       continue-on-error: true
       env:
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      run: npx playwright test saucedemo_Smoke.spec.js 
+        HEADLESS: 'true'
+        CI: 'true'
+      run: npx playwright test src/tests/ --config=config/playwright.config.js --project=chromium
 
     - name: Generate test report
       if: always()
@@ -154,6 +156,7 @@ jobs:
 
     - name: Send Email Notification
       if: always()
+      continue-on-error: true
       uses: dawidd6/action-send-mail@v3
       with:
         server_address: smtp.gmail.com
