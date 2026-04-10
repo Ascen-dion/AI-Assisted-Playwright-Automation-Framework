@@ -29,8 +29,8 @@ module.exports = defineConfig({
   
   // Reporter to use
   reporter: [
-    ['html', { outputFolder: 'test-results/html-report' }],
-    ['json', { outputFile: 'test-results/results.json' }],
+    ['html', { outputFolder: path.resolve(__dirname, '../test-results/html-report') }],
+    ['json', { outputFile: path.resolve(__dirname, '../test-results/results.json') }],
     ['list']
   ],
 
