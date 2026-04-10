@@ -66,93 +66,152 @@ jobs:
     - name: Prepare email content
       if: always()
       run: |
-        echo "Preparing email content..."
-        
-        # Create email body
-        cat > email-body.html << 'EOF'
-        <!DOCTYPE html>
+        node - << 'NODEOF'
+        const fs = require('fs');
+        const path = require('path');
+
+        const RUN_URL = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+        const REPO    = process.env.GITHUB_REPOSITORY || '';
+        const BRANCH  = process.env.GITHUB_REF_NAME  || '';
+        const ACTOR   = process.env.GITHUB_ACTOR     || '';
+        const RUN_NUM = process.env.GITHUB_RUN_NUMBER || '';
+        const SHA     = (process.env.GITHUB_SHA || '').slice(0, 7);
+
+        // --- parse results.json ---
+        let passed = 0, failed = 0, skipped = 0, duration = 0;
+        let testRows = '';
+
+        try {
+          const raw = fs.readFileSync('test-results/results.json', 'utf8');
+          const report = JSON.parse(raw);
+
+          const statusIcon = s => s === 'passed' ? '✅' : s === 'failed' ? '❌' : s === 'skipped' ? '⏭️' : '⚠️';
+          const statusColor = s => s === 'passed' ? '#28a745' : s === 'failed' ? '#dc3545' : '#6c757d';
+          const ms = n => n >= 1000 ? (n/1000).toFixed(1)+'s' : n+'ms';
+
+          const walk = (suites, suiteName) => {
+            for (const suite of (suites || [])) {
+              const name = suite.title || suiteName || '';
+              walk(suite.suites || [], name);
+              for (const spec of (suite.specs || [])) {
+                for (const test of (spec.tests || [])) {
+                  const status   = test.status || 'unknown';
+                  const fullName = [name, spec.title].filter(Boolean).join(' › ');
+                  const dur      = (test.results || []).reduce((a, r) => a + (r.duration || 0), 0);
+                  const errMsg   = (test.results || [])
+                    .flatMap(r => r.errors || [])
+                    .map(e => (e.message || '').split('\n')[0].slice(0, 200))
+                    .filter(Boolean)
+                    .join('<br>');
+
+                  if (status === 'passed')  passed++;
+                  else if (status === 'failed')  failed++;
+                  else skipped++;
+                  duration += dur;
+
+                  testRows += `
+                    <tr>
+                      <td style="padding:8px 12px;border-bottom:1px solid #e9ecef;">
+                        ${statusIcon(status)} <span style="color:${statusColor(status)};font-weight:600;">${status.toUpperCase()}</span>
+                      </td>
+                      <td style="padding:8px 12px;border-bottom:1px solid #e9ecef;">${fullName}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid #e9ecef;color:#6c757d;">${ms(dur)}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid #e9ecef;color:#dc3545;font-size:12px;">${errMsg}</td>
+                    </tr>`;
+                }
+              }
+            }
+          };
+
+          walk(report.suites || []);
+        } catch(e) {
+          testRows = `<tr><td colspan="4" style="padding:12px;color:#6c757d;font-style:italic;">No results.json found — tests may not have run or the file path is different.</td></tr>`;
+        }
+
+        const total = passed + failed + skipped;
+        const overallColor = failed > 0 ? '#dc3545' : '#28a745';
+        const overallLabel = failed > 0 ? '❌ FAILED' : '✅ PASSED';
+
+        const html = `<!DOCTYPE html>
         <html>
-        <head>
-          <style>
-            body { font-family: Arial, sans-serif; }
-            .header { background-color: #0066cc; color: white; padding: 20px; }
-            .content { padding: 20px; }
-            .success { color: #28a745; }
-            .failure { color: #dc3545; }
-            .info { background-color: #f8f9fa; padding: 15px; margin: 10px 0; border-left: 4px solid #0066cc; }
-            table { border-collapse: collapse; width: 100%; margin: 20px 0; }
-            th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-            th { background-color: #0066cc; color: white; }
-            .footer { background-color: #f8f9fa; padding: 15px; margin-top: 20px; font-size: 12px; }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1>🎭 Playwright AI Framework - Test Results</h1>
-          </div>
-          
-          <div class="content">
-            <div class="info">
-              <strong>Repository:</strong> ${{ github.repository }}<br>
-              <strong>Branch:</strong> ${{ github.ref_name }}<br>
-              <strong>Commit:</strong> ${{ github.sha }}<br>
-              <strong>Triggered by:</strong> ${{ github.actor }}<br>
-              <strong>Workflow:</strong> ${{ github.workflow }}<br>
-              <strong>Run Number:</strong> #${{ github.run_number }}
-            </div>
+        <head><meta charset="UTF-8"></head>
+        <body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#f4f4f4;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:20px 0;">
+            <tr><td>
+              <table width="700" align="center" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1);">
 
-            <h2>Test Execution Summary</h2>
-            <p>The automated Playwright tests have been executed. Please find the details below:</p>
+                <!-- Header -->
+                <tr><td style="background:#0066cc;padding:24px 32px;">
+                  <h1 style="margin:0;color:#fff;font-size:22px;">🎭 Playwright AI Framework — Test Results</h1>
+                  <p style="margin:6px 0 0;color:#cce0ff;font-size:14px;">Run #${RUN_NUM} &nbsp;·&nbsp; ${BRANCH} &nbsp;·&nbsp; ${SHA}</p>
+                </td></tr>
 
-            <table>
-              <tr>
-                <th>Metric</th>
-                <th>Details</th>
-              </tr>
-              <tr>
-                <td>Status</td>
-                <td class="${{ job.status == 'success' && 'success' || 'failure' }}">${{ job.status }}</td>
-              </tr>
-              <tr>
-                <td>Run ID</td>
-                <td>${{ github.run_id }}</td>
-              </tr>
-              <tr>
-                <td>Event</td>
-                <td>${{ github.event_name }}</td>
-              </tr>
-              <tr>
-                <td>Timestamp</td>
-                <td>${{ github.event.head_commit.timestamp }}</td>
-              </tr>
-            </table>
+                <!-- Overall badge -->
+                <tr><td style="padding:24px 32px 0;">
+                  <table cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td style="background:${overallColor};color:#fff;font-size:20px;font-weight:700;padding:12px 28px;border-radius:6px;">${overallLabel}</td>
+                      <td style="padding-left:24px;">
+                        <span style="font-size:28px;font-weight:700;color:#28a745;">${passed}</span><span style="color:#6c757d;font-size:13px;"> passed</span>&nbsp;&nbsp;
+                        <span style="font-size:28px;font-weight:700;color:#dc3545;">${failed}</span><span style="color:#6c757d;font-size:13px;"> failed</span>&nbsp;&nbsp;
+                        <span style="font-size:28px;font-weight:700;color:#6c757d;">${skipped}</span><span style="color:#6c757d;font-size:13px;"> skipped</span>&nbsp;&nbsp;
+                        <span style="color:#6c757d;font-size:13px;">&nbsp;/&nbsp; ${total} total</span>
+                      </td>
+                    </tr>
+                  </table>
+                </td></tr>
 
-            <h3>📊 View Full Report</h3>
-            <p>
-              <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" 
-                 style="background-color: #0066cc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                View GitHub Actions Run
-              </a>
-            </p>
+                <!-- Meta info -->
+                <tr><td style="padding:20px 32px 0;">
+                  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f8f9fa;border-left:4px solid #0066cc;padding:16px;border-radius:4px;">
+                    <tr><td style="font-size:13px;color:#495057;line-height:1.8;">
+                      <strong>Repository:</strong> ${REPO}<br>
+                      <strong>Branch:</strong> ${BRANCH}<br>
+                      <strong>Triggered by:</strong> ${ACTOR}<br>
+                      <strong>Run:</strong> <a href="${RUN_URL}" style="color:#0066cc;">#${RUN_NUM}</a>
+                    </td></tr>
+                  </table>
+                </td></tr>
 
-            <h3>📦 Download Artifacts</h3>
-            <ul>
-              <li><a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Playwright HTML Report</a></li>
-              <li><a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">Test Results & Screenshots</a></li>
-            </ul>
+                <!-- Test results table -->
+                <tr><td style="padding:24px 32px 0;">
+                  <h2 style="margin:0 0 12px;font-size:16px;color:#212529;">Test Results</h2>
+                  <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:6px;overflow:hidden;border:1px solid #dee2e6;">
+                    <thead>
+                      <tr style="background:#0066cc;color:#fff;">
+                        <th style="padding:10px 12px;text-align:left;font-size:13px;width:90px;">Status</th>
+                        <th style="padding:10px 12px;text-align:left;font-size:13px;">Test Name</th>
+                        <th style="padding:10px 12px;text-align:left;font-size:13px;width:70px;">Duration</th>
+                        <th style="padding:10px 12px;text-align:left;font-size:13px;">Error</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${testRows}
+                    </tbody>
+                  </table>
+                </td></tr>
 
-            <div class="info">
-              <strong>💡 Note:</strong> Download the artifacts from the GitHub Actions page to view detailed test reports, screenshots, and failure analysis.
-            </div>
-          </div>
+                <!-- CTA -->
+                <tr><td style="padding:24px 32px;">
+                  <a href="${RUN_URL}" style="display:inline-block;background:#0066cc;color:#fff;padding:12px 24px;border-radius:6px;text-decoration:none;font-size:14px;font-weight:600;">
+                    View Full Report &amp; Artifacts →
+                  </a>
+                </td></tr>
 
-          <div class="footer">
-            <p>This is an automated email from Playwright AI Framework CI/CD Pipeline.</p>
-            <p>© ${{ github.repository }} - Powered by GitHub Actions</p>
-          </div>
+                <!-- Footer -->
+                <tr><td style="background:#f8f9fa;padding:16px 32px;font-size:12px;color:#6c757d;border-top:1px solid #dee2e6;">
+                  Automated by Playwright AI Framework CI/CD &nbsp;·&nbsp; ${REPO}
+                </td></tr>
+
+              </table>
+            </td></tr>
+          </table>
         </body>
-        </html>
-        EOF
+        </html>`;
+
+        fs.writeFileSync('email-body.html', html);
+        console.log(`Email prepared: ${passed} passed, ${failed} failed, ${skipped} skipped`);
+        NODEOF
 
     - name: Send Email Notification
       if: always()
