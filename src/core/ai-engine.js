@@ -65,6 +65,10 @@ class AIEngine {
         }
         break;
 
+      case 'groq':
+        this.initializeGroq();
+        break;
+
       case 'local':
         this.initializeLocal();
         break;
@@ -78,6 +82,22 @@ class AIEngine {
         this.provider = 'openrouter';
         this.initializeOpenRouter();
     }
+  }
+
+  initializeGroq() {
+    // Groq is OpenAI-compatible, uses same SDK
+    if (!process.env.GROQ_API_KEY) {
+      logger.error('GROQ_API_KEY not found in .env file!');
+      throw new Error('Groq API key required. Please set GROQ_API_KEY in .env');
+    }
+    this.client = new OpenAI({
+      baseURL: 'https://api.groq.com/openai/v1',
+      apiKey: process.env.GROQ_API_KEY,
+    });
+    this.model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+    this.primaryModel = this.model;
+    logger.info(`Groq configured with model: ${this.model}`);
+    logger.info('🚀 Using fast cloud-based AI (Groq)');
   }
 
   initializeOpenRouter() {
@@ -143,6 +163,27 @@ class AIEngine {
     return text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
   }
 
+  extractMessageContent(messageContent) {
+    if (typeof messageContent === 'string') {
+      return this.cleanThinkingTags(messageContent);
+    }
+
+    if (Array.isArray(messageContent)) {
+      const text = messageContent
+        .map(item => {
+          if (typeof item === 'string') return item;
+          if (item && typeof item.text === 'string') return item.text;
+          return '';
+        })
+        .join('')
+        .trim();
+
+      return this.cleanThinkingTags(text);
+    }
+
+    return null;
+  }
+
   /**
    * Wrapper that auto-retries an OpenRouter call on 402 by rotating models.
    * @param {Function} apiFn - async function that makes the API call, receives current model
@@ -163,6 +204,23 @@ class AIEngine {
             );
           }
           // retry with new model
+          continue;
+        }
+        if (error.status === 429 || error.code === 429) {
+          logger.warn(`⚠️ 429 Rate limit hit on model: ${this.model}, rotating...`);
+          if (!this.rotateToNextModel()) {
+            throw new Error(
+              'All free OpenRouter models exhausted (rate-limited on every model). ' +
+              'Wait a moment and try again.'
+            );
+          }
+          continue;
+        }
+        if (error.status === 404 || error.code === 404) {
+          logger.warn(`⚠️ 404 Model not found: ${this.model}, rotating...`);
+          if (!this.rotateToNextModel()) {
+            throw new Error('All free OpenRouter models exhausted (404 on every model).');
+          }
           continue;
         }
         // Non-402 error — rethrow
@@ -231,7 +289,7 @@ Provide your response in JSON format with the following structure:
         logger.info(`AI found selector with ${result.confidence} confidence`);
         return result;
         
-      } else if (this.provider === 'openrouter' || this.provider === 'local') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq') {
         response = await this.callWithFallback((model) =>
           this.client.chat.completions.create({
             model: model,
@@ -381,7 +439,7 @@ Response format:
         });
         return JSON.parse(response.content[0].text);
         
-      } else if (this.provider === 'openrouter' || this.provider === 'local') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq') {
         response = await this.callWithFallback((model) =>
           this.client.chat.completions.create({
             model: model,
@@ -455,7 +513,7 @@ Provide analysis in JSON:
         });
         return JSON.parse(response.content[0].text);
         
-      } else if (this.provider === 'openrouter' || this.provider === 'local') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq') {
         response = await this.callWithFallback((model) =>
           this.client.chat.completions.create({
             model: model,
@@ -504,7 +562,7 @@ Provide analysis in JSON:
         
         return response.content[0].text;
         
-      } else if (this.provider === 'openrouter' || this.provider === 'local') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq') {
         const messages = [];
         
         if (systemMessage) {
@@ -518,16 +576,27 @@ Provide analysis in JSON:
         
         messages.push({ role: 'user', content: prompt });
         
-        response = await this.callWithFallback((model) =>
-          this.client.chat.completions.create({
-            model: model,
-            messages: messages,
-            temperature: temperature,
-            max_tokens: maxTokens
-          })
-        );
-        
-        return this.cleanThinkingTags(response.choices[0].message.content);
+        let content = null;
+        let canRotate = true;
+        while (!content && canRotate) {
+          response = await this.callWithFallback((model) =>
+            this.client.chat.completions.create({
+              model: model,
+              messages: messages,
+              temperature: temperature,
+              max_tokens: maxTokens
+            })
+          );
+          content = this.extractMessageContent(response?.choices?.[0]?.message?.content);
+          if (!content) {
+            logger.warn(`⚠️ Empty response from model: ${this.model}, rotating to next...`);
+            canRotate = this.rotateToNextModel();
+          }
+        }
+        if (!content) {
+          throw new Error('All available models returned empty responses for query()');
+        }
+        return content;
       }
       
     } catch (error) {
@@ -578,20 +647,30 @@ Return ONLY the JavaScript code for the test file, no markdown, no explanations,
         logger.info('Test script generated successfully');
         return this.cleanGeneratedScript(script);
         
-      } else if (this.provider === 'openrouter' || this.provider === 'local') {
-        response = await this.callWithFallback((model) =>
-          this.client.chat.completions.create({
-            model: model,
-            messages: [
-              { role: 'system', content: systemMessage },
-              { role: 'user', content: prompt }
-            ],
-            temperature: 0.3,
-            max_tokens: 4000
-          })
-        );
-        
-        const script = this.cleanThinkingTags(response.choices[0].message.content);
+      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq') {
+        let script = null;
+        let canRotate = true;
+        while (!script && canRotate) {
+          response = await this.callWithFallback((model) =>
+            this.client.chat.completions.create({
+              model: model,
+              messages: [
+                { role: 'system', content: systemMessage },
+                { role: 'user', content: prompt }
+              ],
+              temperature: 0.3,
+              max_tokens: 4000
+            })
+          );
+          script = this.extractMessageContent(response?.choices?.[0]?.message?.content);
+          if (!script) {
+            logger.warn(`⚠️ Empty response from model: ${this.model}, rotating to next...`);
+            canRotate = this.rotateToNextModel();
+          }
+        }
+        if (!script) {
+          throw new Error('All available models returned empty responses for generateTestScript()');
+        }
         logger.info('Test script generated successfully');
         return this.cleanGeneratedScript(script);
       }
@@ -623,3 +702,4 @@ Return ONLY the JavaScript code for the test file, no markdown, no explanations,
 }
 
 module.exports = new AIEngine();
+

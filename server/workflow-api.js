@@ -359,6 +359,37 @@ ${contextPrompt}
     
     // Convert plan to test cases format using correct field mapping
     const testCases = [];
+    const normalizeCandidateText = (value) => {
+      if (typeof value !== 'string') return null;
+      const trimmed = value.trim();
+      if (!trimmed) return null;
+      if (/^(undefined|null|n\/a|na)$/i.test(trimmed)) return null;
+      return trimmed;
+    };
+
+    const getTestCaseTitle = (candidate, index, fallback = 'Verification') => {
+      const rawTitle = [
+        candidate?.title,
+        candidate?.name,
+        candidate?.scenario,
+        candidate?.scenarioName,
+        candidate?.description,
+        fallback
+      ].map(normalizeCandidateText).find(Boolean);
+
+      return `Test Case ${index + 1}: ${rawTitle}`;
+    };
+
+    const getScenarioText = (candidate, fallback = 'Verify the requirement') => {
+      return [
+        candidate?.scenario,
+        candidate?.scenarioName,
+        candidate?.title,
+        candidate?.name,
+        candidate?.description,
+        fallback
+      ].map(normalizeCandidateText).find(Boolean);
+    };
     
     // Try different response structures based on MCP response format
     if (parsedPlan.testPlan) {
@@ -369,15 +400,22 @@ ${contextPrompt}
         console.log(`[DEBUG] Processing ${testPlan.testScenarios.length} test scenarios from MCP`);
         
         testPlan.testScenarios.forEach((scenario, index) => {
+          if (index === 0) {
+            console.log('[DEBUG] First MCP scenario keys:', Object.keys(scenario || {}));
+            console.log('[DEBUG] First MCP scenario preview:', JSON.stringify(scenario).substring(0, 300));
+          }
+
+          const scenarioText = getScenarioText(scenario);
+
           // Handle both direct testSteps in scenario and testSteps lookup by scenario name
           let steps = '';
           
           if (scenario.testSteps && Array.isArray(scenario.testSteps)) {
             // Direct testSteps array in scenario
             steps = scenario.testSteps.map((step, i) => `${i + 1}. ${step}`).join('\n');
-          } else if (testPlan.testSteps && testPlan.testSteps[scenario.scenario]) {
+          } else if (testPlan.testSteps && testPlan.testSteps[scenarioText]) {
             // testSteps lookup by scenario name
-            steps = testPlan.testSteps[scenario.scenario].map((step, i) => {
+            steps = testPlan.testSteps[scenarioText].map((step, i) => {
               // Remove existing numbering if present
               const cleanStep = step.replace(/^\d+\.\s*/, '');
               return `${i + 1}. ${cleanStep}`;
@@ -385,21 +423,22 @@ ${contextPrompt}
           } else {
             // Fallback - use story's extracted URL or generic navigation
             const fallbackUrl = (storyWithContext.extractedUrls && storyWithContext.extractedUrls.length > 0) ? storyWithContext.extractedUrls[0] : normalizedContext.targetUrl;
-            steps = `1. Navigate to ${fallbackUrl}\n2. ${scenario.description || scenario.scenario}`;
+            const stepText = getScenarioText(scenario, 'Verify the expected behavior');
+            steps = `1. Navigate to ${fallbackUrl}\n2. ${stepText}`;
           }
           
           // Handle expectedResults similarly
           let expected = '';
           if (scenario.expectedResults) {
             expected = scenario.expectedResults;
-          } else if (testPlan.expectedResults && testPlan.expectedResults[scenario.scenario]) {
-            expected = testPlan.expectedResults[scenario.scenario];
+          } else if (testPlan.expectedResults && testPlan.expectedResults[scenarioText]) {
+            expected = testPlan.expectedResults[scenarioText];
           } else {
-            expected = scenario.description || scenario.scenario;
+            expected = getScenarioText(scenario, 'Expected behavior is satisfied');
           }
             
           testCases.push({
-            title: `Test Case ${index + 1}: ${scenario.scenario}`,
+            title: getTestCaseTitle(scenario, index),
             steps: steps,
             expected: expected
           });
@@ -578,15 +617,17 @@ app.post('/api/workflow/push-testrail', async (req, res) => {
 
     for (const testCase of testCases) {
       // Check if test case already exists
+      const normalizedTitle = normalizeCandidateText(testCase.title) || normalizeCandidateText(testCase.name) || `Test Case ${created + updated + 1}`;
+
       const existing = await testrailClient.findTestCaseByTitle(
         projectId, 
         suiteId, 
-        testCase.title, 
+        normalizedTitle, 
         sectionId
       );
 
       const testCaseData = {
-        title: testCase.title,
+        title: normalizedTitle,
         steps: testCase.steps || testCase.description || '',
         expected: testCase.expectedResult || testCase.expected || 'Test passes successfully',
         preconditions: testCase.preconditions || '',
@@ -597,14 +638,14 @@ app.post('/api/workflow/push-testrail', async (req, res) => {
         // Update existing test case
         await testrailClient.updateTestCase(existing.id, testCaseData);
         updated++;
-        updatedCases.push({ id: existing.id, title: testCase.title });
-        console.log(`[API] ✓ Updated: C${existing.id} - ${testCase.title}`);
+        updatedCases.push({ id: existing.id, title: normalizedTitle });
+        console.log(`[API] ✓ Updated: C${existing.id} - ${normalizedTitle}`);
       } else {
         // Create new test case
         const newCase = await testrailClient.pushTestCase(projectId, suiteId, testCaseData, sectionId);
         created++;
-        createdCases.push({ id: newCase?.id || 'new', title: testCase.title });
-        console.log(`[API] ✓ Created: ${testCase.title}`);
+        createdCases.push({ id: newCase?.id || 'new', title: normalizedTitle });
+        console.log(`[API] ✓ Created: ${normalizedTitle}`);
       }
     }
 

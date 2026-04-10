@@ -259,14 +259,14 @@ const WorkflowUI = () => {
       if (testrailData.createdCases && testrailData.createdCases.length > 0) {
         addLog(`   Created test cases:`, 'info');
         testrailData.createdCases.forEach((tc, idx) => {
-          addLog(`     ${idx + 1}. ${tc.title}`, 'info');
+          addLog(`     ${idx + 1}. ${tc.title || tc.name || `Test Case ${idx + 1}`}`, 'info');
         });
       }
       
       if (testrailData.updatedCases && testrailData.updatedCases.length > 0) {
         addLog(`   Updated test cases:`, 'info');
         testrailData.updatedCases.forEach((tc, idx) => {
-          addLog(`     ${idx + 1}. C${tc.id} - ${tc.title}`, 'info');
+          addLog(`     ${idx + 1}. C${tc.id} - ${tc.title || tc.name || `Test Case ${idx + 1}`}`, 'info');
         });
       }
       

@@ -67,3 +67,4 @@ out/
 *.cpuprofile
 *.heapsnapshot
 docs/*
+.playwright-cli/

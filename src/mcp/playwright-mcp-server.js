@@ -360,11 +360,19 @@ Return ONLY the complete, valid JavaScript code. No markdown wrappers, no explan
         temperature: 0.1 
       });
 
+      if (typeof response !== 'string' || !response.trim()) {
+        throw new Error('AI returned empty code generation output');
+      }
+
       // Extract code from markdown if present
       let code = response;
       const codeMatch = response.match(/```(?:javascript|js)?\n([\s\S]*?)```/);
       if (codeMatch) {
         code = codeMatch[1];
+      }
+
+      if (!code.trim()) {
+        throw new Error('AI code generation output was empty after markdown extraction');
       }
 
       return {
