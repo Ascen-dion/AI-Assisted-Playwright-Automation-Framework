@@ -66,5 +66,4 @@ out/
 .vscode-test/
 *.cpuprofile
 *.heapsnapshot
-docs/*
 .playwright-cli/

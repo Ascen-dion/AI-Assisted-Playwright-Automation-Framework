@@ -219,6 +219,10 @@ Because the backend exposes workflow endpoints, you can also wire it into your o
 
 ## Architecture
 
+Client-facing architecture diagram:
+
+- [docs/client-framework-diagram.md](docs/client-framework-diagram.md)
+
 High-level flow:
 
 1. User enters a Jira ID or plain-English requirement in the UI

@@ -1,0 +1,90 @@
+flowchart LR
+    classDef input fill:#eef4ff,stroke:#3d6dcc,color:#0f172a,stroke-width:1.5px;
+    classDef orchestration fill:#f3f0ff,stroke:#6d4aff,color:#1f2937,stroke-width:1.5px;
+    classDef automation fill:#ecfdf3,stroke:#0f9f6e,color:#0f172a,stroke-width:1.5px;
+    classDef enterprise fill:#fff7e8,stroke:#d97706,color:#111827,stroke-width:1.5px;
+    classDef output fill:#fff1f2,stroke:#e11d48,color:#111827,stroke-width:1.5px;
+
+    subgraph Inputs[External Inputs Panel]
+        REQ[Plain-English Requirements]
+        JIRA_REQ[Jira Stories and Acceptance Criteria]
+        APP[Application Knowledge]
+        FW[Framework Knowledge]
+        DOMAIN[Domain Knowledge - Core Business Processes and Logic]
+        DOCS[Wiki Links and Uploaded Documents]
+    end
+
+    subgraph Core[Core Logic Module]
+        UI[Workflow UI<br/>React Control Surface]
+        API[Workflow API<br/>Node and Express Orchestration]
+        CTX[Project Context Engine<br/>Normalizes Business and Technical Context]
+        COPILOT[GitHub Copilot Agent Layer<br/>Healing Workflows, CodeGen and Assistance]
+        CLI[Playwright CLI Skills<br/>Page Inspection and Browser Tools]
+        PLAN[Planner Agent<br/>Creates Test Scenarios and Coverage]
+        GEN[Generator Agent<br/>Builds Playwright POM and Specs]
+        HEAL[Healer Agent<br/>Analyzes Failures and Retries Intelligently]
+        MCP[MCP Layer<br/>Browser Actions]
+        AI[AI Engine - LLMs<br/>OpenRouter, Claude, Local LLM]
+    end
+
+    subgraph Execution[POM Assets and Tests Module]
+        POM[Reusable POM Assets<br/>Pages, Locators, Seeds]
+        TESTS[Generated Playwright Tests<br/>Test Files]
+        RUN[Playwright Execution<br/>Headed or CI Run]
+        SELF[Self-Healing Loop]
+        REPORTS[Execution Outputs<br/>Videos, Logs, HTML Report, Results]
+    end
+
+    subgraph Enterprise[Hosted Services, CI/CD and Project Tracking]
+        CLOUD[Hosted Services Module<br/>GitHub Pages and Node Hosting]
+        TR[Test Management and CI/CD Module<br/>TestRail Case Sync and GitHub Actions]
+        JIRA_SYS[Project Tracking Module<br/>Jira Story Lifecycle and Result Updates]
+        CLIENT[Client Facing Reporting<br/>Client Reporting and QA Visibility]
+    end
+
+    REQ --> UI
+    JIRA_REQ --> UI
+    APP --> UI
+    FW --> UI
+    DOMAIN --> UI
+    DOCS --> UI
+
+    UI --> API
+    API --> CTX
+    UI --> COPILOT
+    COPILOT --> PLAN
+    COPILOT --> GEN
+    COPILOT --> HEAL
+    CTX --> PLAN
+    CTX --> GEN
+    CTX --> HEAL
+    API --> MCP
+    CLI --> MCP
+    PLAN --> AI
+    GEN --> AI
+    HEAL --> AI
+    MCP --> AI
+
+    PLAN --> TR
+    GEN --> POM
+    POM --> TESTS
+    TESTS --> RUN
+    RUN --> REPORTS
+    RUN --> SELF
+    SELF --> HEAL
+    HEAL --> TESTS
+
+    API --> JIRA_SYS
+    API --> TR
+    TR --> RUN
+    CLOUD --> API
+    CLOUD --> UI
+    REPORTS --> CLIENT
+    JIRA_SYS --> CLIENT
+    TR --> CLIENT
+
+    class REQ,JIRA_REQ,APP,FW,DOMAIN,DOCS input;
+    class UI,API,CTX,COPILOT,CLI,PLAN,GEN,HEAL,MCP,AI orchestration;
+    class POM,TESTS,RUN,SELF,REPORTS automation;
+    class CLOUD,TR,JIRA_SYS enterprise;
+    class CLIENT output;
