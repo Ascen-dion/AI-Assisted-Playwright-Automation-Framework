@@ -1,0 +1,148 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - list [ref=e11]:
+      - listitem [ref=e12]:
+        - link "Personal" [ref=e13] [cursor=pointer]:
+          - /url: https://www.starhub.com/personal.html
+      - listitem [ref=e14]:
+        - link "SME" [ref=e15] [cursor=pointer]:
+          - /url: https://www.starhub.com/sme.html
+      - listitem [ref=e16]:
+        - link "Enterprise" [ref=e17] [cursor=pointer]:
+          - /url: https://www.starhub.com/business.html
+      - listitem [ref=e18]:
+        - link "About Us" [ref=e19] [cursor=pointer]:
+          - /url: /about-us.html
+    - navigation [ref=e23]:
+      - generic [ref=e24]:
+        - link [ref=e26] [cursor=pointer]:
+          - /url: javascript:void(0)
+          - img [ref=e27]
+        - list [ref=e29]:
+          - listitem [ref=e30]:
+            - button "Company" [ref=e31]
+          - listitem [ref=e32]:
+            - button "Sustainability" [ref=e33]
+          - listitem [ref=e34]:
+            - button "News" [ref=e35]
+          - listitem [ref=e36]:
+            - link "Careers" [ref=e37]:
+              - /url: https://careers.starhub.com/.html
+  - generic [ref=e38]:
+    - generic [ref=e44]:
+      - list:
+        - listitem [ref=e45]:
+          - heading "About StarHub" [level=1] [ref=e52]:
+            - generic [ref=e53]: About StarHub
+          - img [ref=e62]
+    - generic [ref=e68]:
+      - generic [ref=e71]:
+        - img [ref=e73]
+        - generic [ref=e74]:
+          - paragraph [ref=e76]
+          - paragraph [ref=e77]: Achievements
+          - paragraph [ref=e78]:
+            - text: Share in the joy of our
+            - text: milestone moments
+          - link "Find out more" [ref=e79] [cursor=pointer]:
+            - /url: /about-us/company-information/achievements.html
+      - generic [ref=e82]:
+        - img [ref=e84]
+        - generic [ref=e85]:
+          - paragraph [ref=e87]
+          - paragraph [ref=e88]: Sustainability
+          - paragraph [ref=e89]:
+            - text: See what Green means to us
+            - text: and our stakeholders
+          - link "Find out more" [ref=e90] [cursor=pointer]:
+            - /url: /about-us/corporate-sustainability.html
+      - generic [ref=e93]:
+        - img [ref=e95]
+        - generic [ref=e96]:
+          - paragraph [ref=e98]
+          - paragraph [ref=e99]: Newsroom
+          - paragraph [ref=e100]:
+            - text: Catch up on our latest
+            - text: announcements
+          - link "Find out more" [ref=e101] [cursor=pointer]:
+            - /url: /about-us/newsroom.html
+    - generic [ref=e105]:
+      - generic [ref=e106]:
+        - heading "We are StarHub" [level=2] [ref=e107]
+        - separator [ref=e108]
+        - generic [ref=e109]:
+          - paragraph [ref=e111]:
+            - text: StarHub is a leading homegrown Singapore
+            - text: company that brings to people, homes and enterprises
+            - text: world-class communication, entertainment and digital solutions.
+          - link "Find out more" [ref=e113] [cursor=pointer]:
+            - /url: /about-us/company-information/profile.html
+            - text: Find out more
+            - img [ref=e114]
+      - generic [ref=e116]:
+        - link "Awards & Certification" [ref=e118] [cursor=pointer]:
+          - /url: /about-us/company-information/awards-and-certification.html
+          - heading "Awards & Certification" [level=4] [ref=e120]
+        - link "Corporate Structure" [ref=e122] [cursor=pointer]:
+          - /url: /about-us/company-information/corporate-structure/leadership.html
+          - heading "Corporate Structure" [level=4] [ref=e124]
+        - link "Investor Relations" [ref=e126] [cursor=pointer]:
+          - /url: https://ir.starhub.com/
+          - heading "Investor Relations" [level=4] [ref=e128]
+        - link "Careers" [ref=e130] [cursor=pointer]:
+          - /url: https://careers.starhub.com/
+          - heading "Careers" [level=4] [ref=e132]
+  - generic [ref=e135]:
+    - list [ref=e143]:
+      - listitem [ref=e144]:
+        - link [ref=e147] [cursor=pointer]:
+          - /url: /about-us.html
+          - img [ref=e148]
+      - listitem [ref=e149]:
+        - generic [ref=e151]: About Us
+    - contentinfo [ref=e152]:
+      - generic [ref=e155]:
+        - generic [ref=e158]:
+          - generic [ref=e159]:
+            - generic [ref=e161]: Support
+            - list [ref=e162]:
+              - listitem [ref=e163]:
+                - link "Contact us" [ref=e164] [cursor=pointer]:
+                  - /url: https://www.starhub.com/personal/support/contact-us.html
+          - generic [ref=e165]:
+            - generic [ref=e167]: Other Useful Links
+            - list [ref=e168]:
+              - listitem [ref=e169]:
+                - link "Contractor's Corner" [ref=e170] [cursor=pointer]:
+                  - /url: /about-us/contractors-corner/introduction.html
+              - listitem [ref=e171]:
+                - link "Investor Relations" [ref=e172] [cursor=pointer]:
+                  - /url: https://ir.starhub.com/home.html
+          - generic [ref=e178]:
+            - generic:
+              - img
+        - generic [ref=e179]:
+          - generic [ref=e180]:
+            - generic [ref=e181]:
+              - link "Legal Notices" [ref=e182] [cursor=pointer]:
+                - /url: /about-us/legal-notices-and-terms.html
+              - link "Data Protection Policy" [ref=e183] [cursor=pointer]:
+                - /url: /about-us/legal-notices-and-terms/personal-data-protection.html
+              - link "Report Vulnerability" [ref=e184] [cursor=pointer]:
+                - /url: https://vdp.starhub.com
+              - link "Clickable Links" [ref=e185] [cursor=pointer]:
+                - /url: /about-us/legal-notices-and-terms/clickable-links.html
+            - generic [ref=e186]: © StarHub 2026. All rights reserved.
+          - generic [ref=e189]:
+            - link [ref=e190] [cursor=pointer]:
+              - /url: https://www.facebook.com/starhub
+              - img [ref=e191]
+            - link [ref=e192] [cursor=pointer]:
+              - /url: https://instagram.com/starhub
+              - img [ref=e193]
+            - link [ref=e194] [cursor=pointer]:
+              - /url: https://twitter.com/StarHub
+              - img [ref=e195]
+            - link [ref=e196] [cursor=pointer]:
+              - /url: https://www.youtube.com/user/StarHub
+              - img [ref=e197]

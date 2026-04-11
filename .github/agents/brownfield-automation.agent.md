@@ -88,16 +88,25 @@ src/pages/              → existing page objects
 src/tests/              → existing spec files
 ```
 
-For each existing file, identify:
-- What methods already exist
-- What selectors are already defined
-- What test patterns are already established
+### StarHub Existing Page Objects (as of April 2026)
+
+| Page Object | Locators | Covers |
+|---|---|---|
+| `starhub-mobile-nav.page.js` | `starhub-mobile-nav.locators.js` | Mobile tab dropdown: All Phones, Apple, Samsung, OPPO, Tablets, Accessories, 5G Plans, Prepaid, Tourist, CIS, Trade-in, BNPL, Roaming, DeviceDollars |
+| `starhub-broadband-nav.page.js` | `starhub-broadband-nav.locators.js` | Broadband tab dropdown: Plans, TV+ Bundles, Routers (10Gbps, WiFi6/7), DVH, JuniorProtect, SafeHub+, WiFi tips |
+| `starhub-entertainment-nav.page.js` | `starhub-entertainment-nav.locators.js` | Entertainment tab dropdown: TV+ Passes, Premier League, Add-ons, Cloud Recording, Mobile App, TV Devices, Channel List, Netflix, Disney+, Amazon Prime, HBO Max, iQIYI, CMGO, Viu |
+| `starhub-lifestyle-safety-nav.page.js` | `starhub-lifestyle-safety-nav.locators.js` | Lifestyle & Safety tab dropdown: SafeHub+, SmartSupport, CyberProtect, SmartSupportHome, CyberCover, ScamSafe, Travel Protection |
+| `starhub-membership-nav.page.js` | `starhub-membership-nav.locators.js` | Membership tab dropdown: Membership Tiers, Why StarHub, Premier League |
+| `starhub-mobile-purchase.page.js` | `starhub-mobile-purchase.locators.js` | Device PDP: Galaxy A57 5G selection, colour/storage/payment defaults, Next button, auth popup (Log in with Hub ID, Sign up) |
 
 **Rules:**
 - If a locator already exists for an element, use it — do not redefine it
 - If a page object method already covers an action, call it — do not reimplement it
 - If a spec file already covers a scenario, note it and extend rather than duplicate
 - Only create new files when there is genuinely no existing coverage
+
+All nav page objects share the same pattern: `async open<Tab>Dropdown()` → individual `click<Link>()` methods.
+All nav page objects share the same `goto()` landing URL: `https://www.starhub.com/personal.html`
 
 ---
 
@@ -290,6 +299,18 @@ To reuse this agent for a new project:
 6. This agent automatically reads those files and grounds every output in them
 
 The agent behaviour does not change — only the context files change per project.
+
+---
+
+## STARHUB-SPECIFIC NOTES
+
+- **Two subdomains**: `www.starhub.com` (marketing/info pages) and `consumer.starhub.com` (store/purchase pages)
+- **Navigation tabs**: 5 tabs open megamenu dropdowns — all covered by existing nav page objects
+- **Purchase auth gate**: Clicking "Next" on any device PDP triggers a login popup — use `starhub-mobile-purchase.page.js` for auth popup assertions
+- **Page load strategy**: Use `waitUntil: 'domcontentloaded'` + `waitForTimeout(3000)` for heavy JS pages on `consumer.starhub.com`
+- **Cookie consent**: Must be dismissed with `button "Got it"` on first load — all page objects handle this in `dismissCookieConsent()`
+- **Default device config**: Galaxy A57 5G defaults to Colour "Awesome Navy", Storage "256GB", Payment "24-month"
+- **Selector for Next button**: Use `.last()` — two "Next" buttons exist on PDP (image carousel "Next Item" + purchase "Next")
 
 ---
 
