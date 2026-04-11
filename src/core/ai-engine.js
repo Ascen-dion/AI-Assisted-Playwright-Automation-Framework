@@ -8,8 +8,17 @@ const logger = require('../../utils/logger');
  * Flexible AI Engine supporting multiple providers:
  * - OpenRouter (cloud, fast, multiple models)
  * - Anthropic Claude (cloud)
+ * - Groq (cloud, fast inference)
+ * - GitHub Copilot (cloud, via GitHub Models API - OpenAI-compatible)
  * - Local LLM via Ollama/LM Studio (OpenAI-compatible)
  * - Disabled mode (fallback to standard selectors)
+ *
+ * GitHub Copilot setup:
+ *   1. Set AI_PROVIDER=copilot in .env
+ *   2. Set GITHUB_TOKEN to a GitHub PAT with 'models:read' permission
+ *      (or a token from 'gh auth token' if you have Copilot subscription)
+ *   3. Optionally set COPILOT_MODEL (default: claude-sonnet-4-5)
+ *      Available models: https://github.com/marketplace/models
  */
 /**
  * Default list of free OpenRouter models for automatic fallback.
@@ -31,7 +40,7 @@ const DEFAULT_FREE_MODELS = [
 
 class AIEngine {
   constructor() {
-    this.provider = process.env.AI_PROVIDER || 'openrouter'; // 'openrouter', 'anthropic', 'local', 'disabled'
+    this.provider = process.env.AI_PROVIDER || 'openrouter'; // 'openrouter', 'copilot', 'anthropic', 'groq', 'local', 'disabled'
     this.conversationHistory = [];
     
     // Model fallback rotation state
@@ -69,6 +78,10 @@ class AIEngine {
         this.initializeGroq();
         break;
 
+      case 'copilot':
+        this.initializeCopilot();
+        break;
+
       case 'local':
         this.initializeLocal();
         break;
@@ -98,6 +111,25 @@ class AIEngine {
     this.primaryModel = this.model;
     logger.info(`Groq configured with model: ${this.model}`);
     logger.info('🚀 Using fast cloud-based AI (Groq)');
+  }
+
+  initializeCopilot() {
+    // GitHub Models API is OpenAI-compatible, uses same SDK
+    if (!process.env.GITHUB_TOKEN) {
+      logger.error('GITHUB_TOKEN not found in .env file!');
+      throw new Error(
+        'GitHub token required. Set GITHUB_TOKEN to a PAT with models:read scope ' +
+        '(or run: gh auth token). See https://github.com/marketplace/models'
+      );
+    }
+    this.client = new OpenAI({
+      baseURL: 'https://models.inference.ai.azure.com',
+      apiKey: process.env.GITHUB_TOKEN,
+    });
+    this.model = process.env.COPILOT_MODEL || 'claude-sonnet-4-5';
+    this.primaryModel = this.model;
+    logger.info(`GitHub Copilot (GitHub Models) configured with model: ${this.model}`);
+    logger.info('🚀 Using GitHub Copilot via GitHub Models API');
   }
 
   initializeOpenRouter() {
@@ -223,7 +255,20 @@ class AIEngine {
           }
           continue;
         }
-        // Non-402 error — rethrow
+        // Network-level connection reset (ECONNRESET / terminated) — rotate and retry
+        const isNetworkReset =
+          error.code === 'ECONNRESET' ||
+          error.message === 'terminated' ||
+          error.cause?.code === 'ECONNRESET' ||
+          error.cause?.message === 'terminated';
+        if (isNetworkReset) {
+          logger.warn(`⚠️ Connection reset (ECONNRESET) on model: ${this.model} — rotating to next model...`);
+          if (!this.rotateToNextModel()) {
+            throw new Error('All free OpenRouter models exhausted (connection reset on every model). Check your network or try again.');
+          }
+          continue;
+        }
+        // Non-retryable error — rethrow
         throw error;
       }
     }
@@ -289,7 +334,7 @@ Provide your response in JSON format with the following structure:
         logger.info(`AI found selector with ${result.confidence} confidence`);
         return result;
         
-      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq' || this.provider === 'copilot') {
         response = await this.callWithFallback((model) =>
           this.client.chat.completions.create({
             model: model,
@@ -337,9 +382,9 @@ Provide your response in JSON format with the following structure:
       };
     }
     
-    // OpenRouter vision support (some models)
-    if (this.provider === 'openrouter') {
-      logger.warn('Vision analysis with OpenRouter - using text-based analysis');
+    // OpenRouter / Copilot / Groq vision support (some models)
+    if (this.provider === 'openrouter' || this.provider === 'groq' || this.provider === 'copilot') {
+      logger.warn(`Vision analysis with ${this.provider} - using text-based analysis`);
       return {
         matches: true,
         confidence: 0.7,
@@ -439,7 +484,7 @@ Response format:
         });
         return JSON.parse(response.content[0].text);
         
-      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq' || this.provider === 'copilot') {
         response = await this.callWithFallback((model) =>
           this.client.chat.completions.create({
             model: model,
@@ -513,7 +558,7 @@ Provide analysis in JSON:
         });
         return JSON.parse(response.content[0].text);
         
-      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq' || this.provider === 'copilot') {
         response = await this.callWithFallback((model) =>
           this.client.chat.completions.create({
             model: model,
@@ -562,7 +607,7 @@ Provide analysis in JSON:
         
         return response.content[0].text;
         
-      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq' || this.provider === 'copilot') {
         const messages = [];
         
         if (systemMessage) {
@@ -647,7 +692,7 @@ Return ONLY the JavaScript code for the test file, no markdown, no explanations,
         logger.info('Test script generated successfully');
         return this.cleanGeneratedScript(script);
         
-      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq') {
+      } else if (this.provider === 'openrouter' || this.provider === 'local' || this.provider === 'groq' || this.provider === 'copilot') {
         let script = null;
         let canRotate = true;
         while (!script && canRotate) {

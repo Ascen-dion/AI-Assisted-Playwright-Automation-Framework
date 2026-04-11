@@ -105,6 +105,13 @@ function normalizeCandidateText(value) {
 }
 
 function getTestCaseTitle(candidate, index, fallback = 'Verification') {
+  // If the scenario is a plain string (e.g. "Scenario 1: Navigate to ..."), use it directly
+  if (typeof candidate === 'string') {
+    // Strip leading "Scenario N:" prefix if present, keep the rest as the title
+    const stripped = candidate.replace(/^scenario\s*\d+\s*:\s*/i, '').trim();
+    return `Test Case ${index + 1}: ${stripped || fallback}`;
+  }
+
   const rawTitle = [
     candidate?.title,
     candidate?.name,
@@ -118,6 +125,11 @@ function getTestCaseTitle(candidate, index, fallback = 'Verification') {
 }
 
 function getScenarioText(candidate, fallback = 'Verify the requirement') {
+  // If the scenario is a plain string, use it directly
+  if (typeof candidate === 'string') {
+    return candidate.trim() || fallback;
+  }
+
   return [
     candidate?.scenario,
     candidate?.scenarioName,
@@ -409,8 +421,12 @@ ${contextPrompt}
         
         testPlan.testScenarios.forEach((scenario, index) => {
           if (index === 0) {
-            console.log('[DEBUG] First MCP scenario keys:', Object.keys(scenario || {}));
+            // Log whether scenario is string or object
+            console.log('[DEBUG] First MCP scenario type:', typeof scenario);
             console.log('[DEBUG] First MCP scenario preview:', JSON.stringify(scenario).substring(0, 300));
+            if (typeof scenario === 'object' && scenario !== null) {
+              console.log('[DEBUG] First MCP scenario keys:', Object.keys(scenario));
+            }
           }
 
           const scenarioText = getScenarioText(scenario);
@@ -418,31 +434,49 @@ ${contextPrompt}
           // Handle both direct testSteps in scenario and testSteps lookup by scenario name
           let steps = '';
           
-          if (scenario.testSteps && Array.isArray(scenario.testSteps)) {
-            // Direct testSteps array in scenario
+          if (typeof scenario === 'object' && scenario !== null && scenario.testSteps && Array.isArray(scenario.testSteps)) {
+            // Direct testSteps array in scenario object
             steps = scenario.testSteps.map((step, i) => `${i + 1}. ${step}`).join('\n');
-          } else if (testPlan.testSteps && testPlan.testSteps[scenarioText]) {
-            // testSteps lookup by scenario name
-            steps = testPlan.testSteps[scenarioText].map((step, i) => {
-              // Remove existing numbering if present
-              const cleanStep = step.replace(/^\d+\.\s*/, '');
-              return `${i + 1}. ${cleanStep}`;
-            }).join('\n');
-          } else {
+          } else if (testPlan.testSteps) {
+            // Try lookup by scenarioText, then by stripped key (without "Scenario N:" prefix)
+            const strippedKey = scenarioText.replace(/^scenario\s*\d+\s*:\s*/i, '').trim();
+            const stepsArray =
+              testPlan.testSteps[scenarioText] ||
+              testPlan.testSteps[strippedKey] ||
+              // also try finding a key that contains the scenario text
+              Object.entries(testPlan.testSteps).find(([k]) =>
+                k.toLowerCase().includes(strippedKey.toLowerCase().substring(0, 30))
+              )?.[1];
+
+            if (stepsArray && Array.isArray(stepsArray)) {
+              steps = stepsArray.map((step, i) => {
+                const cleanStep = step.replace(/^\d+\.\s*/, '');
+                return `${i + 1}. ${cleanStep}`;
+              }).join('\n');
+            }
+          }
+
+          if (!steps) {
             // Fallback - use story's extracted URL or generic navigation
             const fallbackUrl = (storyWithContext.extractedUrls && storyWithContext.extractedUrls.length > 0) ? storyWithContext.extractedUrls[0] : normalizedContext.targetUrl;
-            const stepText = getScenarioText(scenario, 'Verify the expected behavior');
-            steps = `1. Navigate to ${fallbackUrl}\n2. ${stepText}`;
+            steps = `1. Navigate to ${fallbackUrl}\n2. ${scenarioText}`;
           }
           
           // Handle expectedResults similarly
           let expected = '';
-          if (scenario.expectedResults) {
+          if (typeof scenario === 'object' && scenario !== null && scenario.expectedResults) {
             expected = scenario.expectedResults;
-          } else if (testPlan.expectedResults && testPlan.expectedResults[scenarioText]) {
-            expected = testPlan.expectedResults[scenarioText];
-          } else {
-            expected = getScenarioText(scenario, 'Expected behavior is satisfied');
+          } else if (testPlan.expectedResults) {
+            const strippedKey = scenarioText.replace(/^scenario\s*\d+\s*:\s*/i, '').trim();
+            expected =
+              testPlan.expectedResults[scenarioText] ||
+              testPlan.expectedResults[strippedKey] ||
+              Object.entries(testPlan.expectedResults).find(([k]) =>
+                k.toLowerCase().includes(strippedKey.toLowerCase().substring(0, 30))
+              )?.[1] || '';
+          }
+          if (!expected) {
+            expected = scenarioText.replace(/^navigate to /i, 'Successfully verified: ') || 'Expected behavior is satisfied';
           }
             
           testCases.push({
@@ -811,7 +845,7 @@ app.post('/api/workflow/execute-tests', async (req, res) => {
       console.log(`[DEBUG] Files in tests directory: ${files.join(', ')}`);
     }
     
-    const maxRetries = 2;
+    const maxRetries = 1;
     let attempt = 1;
     let lastResults = null;
     let healingApplied = false;
@@ -1014,9 +1048,60 @@ app.post('/api/workflow/update-results', async (req, res) => {
 
 /**
  * Builds a slug from a storyId (e.g. "ECOM-101" -> "ecom-101")
+ * Kept for internal reference; prefer meaningfulSlug() for file naming.
  */
 function storySlug(storyId) {
   return storyId.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+}
+
+/**
+ * Builds a human-readable slug from the story title, falling back to the URL
+ * path and then to the storyId slug.
+ * Examples:
+ *   "Verify Mobile Devices listing page loads" → "mobile-devices-listing"
+ *   URL path /personal/mobile/smartphones      → "mobile-smartphones"
+ *   ED-70 (no title)                           → "ed-70"
+ */
+function meaningfulSlug(story, storyId, targetUrl) {
+  const stopWords = new Set([
+    'a','an','the','is','are','was','were','be','been','being',
+    'as','of','to','for','in','on','at','by','with','from',
+    'and','or','but','if','when','where','which','that','this','these','those',
+    'it','its','we','our','you','your','they','their','he','his','she','her',
+    'i','my','do','does','did','will','would','could','should','may','can','has','have','had',
+    'user','users','please','verify','check','ensure','test','validate','should','page','pages'
+  ]);
+
+  // --- Priority 1: story title ---
+  if (story?.title && story.title.toLowerCase() !== storyId.toLowerCase()) {
+    const words = story.title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .split(/\s+/)
+      .filter(w => w.length > 2 && !stopWords.has(w));
+
+    if (words.length > 0) {
+      return words.slice(0, 5).join('-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    }
+  }
+
+  // --- Priority 2: meaningful URL path segments ---
+  if (targetUrl) {
+    try {
+      const urlObj = new URL(targetUrl);
+      const parts = urlObj.pathname
+        .split('/')
+        .filter(p => p && !/^(index\.html?|default\.aspx?)$/i.test(p))
+        .map(p => p.replace(/\.html?$/i, ''));
+      if (parts.length > 0) {
+        const raw = parts.slice(-2).join('-').replace(/[^a-z0-9-]/g, '-');
+        return raw.replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 50);
+      }
+    } catch (_) {}
+  }
+
+  // --- Fallback: storyId (existing behaviour) ---
+  return storySlug(storyId);
 }
 
 /**
@@ -1059,14 +1144,185 @@ function parsePOMFiles(rawCode, slug, storyId) {
 }
 
 /**
+ * Scans existing page objects to find one that already covers the target page.
+ * Matching priority:
+ *   1. Exact slug match  – e.g. a previously generated file for the same story title
+ *   2. URL match         – the existing page object imports the same base URL
+ *
+ * Returns null when nothing is found, otherwise:
+ *   { slug, className, pageFilePath, locatorsFilePath, pageObjectCode, locatorsCode }
+ */
+async function findExistingPageAsset(slug, targetUrl) {
+  const pagesDir = path.join(__dirname, '..', 'src', 'pages');
+  const locatorsDir = path.join(pagesDir, 'locators');
+
+  // Helper: try to load a specific slug
+  async function loadSlug(s) {
+    const pageFilePath = path.join(pagesDir, `${s}.page.js`);
+    const locatorsFilePath = path.join(locatorsDir, `${s}.locators.js`);
+    const pageExists = await fs.access(pageFilePath).then(() => true).catch(() => false);
+    if (!pageExists) return null;
+    const pageObjectCode = await fs.readFile(pageFilePath, 'utf-8');
+    const locatorsCode = await fs.access(locatorsFilePath).then(() => fs.readFile(locatorsFilePath, 'utf-8')).catch(() => '');
+    const classMatch = pageObjectCode.match(/class\s+(\w+)/);
+    const className = classMatch ? classMatch[1] : slugToClassName(s);
+    return { slug: s, className, pageFilePath, locatorsFilePath, pageObjectCode, locatorsCode };
+  }
+
+  // Priority 1: exact slug match
+  const exactMatch = await loadSlug(slug);
+  if (exactMatch) {
+    console.log(`[POM] 🔁 Reusing existing page asset: src/pages/${slug}.page.js (exact slug match)`);
+    return exactMatch;
+  }
+
+  // Priority 2: scan all *.page.js files for a URL match
+  if (targetUrl) {
+    let files;
+    try { files = await fs.readdir(pagesDir); } catch { return null; }
+    const pageFiles = files.filter(f => f.endsWith('.page.js'));
+
+    // Normalise URL for comparison – strip trailing slash, lowercase hostname
+    const normalise = (u) => {
+      try {
+        const parsed = new URL(u);
+        return (parsed.hostname + parsed.pathname).toLowerCase().replace(/\/$/, '');
+      } catch { return u.toLowerCase().replace(/\/$/, ''); }
+    };
+    const normTarget = normalise(targetUrl);
+
+    for (const file of pageFiles) {
+      const s = file.replace(/\.page\.js$/, '');
+      const filePath = path.join(pagesDir, file);
+      const code = await fs.readFile(filePath, 'utf-8').catch(() => '');
+      // Extract URL constant from page object (e.g.  const URL = 'https://...')
+      const urlMatch = code.match(/const\s+(?:URL|BASE_URL)\s*=\s*['"`]([^'"`]+)['"`]/);
+      if (urlMatch) {
+        const normFile = normalise(urlMatch[1]);
+        // Match if target URL starts with the page's base URL or vice-versa
+        if (normTarget.startsWith(normFile) || normFile.startsWith(normTarget)) {
+          const locatorsFilePath = path.join(locatorsDir, `${s}.locators.js`);
+          const locatorsCode = await fs.access(locatorsFilePath).then(() => fs.readFile(locatorsFilePath, 'utf-8')).catch(() => '');
+          const classMatch = code.match(/class\s+(\w+)/);
+          const className = classMatch ? classMatch[1] : slugToClassName(s);
+          console.log(`[POM] 🔁 Reusing existing page asset: src/pages/${file} (URL match: ${normFile} ≈ ${normTarget})`);
+          return { slug: s, className, pageFilePath: filePath, locatorsFilePath, pageObjectCode: code, locatorsCode };
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
  * Calls the Generator Agent with a POM-aware prompt and saves all three files.
+ * When an existing page object already covers the target URL, reuses it and
+ * generates only the spec file (spec-only mode).
  * Returns the spec filename so callers can reference it.
  */
 async function generatePOMTestFiles({ story, storyId, strategy, testCases, targetUrl, pageInspection, projectContext }) {
-  const slug = storySlug(storyId);
-  const className = slugToClassName(slug);
+  const slug = meaningfulSlug(story, storyId, targetUrl);
   const isAddStory = strategy.storyType === 'ADD';
   const contextPrompt = buildContextPromptBlock(projectContext || story?.projectContext || {});
+
+  // ── Check for reusable existing page assets ──────────────────────────────
+  const existingAsset = await findExistingPageAsset(slug, targetUrl);
+
+  if (existingAsset) {
+    // ── SPEC-ONLY MODE: reuse existing locators + page object ───────────────
+    const { slug: assetSlug, className, pageObjectCode: existingPageCode, locatorsCode: existingLocatorsCode } = existingAsset;
+
+    console.log(`[POM] ♻️  Spec-only mode – reusing src/pages/${assetSlug}.page.js`);
+
+    // Extract method signatures from the existing page object so the AI knows what's available
+    const methodSignatures = [...existingPageCode.matchAll(/async\s+(\w+)\s*\([^)]*\)/g)]
+      .map(m => `  ${m[0].replace(/\{.*/, '').trim()}`).join('\n');
+    const locatorNames = [...existingLocatorsCode.matchAll(/(?:const|module\.exports\.)\s*(\w+)\s*=/g)]
+      .map(m => m[1]).join(', ');
+
+    const specOnlyPrompt = `You are an expert Playwright automation engineer writing a new spec file.
+
+An existing Page Object already covers this page – DO NOT regenerate the page object or locators.
+Your task: write ONLY the spec file that imports and uses the EXISTING page object.
+
+EXISTING PAGE OBJECT: src/pages/${assetSlug}.page.js
+Class name: ${className}
+Available methods (use these – do NOT invent new ones):
+${methodSignatures || '  (see page object below)'}
+
+EXISTING LOCATORS: src/pages/locators/${assetSlug}.locators.js
+Exported locators: ${locatorNames || '(see locators file below)'}
+
+FULL EXISTING PAGE OBJECT CODE (for reference):
+\`\`\`javascript
+${existingPageCode}
+\`\`\`
+
+STORY DETAILS:
+ID: ${storyId}
+Title: ${story?.title || storyId}
+Description: ${story?.description || 'N/A'}
+Story Type: ${strategy.storyType} (${strategy.verificationApproach})
+Target URL: ${targetUrl}
+
+TEST CASES TO AUTOMATE:
+${testCases.map((tc, i) => `${i + 1}. ${tc.title}\n   Steps: ${tc.steps}\n   Expected: ${tc.expected}`).join('\n\n')}
+
+${contextPrompt}
+
+${isAddStory ? `⚠️ ADD STORY: Test PAGE STRUCTURE only – do NOT assert on end-state content that doesn't exist yet.` : ''}
+
+OUTPUT – a single spec file using this EXACT marker so it can be saved:
+
+// === FILE: src/tests/${assetSlug}-automated.spec.js ===
+const { test, expect } = require('@playwright/test');
+const ${className} = require('../pages/${assetSlug}.page');
+
+test.describe('${story?.title || storyId}', () => {
+  let pomPage;
+
+  test.beforeEach(async ({ page }) => {
+    pomPage = new ${className}(page);
+    await pomPage.goto();
+    try { await page.getByRole('button', { name: /accept|agree|consent|got it/i }).first().click({ timeout: 3000 }); } catch (e) {}
+  });
+
+  // one test() per test case – call existing page object methods only
+});
+
+PLAYWRIGHT RULES (strictly enforced):
+- Only call methods that exist on the page object above – never access page/locator directly in the spec.
+- URL assertions: expect(page).toHaveURL(/keyword/i)  – never exact string.
+- Title assertions: expect(page).toHaveTitle(/keyword/i) – NEVER page.locator('title').
+- Each test() must have try/catch with console.error + re-throw, plus console.log('✓ …') for each passing assertion.
+- Return ONLY executable JavaScript – no markdown fences, no prose.`;
+
+    const rawSpec = await testAgents.generateTest(specOnlyPrompt, {
+      url: targetUrl,
+      framework: 'playwright',
+      useAIPage: false,
+      includeComments: true
+    });
+
+    // Extract only the spec section (ignore any accidental page/locator output)
+    const specMarker = `// === FILE: src/tests/${assetSlug}-automated.spec.js ===`;
+    const markerIdx = rawSpec.indexOf(specMarker);
+    const clean = (s) => s.replace(/```javascript\n?/g, '').replace(/```js\n?/g, '').replace(/```\n?/g, '').trim();
+    const specCode = clean(markerIdx !== -1 ? rawSpec.slice(markerIdx + specMarker.length) : rawSpec);
+
+    const specFilename = `${assetSlug}-automated.spec.js`;
+    const specFilepath = path.join(__dirname, '..', 'src', 'tests', specFilename);
+    await fs.writeFile(specFilepath, specCode);
+
+    console.log(`[POM] ✅ Saved spec (reused pages) → src/tests/${specFilename}`);
+    console.log(`[POM] ⏭️  Skipped page obj & locators (already exist and were reused)`);
+
+    return { specFilename, specFilepath, locatorsCode: existingLocatorsCode, pageObjectCode: existingPageCode, specCode };
+  }
+
+  // ── FULL MODE: generate all three POM files from scratch ─────────────────
+  const className = slugToClassName(slug);
 
   const pomPrompt = `You are an expert Playwright automation engineer. Generate a Page Object Model (POM) structured test suite split into THREE files.
 
@@ -1608,6 +1864,9 @@ async function applyTestHealing({ filename, testCases, storyId, story: inputStor
         }
       }
       
+      // Derive the slug from the existing filename (already has the meaningful name)
+      const healSlug = filename.replace(/-automated\.spec\.js$/, '');
+
       regeneratePrompt = `You are a Playwright automation engineer applying self-healing fixes. Generate a COMPLETE POM-structured test file.
 
 The previous test failed. Apply the fixes below and regenerate the SPEC FILE ONLY (the page object already exists – do not regenerate it, just import it).
@@ -1627,7 +1886,7 @@ Test Cases:
 ${JSON.stringify(testCases, null, 2)}
 
 POM IMPORT (use this exact path):
-const PageObject = require('../pages/${storySlug(storyId)}.page');
+const PageObject = require('../pages/${healSlug}.page');
 
 FIXES TO APPLY:
 ${isLogicError ? '- STRATEGY FIX: Test page structure / navigation – NOT content that does not exist yet\n' : ''}\
@@ -1642,8 +1901,8 @@ ${errors.textMismatches.length > 0 ? '- Use flexible text matching (contains, no
 - .first() on every multi-match locator
 
 REQUIREMENTS:
-1. Output ONLY the spec file (src/tests/${storySlug(storyId)}-automated.spec.js)
-2. Import the page object: const PageObject = require('../pages/${storySlug(storyId)}.page');
+1. Output ONLY the spec file (src/tests/${healSlug}-automated.spec.js)
+2. Import the page object: const PageObject = require('../pages/${healSlug}.page');
 3. Use test.describe() + test.beforeEach() + individual test() per test case
 4. All locator calls go through the page object – no raw selectors in the spec
 5. Return ONLY executable JavaScript – no markdown, no explanations

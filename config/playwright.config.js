@@ -27,9 +27,13 @@ module.exports = defineConfig({
   // Opt out of parallel tests on CI
   workers: process.env.CI ? 1 : undefined,
   
+  // Playwright artifacts output directory (videos, traces, screenshots)
+  // Must NOT be the same folder as the HTML reporter output
+  outputDir: path.resolve(__dirname, '../test-results/artifacts'),
+
   // Reporter to use
   reporter: [
-    ['html', { outputFolder: path.resolve(__dirname, '../test-results/html-report') }],
+    ['html', { outputFolder: path.resolve(__dirname, '../test-results/html-report'), open: 'never' }],
     ['json', { outputFile: path.resolve(__dirname, '../test-results/results.json') }],
     ['list']
   ],
