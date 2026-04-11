@@ -1,0 +1,285 @@
+- generic [ref=e8]:
+  - generic [ref=e11]:
+    - generic [ref=e15]:
+      - text: 
+      - generic [ref=e18]:
+        - link "Personal" [ref=e20] [cursor=pointer]:
+          - /url: https://www.starhub.com/personal.html
+          - generic [ref=e21]: Personal
+        - link "SME" [ref=e23] [cursor=pointer]:
+          - /url: https://www.starhub.com/sme.html
+          - generic [ref=e24]: SME
+        - link "Enterprise" [ref=e26] [cursor=pointer]:
+          - /url: https://www.starhub.com/business.html
+          - generic [ref=e27]: Enterprise
+        - link "About us" [ref=e29] [cursor=pointer]:
+          - /url: https://www.starhub.com/about-us.html
+          - generic [ref=e30]: About us
+    - generic [ref=e35]:
+      - tooltip "toggle tooltip" [ref=e36] [cursor=pointer]:
+        - generic [ref=e38]:
+          - text: My Account
+          - generic [ref=e41]: 
+      - generic:
+        - generic:
+          - generic:
+            - generic: Manage my account (Preferred)
+            - generic:
+              - img
+              - img
+            - generic:
+              - link "Hub ID login":
+                - /url: "#"
+                - generic: Hub ID login
+  - generic [ref=e45]:
+    - generic [ref=e46]:
+      - button [ref=e49] [cursor=pointer]
+      - generic [ref=e50]:
+        - text: 
+        - generic [ref=e51]:
+          - text:  
+          - generic [ref=e52]:
+            - generic [ref=e55]:
+              - generic [ref=e56]: Mobile
+              - text: 
+            - generic [ref=e59]:
+              - generic [ref=e60]: Broadband
+              - text: 
+            - generic [ref=e63]:
+              - generic [ref=e64]: Entertainment
+              - text: 
+            - generic [ref=e67]:
+              - generic [ref=e68]: Lifestyle & Safety
+              - text: 
+            - generic [ref=e71]:
+              - generic [ref=e72]: Membership
+              - text: 
+    - generic [ref=e74] [cursor=pointer]: Support
+    - text: 
+    - link [ref=e82] [cursor=pointer]:
+      - /url: "#"
+      - img [ref=e84]
+  - generic [ref=e85]:
+    - generic [ref=e89]:
+      - text: 
+      - generic [ref=e90]:
+        - link "Home" [ref=e91] [cursor=pointer]:
+          - /url: "#"
+        - generic [ref=e94]: 
+      - generic [ref=e95]:
+        - generic [ref=e96]:
+          - link "Mobile" [ref=e97] [cursor=pointer]:
+            - /url: "#"
+          - generic [ref=e100]: 
+        - generic [ref=e102]: Samsung Galaxy A57 5G
+    - main [ref=e103]:
+      - generic [ref=e104]:
+        - generic [ref=e112]:
+          - generic [ref=e113]:
+            - generic [ref=e116]:
+              - generic [ref=e117]: New
+              - generic "Item 1 of 6. First Item." [ref=e119]:
+                - generic [ref=e122]:
+                  - img [ref=e123]
+                  - img [ref=e124]
+                  - img [ref=e125]
+                  - img
+                  - img
+                  - img
+                - text: 
+                - button "Next Item" [ref=e126] [cursor=pointer]:
+                  - generic [ref=e127]: 
+                - navigation [ref=e128]:
+                  - button "Go To Item 1" [ref=e129] [cursor=pointer]
+                  - button "Go To Item 2" [ref=e130] [cursor=pointer]
+                  - button "Go To Item 3" [ref=e131] [cursor=pointer]
+                  - button "Go To Item 4" [ref=e132] [cursor=pointer]
+                  - button "Go To Item 5" [ref=e133] [cursor=pointer]
+                  - button "Go To Item 6" [ref=e134] [cursor=pointer]
+            - generic [ref=e135]:
+              - generic [ref=e136]:
+                - generic [ref=e137]:
+                  - generic [ref=e138]: Samsung
+                  - generic [ref=e140]: Galaxy A57 5G
+                  - generic [ref=e142]: "Retail price: $698.00"
+                - generic [ref=e144]:
+                  - generic [ref=e146]:
+                    - generic [ref=e147]:
+                      - generic [ref=e150]: 
+                      - generic [ref=e151]:
+                        - text: Up to $300 off when you pay later with 5G Unlimited+ plans (Core & above)
+                        - generic [ref=e152]:
+                          - generic [ref=e153]: (
+                          - link "details" [ref=e154] [cursor=pointer]:
+                            - /url: "#"
+                          - generic [ref=e155]: )
+                    - generic [ref=e156]:
+                      - generic [ref=e159]: 
+                      - generic [ref=e160]:
+                        - text: "New line/port-in bonus: Up to $300 off device with 5G Unlimited+ Plus Plans & above"
+                        - generic [ref=e161]:
+                          - generic [ref=e162]: (
+                          - link "details" [ref=e163] [cursor=pointer]:
+                            - /url: "#"
+                          - generic [ref=e164]: )
+                    - generic [ref=e165]:
+                      - generic [ref=e168]: 
+                      - generic [ref=e169]: Additional savings for existing customers with promo code
+                  - generic [ref=e170]:
+                    - generic [ref=e171]: Bonus offers with this device!
+                    - generic [ref=e174]:
+                      - generic [ref=e177]:
+                        - generic [ref=e178]: Extra discounts with DeviceDollars
+                        - generic [ref=e184] [cursor=pointer]: 
+                      - generic [ref=e188]: Use your promo code for extra device savings (pay later with 5G Unlimited+ Plus Plan & above)
+                      - generic [ref=e193]: Got a pay later promo code? Apply at checkout
+                      - generic [ref=e198]: Got a plan promo code? Apply at checkout
+                      - generic [ref=e203]: CIS customers get up to $250 off devices! Visit a StarHub shop to find out more.
+                      - generic [ref=e208]: Got a device promo code? Apply at checkout
+              - generic [ref=e213]:
+                - generic [ref=e215]: "Colour: Awesome Navy"
+                - generic [ref=e229]:
+                  - generic [ref=e230]: "Storage: 256GB"
+                  - generic [ref=e238] [cursor=pointer]: 256GB
+              - generic [ref=e241]:
+                - generic [ref=e242]:
+                  - generic [ref=e243]: Payment option
+                  - generic:
+                    - img
+                - generic [ref=e244]:
+                  - generic [ref=e245]:
+                    - generic [ref=e247]:
+                      - generic [ref=e254] [cursor=pointer]: 24-month
+                      - generic [ref=e261] [cursor=pointer]: 12-month
+                    - generic [ref=e262]: Or
+                  - generic [ref=e269] [cursor=pointer]: Pay today
+              - generic [ref=e271]:
+                - generic [ref=e274]:
+                  - checkbox [ref=e279] [cursor=pointer]
+                  - generic [ref=e280]: SmartSupport
+                  - generic [ref=e283]:
+                    - img
+                    - text: Free for your 1st month!
+                  - generic [ref=e286]: $14.26/mth
+                  - generic [ref=e289]:
+                    - generic [ref=e293]:
+                      - generic [ref=e297]: 
+                      - generic [ref=e299]: 1 replacement within a 12-month period and unlimited swaps for any reason.
+                    - generic [ref=e303]:
+                      - generic [ref=e307]: 
+                      - generic [ref=e309]: Free doorstep delivery within 2 hours.
+                  - generic [ref=e310]:
+                    - img
+                - link [ref=e313] [cursor=pointer]:
+                  - /url: "#"
+                  - generic [ref=e314]:
+                    - img
+              - generic [ref=e317]:
+                - generic [ref=e318]: Pay later
+                - generic [ref=e319]:
+                  - text: $29.08
+                  - generic [ref=e320]: /mthx24 mths
+                - button "Next" [ref=e322] [cursor=pointer]:
+                  - generic [ref=e324]: Next
+                - generic [ref=e325]: Exclusive discounts and subscriptions will be applied at checkout.
+          - generic [ref=e327]:
+            - generic [ref=e328]:
+              - generic [ref=e329] [cursor=pointer]: View Specs
+              - generic [ref=e330] [cursor=pointer]: What’s in the package
+            - generic [ref=e331]:
+              - generic [ref=e332]:
+                - generic [ref=e333]: Dimension
+                - list [ref=e334]:
+                  - listitem [ref=e335]: "Size (mm): 161.5 x 76.8 x 6.9mm"
+                  - listitem [ref=e336]: "Weight: 179g"
+              - generic [ref=e338]:
+                - generic [ref=e339]: Front camera
+                - list [ref=e340]:
+                  - listitem [ref=e341]: 12.0 MP
+                - generic [ref=e342]: Rear camera
+                - list [ref=e343]:
+                  - listitem [ref=e344]: 50MP + 12MP + 5MP + OIS
+              - generic [ref=e346]:
+                - generic [ref=e347]: Battery Life
+                - list [ref=e348]:
+                  - listitem [ref=e349]: 5000 mAh
+              - generic [ref=e351]:
+                - generic [ref=e352]: CPU
+                - list [ref=e353]:
+                  - listitem [ref=e354]: Exynos 1680 (4nm)
+              - generic [ref=e356]:
+                - generic [ref=e357]: Display
+                - list [ref=e358]:
+                  - listitem [ref=e359]: 6.7inch FHD+, Super AMOLED+, 120Hz
+              - generic [ref=e361]:
+                - generic [ref=e362]: Operating System
+                - list [ref=e363]:
+                  - listitem [ref=e364]: Android 16
+              - generic [ref=e366]:
+                - generic [ref=e367]: Wireless Tech
+                - list [ref=e368]:
+                  - listitem [ref=e369]: 4G
+                  - listitem [ref=e370]: 5G
+                  - listitem [ref=e371]: NFC
+        - generic:
+          - generic: 
+    - generic:
+      - generic: 
+    - contentinfo [ref=e373]:
+      - generic [ref=e376]:
+        - generic [ref=e378]:
+          - generic [ref=e379]:
+            - generic [ref=e380]: Other Useful Links
+            - generic [ref=e382]:
+              - link "Check out our latest promotions!" [ref=e385] [cursor=pointer]:
+                - /url: https://www.starhub.com/personal/promotions.html
+              - link "Switch to StarHub" [ref=e388] [cursor=pointer]:
+                - /url: https://www.starhub.com/personal/switch-to-starhub.html
+              - link "Store Locations" [ref=e391] [cursor=pointer]:
+                - /url: https://www.starhub.com/shop-locations.html
+              - link "Reviews, Guides & How-To's" [ref=e394] [cursor=pointer]:
+                - /url: https://www.starhub.com/personal/how-to.html
+          - generic [ref=e395]:
+            - generic [ref=e396]: Support
+            - generic [ref=e398]:
+              - link "Contact Us" [ref=e401] [cursor=pointer]:
+                - /url: https://www.starhub.com/personal/support/contact-us.html
+              - link "FAQ" [ref=e404] [cursor=pointer]:
+                - /url: https://www.starhub.com/personal/support.html
+          - generic [ref=e405]:
+            - generic [ref=e406]: StarHub App
+            - generic [ref=e410]:
+              - link [ref=e411] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e412]
+              - link [ref=e413] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e414]
+              - link [ref=e415] [cursor=pointer]:
+                - /url: "#"
+                - img [ref=e416]
+        - generic [ref=e417]:
+          - generic [ref=e418]:
+            - generic [ref=e420]:
+              - link "Legal Notices" [ref=e422] [cursor=pointer]:
+                - /url: https://www.starhub.com/about-us/legal-notices-and-terms.html
+              - link "Data Protection Policy" [ref=e424] [cursor=pointer]:
+                - /url: https://www.starhub.com/about-us/legal-notices-and-terms/personal-data-protection.html
+              - link "Report Vulnerability" [ref=e426] [cursor=pointer]:
+                - /url: https://vdp.starhub.com/
+              - link "Clickable Links" [ref=e428] [cursor=pointer]:
+                - /url: https://www.starhub.com/about-us/legal-notices-and-terms/clickable-links.html
+            - generic [ref=e429]: © StarHub 2026. All rights reserved.
+          - generic [ref=e431]:
+            - link [ref=e432] [cursor=pointer]:
+              - /url: https://urldefense.com/v3/__https://www.facebook.com/starhub__;!!DPlTs6BR!B2H91uID7iZM7l8INDFTx9hfNsvkO8_cV1nnreIP8qjKCNOeNxkVK3H1u9aJMValYqcW0l1zYoIeC8ord2Q$ [facebook[.]com]
+              - img [ref=e434]
+            - link [ref=e435] [cursor=pointer]:
+              - /url: https://urldefense.com/v3/__https://instagram.com/starhub__;!!DPlTs6BR!B2H91uID7iZM7l8INDFTx9hfNsvkO8_cV1nnreIP8qjKCNOeNxkVK3H1u9aJMValYqcW0l1zYoIeSi4TnKo$ [instagram[.]com]
+              - img [ref=e437]
+            - link [ref=e438] [cursor=pointer]:
+              - /url: https://urldefense.com/v3/__https://twitter.com/StarHub__;!!DPlTs6BR!B2H91uID7iZM7l8INDFTx9hfNsvkO8_cV1nnreIP8qjKCNOeNxkVK3H1u9aJMValYqcW0l1zYoIeAOWV69g$ [twitter[.]com]
+              - img [ref=e440]
+            - link [ref=e441] [cursor=pointer]:
+              - /url: https://urldefense.com/v3/__https://www.youtube.com/user/StarHub__;!!DPlTs6BR!B2H91uID7iZM7l8INDFTx9hfNsvkO8_cV1nnreIP8qjKCNOeNxkVK3H1u9aJMValYqcW0l1zYoIeGTT9VnY$ [youtube[.]com]
+              - img [ref=e443]

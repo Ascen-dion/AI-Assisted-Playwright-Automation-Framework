@@ -1,53 +1,95 @@
-# Application Knowledge — E-Shop Brownfield
+# Application Context - StarHub E-commerce
 
-## Target URL
-https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/
+## Base Configuration
 
-## Technology Stack
-- Frontend: React SPA (Single Page Application)
-- Routing: Client-side routing, no full page reloads between pages
-- Root element: `#root`
-- Hosted on: Azure App Service
+**Target URL**: https://www.starhub.com
+**Application Type**: E-commerce telecommunications website
+**Environment**: Production
+**Domain**: StarHub Singapore telecommunications
 
-## Pages and Routes
+## Application Routes & Navigation
 
-### Homepage — /
-- Hero heading: `h1.hero-title` — text: "Welcome to E-Shop"
-- Hero subtitle: `p.hero-subtitle` — text: "Discover amazing products at great prices"
-- Primary CTA: `a[href="/products"]` — text: "Shop Now"
-- Feature cards (all visible above fold):
-  - "Free Shipping" — On orders over $50
-  - "Secure Payment" — 100% secure transactions
-  - "Easy Returns" — 30-day return policy
-  - "Quality Products" — Carefully curated selection
-- Feature headings rendered as `h3` elements in order (nth 0-3)
+### Primary Routes
+- `/personal.html` - Main personal plans page (landing page)
+- `/personal/store/mobile/devices` - All phones listing page
+- `/personal/store/mobile/devices/samsung/galaxy-a57-5g` - Product detail page
 
-### Products Page — /products
-- Route: `/products`
-- Dynamic content: Products load asynchronously ("Loading products..." shown while fetching)
-- Product cards: `[data-testid*="product"], .product, .product-card, article`
-- Add to Cart buttons: `button:has-text("Add to Cart")` or `[data-testid*="add-to-cart"]`
-- Search: `input[type="search"], input[placeholder*="search"]`
-- Wait for products to load before asserting — avoid asserting on "Loading products..."
+### Key Navigation Paths
+1. **Mobile Phones Flow**:
+   - Home → Mobile (dropdown) → All Phones → Device Selection → Product Details → Purchase Flow
 
-### Cart Page — /cart
-- Route: `/cart`
-- Empty state heading: "Your cart is empty"
-- Empty state sub-text: "Add some products to get started!"
-- Cart count shown in nav: `Cart (0)` when empty, `Cart (N)` when items present
-- Cart link selector: `a[href*="cart"]` or `[data-testid*="cart"]`
+### Page Loading Characteristics
+- **Initial load time**: 3-5 seconds for product pages
+- **JavaScript heavy**: SPA-style navigation with dynamic content loading
+- **Cookie consent**: Required dismissal on first visit
+- **Network requests**: Heavy API usage for product data
 
-## Navigation
-- Logo: `a[href="/"]` with text "🛒 E-Shop"
-- Nav items rendered as `li.nav-item`:
-  - Home: `li.nav-item:has(a[href="/"])`
-  - Products: `li.nav-item:has(a[href="/products"])`
-  - Cart: `li.nav-item:has(a[href="/cart"])` — shows item count in brackets
+## Key UI Elements & Selectors
 
-## Selector Strategy (Priority Order)
-1. `data-testid` attributes where present
-2. ARIA roles: `getByRole('button', { name: ... })`, `getByRole('link', { name: ... })`
-3. Semantic text: `getByText(...)`, `getByLabel(...)`
+### Navigation
+- **Mobile dropdown button**: `button[text="Mobile"]`
+- **All Phones link**: `link[text="All Phones"]`
+- **Breadcrumb navigation**: Present on all product pages
+- **Cookie consent button**: `button[text="Got it"]`
+
+### Product Listing Page
+- **Device cards**: Grid layout with product images, names, pricing
+- **Filters sidebar**: Brand, features, price range controls
+- **Sort dropdown**: Various sorting options (newest, price, popularity)
+- **Total items display**: Shows count of available devices
+- **Samsung Galaxy A57 5G**: First product in "New" section
+
+### Product Detail Page
+- **Color selector**: Defaults to "Awesome Navy"
+- **Storage selector**: Multiple options with 256GB default
+- **Payment options**: 24-month (default), 12-month, Pay today
+- **Next button**: Primary CTA for purchase flow
+- **Add-ons**: SmartSupport optional service
+- **Price display**: Format `$XX.XX/mthx24 mths`
+
+### Authentication Elements (Expected)
+- **Login popup/modal**: Triggered after "Next" button click
+- **Hub ID login button**: Primary authentication method
+- **Sign up link**: Account creation option
+- **Login message**: "Please log in or create an account to continue with your purchase"
+
+## Application-Specific Rules
+
+### Element Stability
+- Product cards use dynamic ref IDs but stable text selectors
+- Navigation uses consistent button/link text
+- Price formatting: `from $XX.XX/mth or $XXX.XX` pattern
+- Color/storage options use clickable text selectors
+
+### Data Validation Points
+- **Product pricing**: Format `from $29.08/mth or $698.00`
+- **Color options**: Text-based selection (e.g., "Awesome Navy")
+- **Storage options**: GB-based values (256GB default)
+- **Payment terms**: Monthly installment calculations
+
+### Error Handling
+- **Slow loading**: Pages may take 3-5 seconds to fully render
+- **Cookie consent**: Must be dismissed before interaction
+- **Dynamic content**: Wait for product data to load before assertions
+
+## Environment Configuration
+
+### Timeouts
+- **Page load**: 60 seconds (heavy JS/API loading)
+- **Element wait**: 15 seconds (dynamic content)
+- **Network wait**: 30 seconds (API-heavy application)
+
+### Browser Configuration
+- **Viewport**: 1920x1080 (desktop-optimized)
+- **User agent**: Default Chromium
+- **JavaScript**: Required (SPA application)
+- **Cookies**: Required for session management
+
+## Selector Priority Strategy
+1. **Text-based selectors**: `getByRole('button', { name: 'Mobile' })`
+2. **Link selectors**: `getByRole('link', { name: 'All Phones' })`
+3. **Exact text matching**: For device names and pricing
+4. **Ref-based selectors**: As fallback for dynamic elements
 4. Stable CSS: class names like `.hero-title`, `.hero-subtitle`, `.product-card`
 5. Avoid: XPath, index-based selectors, brittle positional selectors
 

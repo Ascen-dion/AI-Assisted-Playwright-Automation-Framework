@@ -4,7 +4,7 @@ These instructions are injected into every AI prompt regardless of what the UI p
 They act as guardrails to keep all generated output aligned with this project.
 
 ## Always Do
-- Always reference the target URL explicitly: https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/
+- Always reference the target URL explicitly: https://www.starhub.com
 - Always generate locators in `src/pages/locators/`, page objects in `src/pages/`, specs in `src/tests/`
 - Always use `waitFor` before asserting on any dynamically loaded content
 - Always wrap navigation in `goto()` methods on the page object — never call `page.goto()` directly in specs

@@ -1,32 +1,60 @@
-# Domain Knowledge — E-Commerce Business Rules
+# Domain Knowledge — Telecommunications E-commerce
 
 ## Business Domain
-This is a consumer-facing e-commerce store ("E-Shop") selling physical products online.
+StarHub Singapore telecommunications provider offering mobile plans, devices, broadband, and entertainment services to personal and business customers.
 
 ## Core Business Concepts
 
-### Product Catalogue
-- Products are listed on the /products page
-- Each product has: name, price, image, "Add to Cart" action
-- Products load asynchronously — data is fetched from an API on page load
-- Test must wait for products to be visible before interacting
+### Device Sales Process
+- **Device Selection**: Browse mobile devices by brand (Apple, Samsung, OPPO, etc.)
+- **Configuration**: Select color, storage capacity, and payment terms
+- **Payment Options**: 24-month installment (default), 12-month, or pay in full
+- **Plan Integration**: Devices tied to mobile plan subscriptions
+- **Authentication Required**: Login/account creation needed for purchase
 
-### Shopping Cart
-- Cart is session-based (no login required in current implementation)
-- Cart count in navigation updates when items are added
-- Empty cart state: "Your cart is empty" with prompt to add products
-- Cart integrity: quantity × unit price must equal line total
+### Product Catalog Structure
+- **Devices**: Mobile phones, tablets, watches, accessories
+- **Plans**: 5G Unlimited+ plans with different tiers (Core, Plus, Platinum)
+- **Add-ons**: SmartSupport, DeviceDollars, Value-added services
+- **Promotions**: New line bonuses, trade-in programs, pay-later discounts
 
-### Pricing and Commerce Rules
-- Free shipping threshold: orders over $50
-- Payment: described as "100% secure transactions"
-- Returns: 30-day return policy
-- Tests that involve pricing MUST validate: displayed price matches expected value, not just that a price is visible
+### Pricing and Commercial Rules
+- **Device Pricing**: Installment plans reduce upfront cost
+- **Plan Integration**: Device discounts tied to plan tier selection
+- **Promotional Offers**:
+  - Up to $300 off with 5G Unlimited+ plans (Core & above)
+  - New line/port-in bonuses up to $300
+  - CIS customer discounts up to $250
+  - DeviceDollars for existing customers
+- **SmartSupport**: Optional $14.26/month with free first month
 
-### Checkout Flow (to be validated when implemented)
-- Cart → Review → Payment → Confirmation
-- Each step must be idempotent — re-running the test should not double-charge or duplicate orders
-- Use isolated test data (unique users/sessions) to avoid shared-state flakiness
+### Customer Journey Requirements
+1. **Device Selection**: Must select specific model (e.g., Samsung Galaxy A57 5G)
+2. **Configuration**: Color and storage selection required
+3. **Payment Terms**: Choose installment period (24/12 months) or full payment
+4. **Authentication**: Hub ID login or account creation mandatory
+5. **Plan Selection**: Choose compatible mobile plan
+6. **Checkout**: Complete purchase with selected options
+
+### Business Validation Points
+- **Device Availability**: Stock status and color/storage options
+- **Price Calculations**: Installment amounts match retail price / months
+- **Plan Compatibility**: Device works with selected plan tier
+- **Promotional Eligibility**: Customer qualifies for advertised discounts
+- **Authentication Flow**: Secure login/signup process completion
+
+### Error States and Edge Cases
+- **Out of Stock**: Alternative options suggested
+- **Invalid Configuration**: Color/storage combination not available
+- **Plan Conflicts**: Device not compatible with selected plan
+- **Authentication Failures**: Login errors, account creation issues
+- **Payment Failures**: Invalid payment methods or declined transactions
+
+## Test Data Requirements
+- **Device Models**: Focus on actively promoted devices (Galaxy A57 5G)
+- **Test Accounts**: Valid Hub ID credentials for authenticated flows
+- **Payment Methods**: Test payment instruments for checkout validation
+- **Plan Configurations**: Various plan tiers for compatibility testing
 
 ## Test Data Rules
 - Do not use shared test accounts — isolate per test run where possible

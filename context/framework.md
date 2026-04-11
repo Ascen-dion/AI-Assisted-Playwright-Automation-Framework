@@ -9,9 +9,9 @@
 - Never duplicate a selector string across files
 
 ## File Naming Convention
-- Locator file: `<jira-id-lowercase>.locators.js` (e.g. `ed-68.locators.js`)
-- Page file: `<jira-id-lowercase>.page.js` (e.g. `ed-68.page.js`)
-- Spec file: `<jira-id-lowercase>-automated.spec.js` (e.g. `ed-68-automated.spec.js`)
+- Locator file: `<feature-name>.locators.js` (e.g. `starhub-mobile-purchase.locators.js`)
+- Page file: `<feature-name>.page.js` (e.g. `starhub-mobile-purchase.page.js`)
+- Spec file: `<feature-name>-automated.spec.js` (e.g. `starhub-mobile-purchase-automated.spec.js`)
 
 ## Locator File Structure
 ```js
@@ -63,7 +63,7 @@ test.describe('[UI] <Story Title>', () => {
 - Always catch async errors with try/catch and re-throw for clear failure messages
 
 ## Reuse Before Creating
-- Check `src/pages/ecomm-brownfield.page.js` and its locators before creating new helpers
+- Check `src/pages/starhub-mobile-purchase.page.js` and its locators before creating new helpers
 - If a method already exists in a page object, call it — do not reimplement
 - Extend existing page objects rather than duplicating them
 
