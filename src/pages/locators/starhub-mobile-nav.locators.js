@@ -32,6 +32,10 @@ const locators = {
   deviceDollarsLink: (page) => page.getByRole('link', { name: 'DeviceDollars' }),
   multiLineSavingsLink: (page) => page.getByRole('link', { name: 'Multi-line Savings' }),
   fiveGCoverageLink: (page) => page.getByRole('link', { name: 'Over 99% 5G Coverage' }),
+
+  // Post-navigation — All Phones listing page
+  deviceListingCard: (page) => page.locator('[class*="product"], [class*="device"], [class*="phone"]').first(),
+  deviceListingHeading: (page) => page.getByRole('heading', { level: 1 }).first(),
 };
 
 module.exports = locators;

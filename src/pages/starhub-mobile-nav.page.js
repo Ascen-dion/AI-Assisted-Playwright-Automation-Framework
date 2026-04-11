@@ -112,7 +112,7 @@ class StarHubMobileNavPage {
   }
 
   async isDropdownExpanded() {
-    const btn = await loc.navButton(this.page);
+    const btn = loc.navButton(this.page);
     return await btn.getAttribute('aria-expanded') === 'true'
       || (await btn.evaluate(el => el.getAttribute('expanded'))) !== null;
   }
@@ -120,6 +120,23 @@ class StarHubMobileNavPage {
   async getDropdownLinkCount() {
     await this.openMobileDropdown();
     return await this.page.locator('button[name="Mobile"] + list a').count();
+  }
+
+  async isDeviceListingLoaded() {
+    await this.page.waitForLoadState('domcontentloaded', { timeout: 30000 });
+    const url = this.page.url();
+    const urlOk = /mobile|phone/i.test(url);
+    let cardVisible = false;
+    try {
+      await loc.deviceListingCard(this.page).waitFor({ state: 'visible', timeout: 15000 });
+      cardVisible = await loc.deviceListingCard(this.page).isVisible();
+    } catch { /* fallback to heading check */ }
+    let headingVisible = false;
+    try {
+      await loc.deviceListingHeading(this.page).waitFor({ state: 'visible', timeout: 10000 });
+      headingVisible = await loc.deviceListingHeading(this.page).isVisible();
+    } catch { /* ignored */ }
+    return urlOk && (cardVisible || headingVisible);
   }
 }
 

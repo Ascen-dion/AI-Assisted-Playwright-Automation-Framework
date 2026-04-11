@@ -6,36 +6,9 @@ description: >
   project context files first, audits reusable assets, inspects the live application, then produces
   deterministic POM-structured test code. Use for: new test generation from Jira stories or plain
   English, extending existing page objects, API test generation, and cross-cutting test coverage gaps.
-tools:
-  - read_file
-  - create_file
-  - replace_string_in_file
-  - search
-  - playwright-test/browser_navigate
-  - playwright-test/browser_snapshot
-  - playwright-test/browser_click
-  - playwright-test/browser_type
-  - playwright-test/browser_hover
-  - playwright-test/browser_wait_for
-  - playwright-test/browser_evaluate
-  - playwright-test/browser_network_requests
-  - playwright-test/browser_console_messages
-  - playwright-test/browser_verify_element_visible
-  - playwright-test/browser_verify_text_visible
-  - playwright-test/browser_verify_value
-  - playwright-test/browser_generate_locator
-  - playwright-test/browser_take_screenshot
-  - playwright-test/browser_press_key
-  - playwright-test/browser_select_option
-  - playwright-test/browser_handle_dialog
-  - playwright-test/browser_run_code
-  - playwright-test/generator_setup_page
-  - playwright-test/generator_write_test
-  - playwright-test/generator_read_log
-  - playwright-test/test_run
-  - playwright-test/test_list
-  - playwright-test/test_debug
-model: Claude Sonnet 4
+tools:vscode, execute, read, agent, edit, search, web, 'playwright/*', browser, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, todo
+[vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace, vscode/resolveMemoryFileUri, vscode/runCommand, vscode/vscodeAPI, vscode/extensions, vscode/askQuestions, execute/runNotebookCell, execute/testFailure, execute/getTerminalOutput, execute/killTerminal, execute/sendToTerminal, execute/createAndRunTask, execute/runInTerminal, read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/terminalSelection, read/terminalLastCommand, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, web/fetch, web/githubRepo, pylance-mcp-server/pylanceDocString, pylance-mcp-server/pylanceDocuments, pylance-mcp-server/pylanceFileSyntaxErrors, pylance-mcp-server/pylanceImports, pylance-mcp-server/pylanceInstalledTopLevelModules, pylance-mcp-server/pylanceInvokeRefactoring, pylance-mcp-server/pylancePythonEnvironments, pylance-mcp-server/pylanceRunCodeSnippet, pylance-mcp-server/pylanceSettings, pylance-mcp-server/pylanceSyntaxErrors, pylance-mcp-server/pylanceUpdatePythonEnvironment, pylance-mcp-server/pylanceWorkspaceRoots, pylance-mcp-server/pylanceWorkspaceUserFiles, playwright/browser_click, playwright/browser_close, playwright/browser_console_messages, playwright/browser_drag, playwright/browser_evaluate, playwright/browser_file_upload, playwright/browser_fill_form, playwright/browser_handle_dialog, playwright/browser_hover, playwright/browser_navigate, playwright/browser_navigate_back, playwright/browser_network_requests, playwright/browser_press_key, playwright/browser_resize, playwright/browser_run_code, playwright/browser_select_option, playwright/browser_snapshot, playwright/browser_tabs, playwright/browser_take_screenshot, playwright/browser_type, playwright/browser_wait_for, browser/openBrowserPage, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, todo]
+model: Claude Sonnet 4.6
 mcp-servers:
   playwright-test:
     type: stdio
