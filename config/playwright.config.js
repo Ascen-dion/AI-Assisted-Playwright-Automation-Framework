@@ -35,7 +35,10 @@ module.exports = defineConfig({
   reporter: [
     ['html', { outputFolder: path.resolve(__dirname, '../test-results/html-report'), open: 'never' }],
     ['json', { outputFile: path.resolve(__dirname, '../test-results/results.json') }],
-    ['list']
+    ['list'],
+    // TestRail reporter — posts results automatically when TESTRAIL_* env vars are set
+    // If credentials are missing, it silently skips (no-op)
+    [path.resolve(__dirname, '../src/integrations/testrail-reporter.js')]
   ],
 
   use: {

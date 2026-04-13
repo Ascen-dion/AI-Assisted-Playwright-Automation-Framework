@@ -1,11 +1,13 @@
 ---
-name: brownfield-automation
+name: starhub-automation-agent
 description: >
   Master brownfield automation agent. Use this agent when you need to generate, extend, or improve
   Playwright UI tests or API tests for an existing (brownfield) application. This agent reads the
-  project context files first, audits reusable assets, inspects the live application, then produces
-  deterministic POM-structured test code. Use for: new test generation from Jira stories or plain
-  English, extending existing page objects, API test generation, and cross-cutting test coverage gaps.
+  project context files first, audits reusable assets, creates manual test cases in TestRail for
+  full traceability, inspects the live application, then produces deterministic POM-structured test
+  code with TestRail case IDs embedded in every test title. Use for: new test generation from Jira
+  stories or plain English, extending existing page objects, API test generation, cross-cutting test
+  coverage gaps, and AC → TestRail → automated spec traceability chains.
 tools: vscode, execute, read, agent, edit, search, web, 'playwright/*', browser, ms-python.python/getPythonEnvironmentInfo, ms-python.python/getPythonExecutableCommand, ms-python.python/installPythonPackage, ms-python.python/configurePythonEnvironment, todo
 [
   vscode/getProjectSetupInfo, vscode/installExtension, vscode/memory, vscode/newWorkspace,
@@ -83,6 +85,8 @@ If any context file is missing, note it and proceed with what is available.
 
 ## PHASE 2 — AUDIT EXISTING ASSETS (reuse before creating)
 
+### 2.1 — Scan code assets
+
 Scan these paths for reusable code:
 
 ```
@@ -91,18 +95,8 @@ src/pages/              → existing page objects
 src/tests/              → existing spec files
 ```
 
-### StarHub Existing Page Objects (as of April 2026)
 
-| Page Object | Locators | Covers |
-|---|---|---|
-| `starhub-mobile-nav.page.js` | `starhub-mobile-nav.locators.js` | Mobile tab dropdown: All Phones, Apple, Samsung, OPPO, Tablets, Accessories, 5G Plans, Prepaid, Tourist, CIS, Trade-in, BNPL, Roaming, DeviceDollars |
-| `starhub-broadband-nav.page.js` | `starhub-broadband-nav.locators.js` | Broadband tab dropdown: Plans, TV+ Bundles, Routers (10Gbps, WiFi6/7), DVH, JuniorProtect, SafeHub+, WiFi tips |
-| `starhub-entertainment-nav.page.js` | `starhub-entertainment-nav.locators.js` | Entertainment tab dropdown: TV+ Passes, Premier League, Add-ons, Cloud Recording, Mobile App, TV Devices, Channel List, Netflix, Disney+, Amazon Prime, HBO Max, iQIYI, CMGO, Viu |
-| `starhub-lifestyle-safety-nav.page.js` | `starhub-lifestyle-safety-nav.locators.js` | Lifestyle & Safety tab dropdown: SafeHub+, SmartSupport, CyberProtect, SmartSupportHome, CyberCover, ScamSafe, Travel Protection |
-| `starhub-membership-nav.page.js` | `starhub-membership-nav.locators.js` | Membership tab dropdown: Membership Tiers, Why StarHub, Premier League |
-| `starhub-mobile-purchase.page.js` | `starhub-mobile-purchase.locators.js` | Device PDP: Galaxy A57 5G selection, colour/storage/payment defaults, Next button, auth popup (Log in with Hub ID, Sign up) |
-
-**Rules:**
+**Code asset rules:**
 - If a locator already exists for an element, use it — do not redefine it
 - If a page object method already covers an action, call it — do not reimplement it
 - If a spec file already covers a scenario, note it and extend rather than duplicate
@@ -111,9 +105,131 @@ src/tests/              → existing spec files
 All nav page objects share the same pattern: `async open<Tab>Dropdown()` → individual `click<Link>()` methods.
 All nav page objects share the same `goto()` landing URL: `https://www.starhub.com/personal.html`
 
+### 2.2 — Check for existing TestRail cases and spec coverage
+
+Before creating anything new, check whether test cases for this story already exist in two places:
+
+**A. Check `src/integrations/testrail-case-map.json`**
+
+If the file exists, read it and look for entries that match the story's AC titles or spec titles.
+
+```
+testrail-case-map.json exists?
+  ├── YES → read it; for each AC check if a matching specTitle entry already has a case ID
+  │         ├── case ID found (e.g. C499) → SKIP creating; reuse that ID in the spec title
+  │         └── case ID missing → CREATE the case in Phase 3
+  └── NO  → proceed to Phase 3; all cases are new
+```
+
+**B. Check `src/tests/` for a spec file that already covers this story**
+
+Search the spec titles inside any existing `.spec.js` file for `[Cxxx]` prefixes matching the story.
+
+```
+Matching spec file found?
+  ├── YES with [Cxxx] IDs → SKIP Phase 3 entirely; reuse the existing spec as-is
+  │                         unless the ACs have changed, in which case UPDATE the cases
+  └── NO or IDs are [C0] → proceed to Phase 3 to create/push cases and embed real IDs
+```
+
+**Decision matrix — what to do per AC:**
+
+| testrail-case-map.json has entry | Spec has `[Cxxx]` title | Action |
+|---|---|---|
+| ✅ Yes — ID exists | ✅ Yes — matches | **Skip** — fully covered, no changes needed |
+| ✅ Yes — ID exists | ❌ No / `[C0]` | **Embed** — add the existing ID to the spec title |
+| ❌ No | ❌ No | **Create** — push new case in Phase 3, embed resulting ID |
+| ❌ No | ✅ Yes — `[Cxxx]` present | **Verify** — ID is in title but not in map; add it to the map file |
+
+Always state which ACs are being skipped, updated, or created before proceeding to Phase 3.
+
 ---
 
-## PHASE 3 — LIVE INSPECTION (ground truth from the browser)
+## PHASE 3 — TESTRAIL: CREATE MANUAL TEST CASES & ESTABLISH TRACEABILITY
+
+Before writing any automation code, create the manual test cases in TestRail derived from the
+acceptance criteria. This establishes upstream traceability between ACs → TestRail cases → automated
+spec titles **before a single line of code is written**.
+
+### 3.1 — Parse acceptance criteria into test cases
+
+For each AC in the story, produce a structured test case object in this exact shape:
+
+```js
+{
+  specTitle: 'Test Case N: <action verb> <what is verified>',  // MUST match the Playwright test title exactly
+  title:     'ACN: <short imperative description>',           // TestRail case title
+  preconditions: '<Given state — what must be true before the test>',
+  steps:     '1. <action>\n2. <action>\n...',                 // numbered, action-verb sentences
+  expected:  '<observable, concrete outcome — no vague "it works">',
+  refs:      '<Jira story key, e.g. AU-1>'                    // from JIRA_REF env var or story metadata
+}
+```
+
+Do this for **every** AC in the story — one test case object per AC.
+
+### 3.2 — Push to TestRail via push-to-testrail.js
+
+**Only run this step for ACs that Phase 2.2 determined are NEW or need updating.**
+For ACs that are already fully covered (existing ID + existing spec title), skip this step entirely.
+
+Update `src/integrations/push-to-testrail.js` with only the new/changed `TEST_CASES` entries, then run:
+
+```bash
+node src/integrations/push-to-testrail.js
+```
+
+The script upserts each case (updates if title already exists in TestRail, creates otherwise),
+prints the assigned case IDs, and writes `src/integrations/testrail-case-map.json`.
+
+**Required `.env` variables** — already configured at the project root `.env`:
+```
+TESTRAIL_HOST=https://ascendionqesmoke.testrail.io
+TESTRAIL_USER=sowmya.sridhar@ascendion.com
+TESTRAIL_API_KEY=<key>
+TESTRAIL_PROJECT_ID=7
+TESTRAIL_SUITE_ID=11
+TESTRAIL_SECTION_ID=50
+JIRA_REF=<story-key>   # set per story — add/update in .env before running
+```
+
+All credentials are present. **Do not ask the user for TestRail credentials** — read them from `.env`
+at the project root. The only value that changes per story is `JIRA_REF`; update that in `.env` or
+pass it as `JIRA_REF=AU-2 node src/integrations/push-to-testrail.js` before running the script.
+
+### 3.3 — Embed TestRail IDs in spec titles (traceability)
+
+Once the script completes, embed each printed case ID directly into the corresponding Playwright
+test title using the `[Cxxx]` prefix format:
+
+```js
+// Format: '[C<id>] Test Case N: <description>'
+test('[C499] Test Case 1: Navigate to All Phones listing via Mobile dropdown', ...)
+test('[C500] Test Case 2: Select Samsung Galaxy A57 5G from the device listing', ...)
+```
+
+**Rules:**
+- The `[Cxxx]` prefix is the **single source of truth** for traceability
+- It appears identically in: Playwright HTML report, terminal output, TestRail runs, CI logs
+- Never use `test.info().annotations` for the ID — keep it in the title
+- The `testrail-reporter.js` (already wired into `config/playwright.config.js`) parses this prefix
+  automatically after every test run and posts results back to TestRail
+
+### 3.4 — Traceability chain produced by this phase
+
+```
+Jira story (AC1…ACN)
+    ↓  Phase 3.1: parse ACs
+TestRail Cases C499…C5xx  (refs: "<Jira key>" stamped on each)
+    ↓  Phase 3.3: embed IDs in titles
+Playwright spec: '[C499] Test Case 1: ...'
+    ↓  testrail-reporter.js after Phase 7 test run
+TestRail Run — pass/fail posted per case automatically
+```
+
+---
+
+## PHASE 4 — LIVE INSPECTION (ground truth from the browser)
 
 For UI tests, always inspect the live application before writing selectors:
 
@@ -134,7 +250,7 @@ For UI tests, always inspect the live application before writing selectors:
 
 ---
 
-## PHASE 4 — DECIDE: UI TEST, API TEST, OR BOTH
+## PHASE 5 — DECIDE: UI TEST, API TEST, OR BOTH
 
 ### UI Test triggers
 - Story involves visible user interaction (click, type, navigate, verify text/visibility)
@@ -152,7 +268,7 @@ For UI tests, always inspect the live application before writing selectors:
 
 ---
 
-## PHASE 5 — GENERATE CODE
+## PHASE 6 — GENERATE CODE
 
 ### UI Test — always POM structure
 
@@ -261,7 +377,7 @@ test.describe('[API] <Story Title>', () => {
 
 ---
 
-## PHASE 6 — QUALITY GATES (check before saving)
+## PHASE 7 — QUALITY GATES (check before saving)
 
 Before writing any file, verify:
 
@@ -275,10 +391,12 @@ Before writing any file, verify:
 - [ ] API tests dispose of `apiContext` in `afterAll`
 - [ ] File names follow convention: `<jira-id-lowercase>-automated.spec.js` or `<jira-id-lowercase>-api.spec.js`
 - [ ] Three separate file blocks each starting with `// === FILE: <relative-path> ===`
+- [ ] Every test title carries a `[Cxxx]` TestRail case ID (Phase 3.3)
+- [ ] `src/integrations/testrail-case-map.json` exists and contains all case IDs for this story
 
 ---
 
-## PHASE 7 — VERIFY WITH TEST RUNNER
+## PHASE 8 — VERIFY WITH TEST RUNNER
 
 After generating and saving files:
 
@@ -287,6 +405,8 @@ After generating and saving files:
 3. If any test fails, run `test_debug` to identify the failure
 4. Fix failures using `replace_string_in_file` — never rewrite the whole file
 5. Re-run until all tests pass or are marked `test.fixme()` with a documented reason
+6. After all tests pass, the `testrail-reporter.js` (wired into `config/playwright.config.js`)
+   automatically creates a dated TestRail run and posts pass/fail for every `[Cxxx]` case
 
 ---
 
@@ -299,9 +419,12 @@ To reuse this agent for a new project:
 3. Update `context/framework.md` if the tech stack differs
 4. Update `context/project-prompt.md` with project-specific guardrails
 5. Add seed POM files to `src/pages/` and `src/pages/locators/`
-6. This agent automatically reads those files and grounds every output in them
+6. TestRail credentials are already in `.env` at the project root (host, user, API key,
+   project ID 7, suite ID 11, section ID 50). Only `JIRA_REF` needs updating per story.
+7. This agent automatically reads context files and grounds every output in them;
+   Phase 3 TestRail push runs automatically for every story with ACs
 
-The agent behaviour does not change — only the context files change per project.
+The agent behaviour does not change — only the context files and `.env` change per project.
 
 ---
 
@@ -325,5 +448,10 @@ The agent behaviour does not change — only the context files change per projec
 - Never create a new helper if an existing one already covers the case
 - Never skip Phase 1 context loading — it is not optional
 - Never skip Phase 2 asset audit — duplication is a defect
-- Never write a selector without Phase 3 live inspection confirming it exists
+- Never skip Phase 2.2 TestRail existence check — always read `testrail-case-map.json` and scan spec titles for `[Cxxx]` before pushing anything to TestRail
+- Never create a new TestRail case for an AC that already has an ID in the case map or spec title — reuse the existing ID
+- Never skip Phase 3 TestRail push — traceability is not optional
+- Never write a test title without a `[Cxxx]` prefix — embed the TestRail ID before writing any spec
+- Never write a selector without Phase 4 live inspection confirming it exists
 - If the application is unavailable, state this clearly and generate best-effort code with TODO markers for every selector that could not be confirmed
+- TestRail credentials are already configured in `.env` — never ask the user for them; only ask for `JIRA_REF` if the story key is not obvious from context

@@ -20,7 +20,7 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
 
   // ── AC1: Navigate to Mobile Devices Listing via nav dropdown ─────────────
 
-  test('Test Case 1: Navigate to All Phones listing via Mobile dropdown', async ({ page }) => {
+  test('[C499] Test Case 1: Navigate to All Phones listing via Mobile dropdown', async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
     await pageObj.goto();
     await pageObj.dismissCookieConsent();
@@ -46,7 +46,7 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
 
   // ── AC2: Select Samsung Galaxy A57 5G from listing ───────────────────────
 
-  test('Test Case 2: Select Samsung Galaxy A57 5G from the device listing', async ({ page }) => {
+  test('[C500] Test Case 2: Select Samsung Galaxy A57 5G from the device listing', async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
     await pageObj.gotoDeviceListing();
     await pageObj.dismissCookieConsent();
@@ -65,7 +65,7 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
 
   // ── AC3: Verify default device configuration ─────────────────────────────
 
-  test('Test Case 3: Verify Samsung Galaxy A57 5G default configuration', async ({ page }) => {
+  test('[C501] Test Case 3: Verify Samsung Galaxy A57 5G default configuration', async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
     await pageObj.gotoGalaxyA57();
     await pageObj.dismissCookieConsent();
@@ -98,7 +98,7 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
 
   // ── AC4: Proceed to Next Step ─────────────────────────────────────────────
 
-  test('Test Case 4: Click Next to initiate the purchase journey next step', async ({ page }) => {
+  test('[C502] Test Case 4: Click Next to initiate the purchase journey next step', async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
     await pageObj.gotoGalaxyA57();
     await pageObj.dismissCookieConsent();
@@ -114,7 +114,7 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
 
   // ── AC5: Display Login / Sign-Up Popup ───────────────────────────────────
 
-  test('Test Case 5: Verify login and sign-up popup after clicking Next', async ({ page }) => {
+  test('[C503] Test Case 5: Verify login and sign-up popup after clicking Next', async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
     await pageObj.gotoGalaxyA57();
     await pageObj.dismissCookieConsent();
