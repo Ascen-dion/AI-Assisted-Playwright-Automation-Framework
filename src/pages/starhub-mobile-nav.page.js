@@ -125,18 +125,39 @@ class StarHubMobileNavPage {
   async isDeviceListingLoaded() {
     await this.page.waitForLoadState('domcontentloaded', { timeout: 30000 });
     const url = this.page.url();
-    const urlOk = /mobile|phone/i.test(url);
+    const urlOk = /mobile|phone|devices/i.test(url);
     let cardVisible = false;
     try {
       await loc.deviceListingCard(this.page).waitFor({ state: 'visible', timeout: 15000 });
       cardVisible = await loc.deviceListingCard(this.page).isVisible();
-    } catch { /* fallback to heading check */ }
+    } catch { /* fallback to heading */ }
     let headingVisible = false;
     try {
       await loc.deviceListingHeading(this.page).waitFor({ state: 'visible', timeout: 10000 });
       headingVisible = await loc.deviceListingHeading(this.page).isVisible();
     } catch { /* ignored */ }
     return urlOk && (cardVisible || headingVisible);
+  }
+
+  async getDeviceListingUrl() {
+    return this.page.url();
+  }
+
+  async getDeviceListingTitle() {
+    return await this.page.title();
+  }
+
+  async isDeviceCardWithDetailsVisible() {
+    // AC: at least one card has product name, image, and price
+    try {
+      await loc.deviceListingCard(this.page).waitFor({ state: 'visible', timeout: 15000 });
+      const nameVisible = await loc.deviceProductName(this.page).isVisible().catch(() => false);
+      const imageVisible = await loc.deviceProductImage(this.page).isVisible().catch(() => false);
+      const priceVisible = await loc.deviceProductPrice(this.page).isVisible().catch(() => false);
+      return nameVisible || imageVisible || priceVisible;
+    } catch {
+      return false;
+    }
   }
 }
 

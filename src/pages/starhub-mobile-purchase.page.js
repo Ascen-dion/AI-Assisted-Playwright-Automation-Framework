@@ -1,5 +1,6 @@
 const loc = require('./locators/starhub-mobile-purchase.locators');
-const URL = 'https://www.starhub.com';
+const BASE_URL = 'https://www.starhub.com/personal.html';
+const PDP_URL = 'https://consumer.starhub.com/personal/store/mobile/devices/samsung/galaxy-a57-5g';
 
 class StarHubMobilePurchasePage {
   constructor(page) {
@@ -7,16 +8,18 @@ class StarHubMobilePurchasePage {
   }
 
   async goto() {
-    await this.page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await this.page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  }
+
+  async gotoPDP() {
+    await this.page.goto(PDP_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await this.page.waitForLoadState('networkidle', { timeout: 30000 });
   }
 
   async dismissCookieConsent() {
     try {
       await loc.cookieConsentButton(this.page).click({ timeout: 3000 });
-      await this.page.waitForTimeout(1000); // Allow modal to close
-    } catch (error) {
-      // Cookie consent not present or already dismissed
-    }
+    } catch { /* already dismissed */ }
   }
 
   async navigateToMobileDropdown() {
@@ -27,57 +30,41 @@ class StarHubMobilePurchasePage {
   async clickAllPhones() {
     await loc.allPhonesLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
     await loc.allPhonesLink(this.page).click();
+    await this.page.waitForLoadState('networkidle', { timeout: 30000 });
   }
 
   async selectGalaxyA57Device() {
-    // Wait for page to load and products to appear
-    await this.page.waitForLoadState('load');
-    await this.page.waitForTimeout(3000); // Additional wait for dynamic content rendering
-    
     await loc.galaxyA57Device(this.page).waitFor({ state: 'visible', timeout: 15000 });
     await loc.galaxyA57Device(this.page).click();
+    await this.page.waitForLoadState('networkidle', { timeout: 30000 });
   }
 
   async isProductDetailPageLoaded() {
-    await this.page.waitForLoadState('load');
     await loc.productTitle(this.page).waitFor({ state: 'visible', timeout: 15000 });
     return await loc.productTitle(this.page).isVisible();
   }
 
   async getSelectedColor() {
-    try {
-      await loc.colorAwesomeNavy(this.page).waitFor({ state: 'visible', timeout: 10000 });
-      return 'Awesome Navy';
-    } catch {
-      // Fallback: check other color patterns
-      const colorText = await this.page.locator('[class*="colour"], [class*="color"]').textContent();
-      return colorText ? colorText.trim() : 'Unknown';
-    }
+    await loc.colourSection(this.page).waitFor({ state: 'visible', timeout: 10000 });
+    const text = await loc.colourSection(this.page).textContent();
+    return text.replace('Colour:', '').trim();
   }
 
-  async getSelectedStorage() {   
-    try {
-      await loc.storage256GB(this.page).waitFor({ state: 'visible', timeout: 10000 });
-      return '256GB';
-    } catch {
-      // Fallback: check storage display text
-      const storageText = await this.page.locator('[class*="storage"]').textContent();
-      return storageText ? storageText.trim() : 'Unknown';
-    }
+  async getSelectedStorage() {
+    await loc.storageSection(this.page).waitFor({ state: 'visible', timeout: 10000 });
+    const text = await loc.storageSection(this.page).textContent();
+    const match = text.match(/(\d+\s?GB)/);
+    return match ? match[1] : text.replace('Storage:', '').trim();
   }
 
   async getSelectedPaymentOption() {
-    try {
-      await loc.payment24Month(this.page).waitFor({ state: 'visible', timeout: 10000 });
-      return '24-month';
-    } catch {
-      // Fallback: check payment option elements
-      return 'Unknown';
-    }
+    await loc.paymentOptionActive(this.page).waitFor({ state: 'visible', timeout: 10000 });
+    return (await loc.paymentOptionActive(this.page).textContent()).trim();
   }
 
   async clickNextButton() {
     await loc.nextButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    await loc.nextButton(this.page).scrollIntoViewIfNeeded();
     await loc.nextButton(this.page).click();
   }
 
@@ -92,7 +79,7 @@ class StarHubMobilePurchasePage {
 
   async getAuthMessage() {
     await loc.authMessage(this.page).waitFor({ state: 'visible', timeout: 15000 });
-    return await loc.authMessage(this.page).textContent();
+    return (await loc.authMessage(this.page).textContent()).trim();
   }
 
   async isHubIdLoginButtonVisible() {

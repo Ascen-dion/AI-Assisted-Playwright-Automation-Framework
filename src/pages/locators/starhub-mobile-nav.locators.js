@@ -33,9 +33,13 @@ const locators = {
   multiLineSavingsLink: (page) => page.getByRole('link', { name: 'Multi-line Savings' }),
   fiveGCoverageLink: (page) => page.getByRole('link', { name: 'Over 99% 5G Coverage' }),
 
-  // Post-navigation — All Phones listing page
-  deviceListingCard: (page) => page.locator('[class*="product"], [class*="device"], [class*="phone"]').first(),
-  deviceListingHeading: (page) => page.getByRole('heading', { level: 1 }).first(),
+  // Post-navigation — All Phones listing page (consumer.starhub.com)
+  // Confirmed live DOM: class="product-item-card ..." (39 items on devices listing)
+  deviceListingCard: (page) => page.locator('[class*="product-item-card"]').first(),
+  deviceProductName: (page) => page.locator('[class*="product-item-card"] [class*="f-body-regular-desktop"][class*="fw-bold"]').first(),
+  deviceProductImage: (page) => page.locator('[class*="product-item-card"] .image-section img').first(),
+  deviceProductPrice: (page) => page.locator('[class*="f-h6-desktop"]').first(),
+  deviceListingHeading: (page) => page.locator('[class*="product-item-card"]').first(),
 };
 
 module.exports = locators;

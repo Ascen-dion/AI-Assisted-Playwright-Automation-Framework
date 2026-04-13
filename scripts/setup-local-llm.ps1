@@ -31,18 +31,18 @@ try {
 }
 
 # Step 3: Check if model is downloaded
-Write-Host "`n[3/7] Checking for llama3.2:3b model..." -ForegroundColor Yellow
+Write-Host "`n[3/7] Checking for gemma4:e4b model..." -ForegroundColor Yellow
 $models = ollama list
-if ($models -match "llama3.2:3b") {
-    Write-Host "   SUCCESS: llama3.2:3b model found!" -ForegroundColor Green
+if ($models -match "gemma4:e4b") {
+    Write-Host "   SUCCESS: gemma4:e4b model found!" -ForegroundColor Green
 } else {
     Write-Host "   Model not found. Downloading..." -ForegroundColor Yellow
-    Write-Host "   (This will take a few minutes - model is ~2GB)" -ForegroundColor Gray
-    ollama pull llama3.2:3b
+    Write-Host "   (This will take a few minutes)" -ForegroundColor Gray
+    ollama pull gemma4:e4b
     if ($LASTEXITCODE -eq 0) {
         Write-Host "   SUCCESS: Model downloaded!" -ForegroundColor Green
     } else {
-        Write-Host "   WARNING: Download incomplete. You can resume later with: ollama pull llama3.2:3b" -ForegroundColor Yellow
+        Write-Host "   WARNING: Download incomplete. You can resume later with: ollama pull gemma4:e4b" -ForegroundColor Yellow
     }
 }
 
@@ -76,7 +76,7 @@ $envContent = @"
 # AI Provider Configuration
 AI_PROVIDER=local
 LOCAL_LLM_URL=http://localhost:11434/v1
-LOCAL_LLM_MODEL=llama3.2:3b
+LOCAL_LLM_MODEL=gemma4:e4b
 LOCAL_LLM_API_KEY=not-needed
 "@
 
@@ -87,7 +87,7 @@ if (Test-Path ".env") {
         Write-Host "   Please manually verify your .env has these settings:" -ForegroundColor Yellow
         Write-Host "   AI_PROVIDER=local" -ForegroundColor Cyan
         Write-Host "   LOCAL_LLM_URL=http://localhost:11434/v1" -ForegroundColor Cyan
-        Write-Host "   LOCAL_LLM_MODEL=llama3.2:3b" -ForegroundColor Cyan
+        Write-Host "   LOCAL_LLM_MODEL=gemma4:e4b" -ForegroundColor Cyan
     } else {
         Add-Content ".env" $envContent
         Write-Host "   SUCCESS: .env updated with local LLM settings!" -ForegroundColor Green

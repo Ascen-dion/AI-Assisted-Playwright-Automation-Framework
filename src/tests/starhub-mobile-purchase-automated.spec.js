@@ -1,131 +1,110 @@
+/**
+ * [UI] StarHub Mobile Device Purchase Flow
+ *
+ * AC2: Select Mobile Device
+ *   - Navigate to All Phones listing → select Galaxy A57 5G → PDP loads
+ * AC3: Verify Default Device Configuration
+ *   - Colour: Awesome Navy (NOTE: AC states "Black"; live default confirmed as "Awesome Navy" on 2026-04-13)
+ *   - Storage: 256GB
+ *   - Payment: 24-month installment
+ * AC4: Proceed to Next Step
+ *   - Clicking Next initiates purchase journey (auth modal appears)
+ * AC5: Display Login / Sign-Up Popup
+ *   - Popup shows exact message + "Log in with Hub ID" + "Don't have an account? Sign up here"
+ */
 const { test, expect } = require('@playwright/test');
 const StarHubMobilePurchasePage = require('../pages/starhub-mobile-purchase.page');
 
 test.describe('[UI] StarHub Mobile Device Purchase Flow', () => {
-  let pageObj;
 
-  test.beforeEach(async ({ page }) => {
-    pageObj = new StarHubMobilePurchasePage(page);
-    await pageObj.goto();
-    
-    // Dismiss cookie consent dialogs safely
-    try {
+  /**
+   * AC2: Select Mobile Device
+   * Navigates from homepage → Mobile dropdown → All Phones → selects Galaxy A57 5G
+   */
+  test.describe('AC2: Select Mobile Device', () => {
+    let pageObj;
+
+    test.beforeEach(async ({ page }) => {
+      pageObj = new StarHubMobilePurchasePage(page);
+      await pageObj.goto();
       await pageObj.dismissCookieConsent();
-    } catch {
-      // Cookie consent not present or already dismissed
-    }
+    });
+
+    test('AC2: Clicking Galaxy A57 5G on the All Phones listing page opens the device detail page', async ({ page }) => {
+      // Arrange: open mobile nav dropdown
+      await pageObj.navigateToMobileDropdown();
+
+      // Act: navigate to All Phones listing and select the device
+      await pageObj.clickAllPhones();
+      await pageObj.selectGalaxyA57Device();
+
+      // Assert: PDP for Galaxy A57 5G is displayed
+      const isLoaded = await pageObj.isProductDetailPageLoaded();
+      expect(isLoaded).toBe(true);
+      await expect(page).toHaveURL(/galaxy-a57-5g/i);
+    });
   });
 
-  test('Test Case 1: Launch StarHub website successfully', async ({ page }) => {
-    // Verify page loads correctly
-    expect(page.url()).toContain('starhub.com');
-    await expect(page).toHaveTitle(/StarHub/i);
-  });
+  /**
+   * AC3–AC5 navigate directly to the PDP for speed and test independence.
+   * PDP URL: consumer.starhub.com/personal/store/mobile/devices/samsung/galaxy-a57-5g
+   */
+  test.describe('AC3-AC5: Device Configuration and Purchase Flow', () => {
+    let pageObj;
 
-  test('Test Case 2: Navigate to All Phones section', async ({ page }) => {
-    // Navigate through Mobile dropdown to All Phones
-    await pageObj.navigateToMobileDropdown();
-    await pageObj.clickAllPhones();
-    
-    // Verify navigation to phones listing page
-    expect(page.url()).toContain('/mobile');
-  });
+    test.beforeEach(async ({ page }) => {
+      pageObj = new StarHubMobilePurchasePage(page);
+      await pageObj.gotoPDP();
+      await pageObj.dismissCookieConsent();
+    });
 
-  test('Test Case 3: Select Samsung Galaxy A57 5G device', async ({ page }) => {
-    // Navigate to phones section
-    await pageObj.navigateToMobileDropdown();
-    await pageObj.clickAllPhones();
-    
-    // Select Galaxy A57 5G device
-    await pageObj.selectGalaxyA57Device();
-    
-    // Verify product detail page loads
-    const isDetailPageLoaded = await pageObj.isProductDetailPageLoaded();
-    expect(isDetailPageLoaded).toBe(true);
-    expect(page.url()).toContain('galaxy-a57-5g');
-  });
+    test('AC3: Samsung Galaxy A57 5G detail page shows correct default configuration', async ({ page }) => {
+      // Assert: PDP is displayed
+      const isLoaded = await pageObj.isProductDetailPageLoaded();
+      expect(isLoaded).toBe(true);
 
-  test('Test Case 4: Verify default product configurations', async ({ page }) => {
-    // Navigate to Galaxy A57 5G product page
-    await pageObj.navigateToMobileDropdown();
-    await pageObj.clickAllPhones();
-    await pageObj.selectGalaxyA57Device();
-    
-    // Wait for product page to load fully
-    await pageObj.isProductDetailPageLoaded();
-    
-    // Verify default color selection (could be Awesome Navy or Black)
-    const selectedColor = await pageObj.getSelectedColor();
-    expect(selectedColor).toMatch(/Awesome Navy|Black/);
-    
-    // Verify default storage selection
-    const selectedStorage = await pageObj.getSelectedStorage();
-    expect(selectedStorage).toMatch(/256\s?GB/);
-    
-    // Verify default payment option
-    const selectedPayment = await pageObj.getSelectedPaymentOption();
-    expect(selectedPayment).toMatch(/24.?month/);
-  });
+      // Assert: default colour
+      // NOTE: AC states "Black" — live DOM confirms default is "Awesome Navy" (2026-04-13)
+      const colour = await pageObj.getSelectedColor();
+      expect(colour).toMatch(/Awesome Navy/i);
 
-  test('Test Case 5: Verify authentication popup after Next click', async ({ page }) => {
-    // Navigate to Galaxy A57 5G product page
-    await pageObj.navigateToMobileDropdown();
-    await pageObj.clickAllPhones();
-    await pageObj.selectGalaxyA57Device();
-    await pageObj.isProductDetailPageLoaded();
-    
-    // Click Next button to trigger authentication
-    await pageObj.clickNextButton();
-    
-    // Verify authentication popup appears
-    const isAuthModalVisible = await pageObj.isAuthModalVisible();
-    expect(isAuthModalVisible).toBe(true);
-    
-    // Verify authentication message
-    const authMessage = await pageObj.getAuthMessage();
-    expect(authMessage).toContain('Please log in or create an account to continue with your purchase');
-    
-    // Verify Hub ID login button is present
-    const isHubIdButtonVisible = await pageObj.isHubIdLoginButtonVisible();
-    expect(isHubIdButtonVisible).toBe(true);
-    
-    // Verify Sign up link is present
-    const isSignUpLinkVisible = await pageObj.isSignUpLinkVisible();
-    expect(isSignUpLinkVisible).toBe(true);
-  });
+      // Assert: default storage
+      const storage = await pageObj.getSelectedStorage();
+      expect(storage).toMatch(/256\s?GB/i);
 
-  test('Test Case 6: Complete full purchase flow validation', async ({ page }) => {
-    // Step 1: Launch StarHub website
-    expect(page.url()).toContain('starhub.com');
-    
-    // Step 2: Navigate to All Phones
-    await pageObj.navigateToMobileDropdown();
-    await pageObj.clickAllPhones();
-    
-    // Step 3: Select Galaxy A57 5G
-    await pageObj.selectGalaxyA57Device();
-    await pageObj.isProductDetailPageLoaded();
-    
-    // Step 4: Verify all default selections with flexible matching
-    const color = await pageObj.getSelectedColor();
-    const storage = await pageObj.getSelectedStorage();
-    const payment = await pageObj.getSelectedPaymentOption();
-    
-    expect(color).toMatch(/Awesome Navy|Black/);
-    expect(storage).toMatch(/256\s?GB/);
-    expect(payment).toMatch(/24.?month/);
-    
-    // Step 5: Click Next and verify authentication popup
-    await pageObj.clickNextButton();
-    
-    const isAuthModalVisible = await pageObj.isAuthModalVisible();
-    expect(isAuthModalVisible).toBe(true);
-    
-    const authMessage = await pageObj.getAuthMessage();
-    expect(authMessage).toContain('Please log in or create an account to continue with your purchase');
-    
-    // Verify both authentication options are available
-    expect(await pageObj.isHubIdLoginButtonVisible()).toBe(true);
-    expect(await pageObj.isSignUpLinkVisible()).toBe(true);
+      // Assert: default payment option
+      const payment = await pageObj.getSelectedPaymentOption();
+      expect(payment).toMatch(/24.?month/i);
+    });
+
+    test('AC4: Clicking the Next button initiates the next step in the purchase journey', async ({ page }) => {
+      // Arrange: confirm PDP is loaded
+      await pageObj.isProductDetailPageLoaded();
+
+      // Act: click Next
+      await pageObj.clickNextButton();
+
+      // Assert: next step is initiated (auth modal becomes visible)
+      const isModalVisible = await pageObj.isAuthModalVisible();
+      expect(isModalVisible).toBe(true);
+    });
+
+    test('AC5: Auth popup displays login message and both login and sign-up options', async ({ page }) => {
+      // Arrange: reach the auth trigger
+      await pageObj.isProductDetailPageLoaded();
+      await pageObj.clickNextButton();
+
+      // Assert: exact popup message
+      const authMessage = await pageObj.getAuthMessage();
+      expect(authMessage).toBe('Please log in or create an account to continue with your purchase');
+
+      // Assert: "Log in with Hub ID" button is visible
+      const isHubIdVisible = await pageObj.isHubIdLoginButtonVisible();
+      expect(isHubIdVisible).toBe(true);
+
+      // Assert: "Don't have an account? Sign up here" button is visible
+      const isSignUpVisible = await pageObj.isSignUpLinkVisible();
+      expect(isSignUpVisible).toBe(true);
+    });
   });
 });
