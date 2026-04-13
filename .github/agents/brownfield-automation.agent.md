@@ -173,7 +173,7 @@ Do this for **every** AC in the story — one test case object per AC.
 **Only run this step for ACs that Phase 2.2 determined are NEW or need updating.**
 For ACs that are already fully covered (existing ID + existing spec title), skip this step entirely.
 
-Update `src/integrations/push-to-testrail.js` with only the new/changed `TEST_CASES` entries, then run:
+Append only the new/changed entries to `src/integrations/testrail-test-cases.json`, then run:
 
 ```bash
 node src/integrations/push-to-testrail.js

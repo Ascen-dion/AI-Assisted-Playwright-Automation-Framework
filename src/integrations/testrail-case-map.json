@@ -5,6 +5,7 @@
     "Test Case 2: Select Samsung Galaxy A57 5G from the device listing": 500,
     "Test Case 3: Verify Samsung Galaxy A57 5G default configuration": 501,
     "Test Case 4: Click Next to initiate the purchase journey next step": 502,
-    "Test Case 5: Verify login and sign-up popup after clicking Next": 503
+    "Test Case 5: Verify login and sign-up popup after clicking Next": 503,
+    "Test Case 6: Navigate to Broadband overview via Broadband dropdown": 504
   }
 }

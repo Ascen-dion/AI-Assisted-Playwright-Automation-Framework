@@ -40,84 +40,18 @@ if (!PROJECT_ID || !SUITE_ID) {
   process.exit(1);
 }
 
-// ── Test case definitions derived from Jira ACs ────────────────────────────
-// Each entry maps 1:1 to a test case in the spec file.
+// ── Test case definitions — loaded from testrail-test-cases.json ────────────
+// To add a new story: append an entry to testrail-test-cases.json and re-run this script.
 // The `specTitle` value MUST match the exact string passed to test() in the spec.
-const TEST_CASES = [
-  {
-    specTitle: 'Test Case 1: Navigate to All Phones listing via Mobile dropdown',
-    title:     'AC1: Navigate to Mobile Devices Listing via Mobile dropdown',
-    preconditions:
-      'User has launched https://www.starhub.com/personal.html in a browser.\n' +
-      'No prior session / not logged in.',
-    steps:
-      '1. Click the "Mobile" navigation tab to open the dropdown megamenu.\n' +
-      '2. In the "Mobile Phones" column click "All Phones".',
-    expected:
-      'Browser navigates to consumer.starhub.com/personal/store/mobile/devices.\n' +
-      '"Mobile Devices" heading is visible.\n' +
-      'Device listing shows at least one item (count text matches /\\d+ items/).',
-    refs: JIRA_REF
-  },
-  {
-    specTitle: 'Test Case 2: Select Samsung Galaxy A57 5G from the device listing',
-    title:     'AC2: Select Samsung Galaxy A57 5G device from All Phones listing',
-    preconditions:
-      'User is on the All Phones listing page: consumer.starhub.com/personal/store/mobile/devices.',
-    steps:
-      '1. Locate the "Galaxy A57 5G" device card.\n' +
-      '2. Click the card.',
-    expected:
-      'Browser navigates to a URL containing "galaxy-a57-5g".\n' +
-      '"Samsung Galaxy A57 5G" breadcrumb title is visible on the product detail page.',
-    refs: JIRA_REF
-  },
-  {
-    specTitle: 'Test Case 3: Verify Samsung Galaxy A57 5G default configuration',
-    title:     'AC3: Verify default colour, storage, and payment options on Galaxy A57 5G PDP',
-    preconditions:
-      'User is on the Galaxy A57 5G product detail page.\n' +
-      'No prior selection has been made.',
-    steps:
-      '1. Observe the Colour label above the colour swatches.\n' +
-      '2. Observe the Storage label and storage option chips.\n' +
-      '3. Observe the Payment option selector.',
-    expected:
-      'Colour label reads "Colour: Awesome Navy" (live default as of April 2026).\n' +
-      'Storage label reads "Storage: 256GB" and the 256GB chip is visible.\n' +
-      'The "24-month" payment option chip is marked active.',
-    refs: JIRA_REF
-  },
-  {
-    specTitle: 'Test Case 4: Click Next to initiate the purchase journey next step',
-    title:     'AC4: Clicking Next on the PDP initiates the next purchase step',
-    preconditions:
-      'User is on the Galaxy A57 5G PDP.\n' +
-      'Default configuration is applied (colour, storage, 24-month payment).\n' +
-      'User is NOT logged in.',
-    steps:
-      '1. Click the "Next" button in the purchase summary section.',
-    expected:
-      'System initiates the next step — confirmed by the auth gate popup becoming visible.\n' +
-      'User remains on the same URL (no full-page redirect).',
-    refs: JIRA_REF
-  },
-  {
-    specTitle: 'Test Case 5: Verify login and sign-up popup after clicking Next',
-    title:     'AC5: Login/Sign-up popup is displayed for unauthenticated users clicking Next',
-    preconditions:
-      'User is on the Galaxy A57 5G PDP and is NOT logged in.',
-    steps:
-      '1. Click the "Next" button.\n' +
-      '2. Observe the popup that appears.',
-    expected:
-      'An overlay modal becomes visible.\n' +
-      'Modal message reads: "Please log in or create an account to continue with your purchase".\n' +
-      '"Log in with Hub ID" button is visible.\n' +
-      '"Don\'t have an account? Sign up here" button is visible.',
-    refs: JIRA_REF
-  }
-];
+const TEST_CASES_RAW = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, 'testrail-test-cases.json'), 'utf8')
+);
+
+// Map jiraRef from JSON; override with JIRA_REF env var if set for the current run
+const TEST_CASES = TEST_CASES_RAW.map(tc => ({
+  ...tc,
+  refs: JIRA_REF || tc.jiraRef || ''
+}));
 
 // ── Main ────────────────────────────────────────────────────────────────────
 async function main() {
