@@ -1,0 +1,411 @@
+- generic [ref=e2]:
+  - generic [ref=e5]:
+    - generic [ref=e9]:
+      - list [ref=e12]:
+        - listitem [ref=e13]:
+          - link "Personal" [ref=e14] [cursor=pointer]:
+            - /url: /personal.html
+        - listitem [ref=e15]:
+          - link "SME" [ref=e16] [cursor=pointer]:
+            - /url: /sme.html
+        - listitem [ref=e17]:
+          - link "Enterprise" [ref=e18] [cursor=pointer]:
+            - /url: /business.html
+        - listitem [ref=e19]:
+          - link "About Us" [ref=e20] [cursor=pointer]:
+            - /url: /about-us.html
+      - button "My Account" [ref=e25] [cursor=pointer]:
+        - text: My Account
+        - img [ref=e26]
+    - navigation [ref=e29]:
+      - generic [ref=e30]:
+        - link [ref=e32] [cursor=pointer]:
+          - /url: /personal.html
+          - img [ref=e33]
+        - generic [ref=e34]:
+          - list [ref=e35]:
+            - listitem [ref=e36]:
+              - button "Mobile" [ref=e37]
+            - listitem [ref=e38]:
+              - button "Broadband" [ref=e39]
+            - listitem [ref=e40]:
+              - button "Entertainment" [expanded] [ref=e41]
+              - list:
+                - generic [ref=e531]:
+                  - generic [ref=e534]:
+                    - link "Entertainment overview" [ref=e535] [cursor=pointer]:
+                      - /url: https://www.starhub.com/personal/tvplus/passes.html
+                      - heading "Entertainment overview" [level=5] [ref=e536]
+                    - generic [ref=e537]: Enjoy the latest in Sporting, Entertainment and streaming available anywhere and everywhere.
+                  - generic [ref=e538]:
+                    - generic [ref=e540]:
+                      - generic [ref=e542]: Entertainment Plans
+                      - list [ref=e543]:
+                        - listitem [ref=e544]:
+                          - link "Browse TV+ Passes" [ref=e545] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/tvplus/passes.html
+                        - listitem [ref=e546]:
+                          - link "Premier League" [ref=e547] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/bundles/premier-league.html
+                        - listitem [ref=e548]:
+                          - link "Explore Add-ons" [ref=e549] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/tvplus/add-ons.html
+                    - generic [ref=e551]:
+                      - generic [ref=e553]: StarHub TV+
+                      - list [ref=e554]:
+                        - listitem [ref=e555]:
+                          - link "Cloud Recording – NEW!" [ref=e556] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/tvplus/interface.html
+                        - listitem [ref=e557]:
+                          - link "Mobile App" [ref=e558] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/tvplus/app.html
+                        - listitem [ref=e559]:
+                          - link "Web Browser" [ref=e560] [cursor=pointer]:
+                            - /url: https://www.starhubtvplus.com/home
+                        - listitem [ref=e561]:
+                          - link "TV Devices" [ref=e562] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/tvplus/tv-accessories.html
+                        - listitem [ref=e563]:
+                          - link "Channel List" [ref=e564] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/tvplus/passes/channel-listing.html
+                    - generic [ref=e566]:
+                      - generic [ref=e568]: Promotions & Bundles
+                      - list [ref=e569]:
+                        - listitem [ref=e570]:
+                          - link "Mediacorp's FIFA World Cup 2026™" [ref=e571] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/bundles/worldcup-2026.html
+                        - listitem [ref=e572]:
+                          - link "Latest Promotions" [ref=e573] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/promotions.html?filterTags=CBGTags%3APromotions%2FBundles%2CCBGTags%3APromotions%2FTV%2C&pg=1
+                        - listitem [ref=e574]:
+                          - link "TV+ & Broadband Bundles" [ref=e575] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/bundles/homehub-plus/ultraspeed.html
+                    - generic [ref=e577]:
+                      - generic [ref=e579]: Streaming Apps
+                      - list [ref=e580]:
+                        - listitem [ref=e581]:
+                          - link "Netflix" [ref=e582] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/bundles/netflix.html
+                        - listitem [ref=e583]:
+                          - link "Disney+" [ref=e584] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/bundles/disneyplus.html
+                        - listitem [ref=e585]:
+                          - link "Amazon Prime" [ref=e586] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/promotions/amazon-prime.html
+                        - listitem [ref=e587]:
+                          - link "HBO Max" [ref=e588] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/tvplus/add-ons/hbo-max.html
+                        - listitem [ref=e589]:
+                          - link "iQIYI" [ref=e590] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/tvplus/add-ons/iqiyi.html
+                        - listitem [ref=e591]:
+                          - link "CMGO" [ref=e592] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/tvplus/add-ons/cmgo.html
+                        - listitem [ref=e593]:
+                          - link "Viu" [ref=e594] [cursor=pointer]:
+                            - /url: https://www.starhub.com/personal/tvplus/add-ons/viu.html
+            - listitem [ref=e42]:
+              - button "Lifestyle & Safety" [ref=e43]
+            - listitem [ref=e44]:
+              - button "Membership" [ref=e45]
+          - list [ref=e47]:
+            - listitem [ref=e48]:
+              - link "Support":
+                - /url: https://www.starhub.com/personal/support.html
+                - generic [ref=e49] [cursor=pointer]: Support
+  - generic [ref=e50]:
+    - generic [ref=e51]:
+      - generic [ref=e53]:
+        - generic [ref=e462]:
+          - generic [ref=e463]:
+            - list:
+              - listitem [ref=e595]:
+                - generic:
+                  - heading "All-new ultimate foldable. As low as $17/mth" [level=1] [ref=e602]:
+                    - generic [ref=e603]:
+                      - text: All-new ultimate foldable.
+                      - text: As low as $17/mth
+                  - generic [ref=e610]:
+                    - generic [ref=e611]:
+                      - separator [ref=e612]
+                      - heading "with free OPPO AI Pen (with case) on 5G Platinum Plan." [level=5] [ref=e613]:
+                        - paragraph [ref=e614]: with free OPPO AI Pen (with case) on 5G Platinum Plan.
+                    - link "Buy now" [ref=e616] [cursor=pointer]:
+                      - /url: https://www.starhub.com/personal/mobile/oppo.html
+                  - link:
+                    - /url: https://www.starhub.com/personal/mobile/oppo.html
+                - img [ref=e618]
+          - generic:
+            - generic:
+              - link [ref=e528] [cursor=pointer]:
+                - /url: ""
+              - link [ref=e529] [cursor=pointer]:
+                - /url: ""
+            - generic [ref=e466]:
+              - link "1" [ref=e468] [cursor=pointer]:
+                - /url: ""
+              - link "2" [ref=e470] [cursor=pointer]:
+                - /url: ""
+              - link "3" [ref=e472] [cursor=pointer]:
+                - /url: ""
+              - link "4" [ref=e474] [cursor=pointer]:
+                - /url: ""
+              - link "5" [ref=e476] [cursor=pointer]:
+                - /url: ""
+        - generic [ref=e100]:
+          - generic [ref=e101]:
+            - img [ref=e102]
+            - text: Peace of mind
+          - generic [ref=e103]:
+            - img [ref=e104]
+            - text: Full flexibility
+          - generic [ref=e105]:
+            - img [ref=e106]
+            - text: Multi-service savings
+          - generic [ref=e107]:
+            - img [ref=e108]
+            - text: 24/7 HubCare
+        - heading "A better way to connect - plans, devices & offers you'll love" [level=4] [ref=e114]: A better way to connect - plans, devices & offers you'll love
+        - generic [ref=e117]:
+          - link "Large Tile" [ref=e119] [cursor=pointer]:
+            - /url: https://consumer.starhub.com/personal/store/mobile/devices
+            - img "Large Tile" [ref=e120]
+          - link "Tile" [ref=e122] [cursor=pointer]:
+            - /url: https://consumer.starhub.com/personal/store/mobile-plans
+            - img "Tile" [ref=e123]
+          - link "Tile" [ref=e125] [cursor=pointer]:
+            - /url: https://www.starhub.com/personal/bundles/homehub-plus.html
+            - img "Tile" [ref=e126]
+          - link "Tile" [ref=e128] [cursor=pointer]:
+            - /url: https://www.starhub.com/personal/broadband.html
+            - img "Tile" [ref=e129]
+          - link "Tile" [ref=e131] [cursor=pointer]:
+            - /url: https://www.starhub.com/personal/promotions.html
+            - img "Tile" [ref=e132]
+        - heading "Curated offers for your different needs" [level=4] [ref=e138]: Curated offers for your different needs
+        - generic [ref=e144]:
+          - generic [ref=e477]:
+            - generic [ref=e147]:
+              - link [ref=e148] [cursor=pointer]:
+                - /url: https://www.starhub.com/personal/broadband.html#10g-tv-promo-hisense
+              - img [ref=e150]
+              - heading [level=4] [ref=e151]
+              - heading "Broadband Get a Hisense 55\" QLED Max TV" [level=6] [ref=e152]:
+                - generic [ref=e153]:
+                  - text: Broadband
+                  - superscript
+                - text: Get a Hisense 55" QLED Max TV
+              - separator [ref=e154]
+              - generic [ref=e156]:
+                - paragraph [ref=e478]: "& Premier League on us with 10Gbps Broadband"
+                - paragraph [ref=e479]:
+                  - generic [ref=e480]: Sign up now
+            - generic [ref=e161]:
+              - link [ref=e162] [cursor=pointer]:
+                - /url: https://consumer.starhub.com/personal/store/mobile/devices/oppo/reno15-pro-max-5g
+              - img [ref=e164]
+              - heading [level=4] [ref=e165]
+              - heading "NEW Free model upgrade!" [level=6] [ref=e166]:
+                - generic [ref=e167]: NEW
+                - text: Free model upgrade!
+              - separator [ref=e168]
+              - generic [ref=e170]:
+                - paragraph [ref=e481]: Get the all-new Reno 15 Pro Max at the price of Reno 15 with 5G Unlimited+ Max Plan.
+                - paragraph [ref=e482]
+                - paragraph [ref=e483]: Buy now
+            - generic [ref=e175]:
+              - link [ref=e176] [cursor=pointer]:
+                - /url: https://consumer.starhub.com/personal/store/mobile/devices/honor/400-pro-5g
+              - img [ref=e178]
+              - heading [level=4] [ref=e179]
+              - heading "Mobile Save $288 + 1-year extended warranty" [level=6] [ref=e180]:
+                - generic [ref=e181]: Mobile
+                - text: Save $288 + 1-year extended warranty
+              - separator [ref=e182]
+              - generic [ref=e184]:
+                - paragraph [ref=e484]: Stack an extra up to $300 off with a new line/port-in!
+                - paragraph [ref=e485]:
+                  - generic [ref=e486]: Sign up now
+          - generic [ref=e190]:
+            - link [ref=e191] [cursor=pointer]:
+              - /url: https://www.starhub.com/personal/broadband.html
+            - img [ref=e193]
+            - heading [level=4] [ref=e194]
+            - heading "Broadband For seamless connection, we got you." [level=6] [ref=e195]:
+              - generic [ref=e196]: Broadband
+              - text: For seamless connection, we got you.
+            - separator [ref=e197]
+            - generic [ref=e199]:
+              - paragraph [ref=e488]: All-inclusive plans from $39.91/mth (U.P. $58.83/mth) for broadband peace of mind.
+              - paragraph [ref=e489]
+              - paragraph [ref=e490]: Sign up now
+        - link [ref=e212] [cursor=pointer]:
+          - /url: https://www.starhub.com/personal/mobile/trade-in.html
+          - img [ref=e214]
+        - generic [ref=e220]:
+          - generic [ref=e222]:
+            - generic [ref=e223]:
+              - heading "Trending Devices" [level=3] [ref=e224]
+              - paragraph [ref=e226]: Up to $300 off for new lines/port-ins
+            - link "Shop now" [ref=e228] [cursor=pointer]:
+              - /url: https://consumer.starhub.com/personal/store/mobile/devices
+              - text: Shop now
+              - img [ref=e229]
+          - generic [ref=e231]:
+            - listbox:
+              - generic [ref=e233]:
+                - generic [ref=e237]: iPhone 17e
+                - generic [ref=e239]:
+                  - heading "From $0/mth" [level=4] [ref=e240]:
+                    - generic [ref=e242]: From $0/mth
+                  - generic [ref=e244]:
+                    - text: "*With DeviceDollars"
+                    - text: Pay later over 24 mths
+                  - generic [ref=e246]: $175 off Apple Watch S11
+                  - link "Buy now" [ref=e248] [cursor=pointer]:
+                    - /url: https://consumer.starhub.com/personal/store/mobile/devices/apple/iphone-17e
+                - img [ref=e251]
+              - generic [ref=e253]:
+                - generic [ref=e257]: Samsung Fold7 256GB
+                - generic [ref=e259]:
+                  - heading "From $0/mth" [level=4] [ref=e260]:
+                    - generic [ref=e262]: From $0/mth
+                  - generic [ref=e264]:
+                    - text: "*With DeviceDollars"
+                    - text: Pay later over 24 mths
+                  - generic [ref=e266]: $175 off Galaxy Watch8 LTE
+                  - link "Buy now" [ref=e268] [cursor=pointer]:
+                    - /url: https://consumer.starhub.com/personal/store/mobile/devices/samsung/galaxy-z-fold7-5g
+                - img [ref=e271]
+              - generic [ref=e273]:
+                - generic [ref=e277]: Oppo Find X9 Pro
+                - generic [ref=e279]:
+                  - heading "From $0/mth" [level=4] [ref=e280]:
+                    - generic [ref=e282]: From $0/mth
+                  - generic [ref=e284]:
+                    - text: "*With DeviceDollars"
+                    - text: Pay later over 24 mths
+                  - generic [ref=e286]: Free accessories worth $108
+                  - link "Buy now" [ref=e288] [cursor=pointer]:
+                    - /url: https://consumer.starhub.com/personal/store/mobile/devices/oppo/find-x9-pro-5g
+                - img [ref=e291]
+        - heading "Gear up with StarHub" [level=4] [ref=e297]: Gear up with StarHub
+        - generic [ref=e303]:
+          - generic [ref=e491]:
+            - generic [ref=e306]:
+              - link [ref=e307] [cursor=pointer]:
+                - /url: https://www.starhub.com/personal/multi-line-discount.html
+              - img [ref=e309]
+              - heading [level=4] [ref=e310]
+              - heading "Multi-line discount" [level=6] [ref=e311]: Multi-line discount
+              - separator [ref=e312]
+              - generic [ref=e314]:
+                - paragraph [ref=e492]: Enjoy greater discounts with multiple lines. Because saving is more fun when shared!
+                - paragraph [ref=e493]
+                - paragraph [ref=e494]: Learn more
+            - generic [ref=e319]:
+              - link [ref=e320] [cursor=pointer]:
+                - /url: https://www.starhub.com/personal/device-dollar.html
+              - img [ref=e322]
+              - heading [level=4] [ref=e323]
+              - heading "DeviceDollars" [level=6] [ref=e324]: DeviceDollars
+              - separator [ref=e325]
+              - generic [ref=e327]:
+                - paragraph [ref=e495]: Learn how to redeem your DeviceDollars on your device purchase!
+                - paragraph [ref=e496]
+                - paragraph [ref=e497]: Learn more
+            - generic [ref=e332]:
+              - link [ref=e333] [cursor=pointer]:
+                - /url: https://consumer.starhub.com/personal/scamsafe
+              - img [ref=e335]
+              - heading [level=4] [ref=e336]
+              - heading "ScamSafe" [level=6] [ref=e337]: ScamSafe
+              - separator [ref=e338]
+              - generic [ref=e340]:
+                - paragraph [ref=e498]: Defend against scam calls and SMS fraud with our smart filtering system.
+                - paragraph [ref=e499]
+                - paragraph [ref=e500]: Learn more
+          - generic [ref=e346]:
+            - link [ref=e347] [cursor=pointer]:
+              - /url: https://www.starhub.com/personal/promotions/geforce-now-powered-by-starhub.html
+            - img [ref=e349]
+            - heading [level=4] [ref=e350]
+            - heading "Access new release" [level=6] [ref=e351]: Access new release
+            - separator [ref=e352]
+            - generic [ref=e354]:
+              - paragraph [ref=e502]: Play AAA games instantly - any device, anywhere - with GameHub+ cloud gaming bundles.
+              - paragraph [ref=e503]: Learn more
+      - separator [ref=e361]
+    - generic [ref=e363]:
+      - list [ref=e370]:
+        - listitem [ref=e371]:
+          - link [ref=e374] [cursor=pointer]:
+            - /url: /personal.html
+            - img [ref=e375]
+        - listitem [ref=e376]:
+          - generic [ref=e378]: "StarHub: Best Mobile, Fibre Broadband & TV Plans"
+      - contentinfo [ref=e379]:
+        - generic [ref=e382]:
+          - generic [ref=e385]:
+            - generic [ref=e386]:
+              - generic [ref=e388]: Other Useful Links
+              - list [ref=e389]:
+                - listitem [ref=e390]:
+                  - link "Check out our latest promotions!" [ref=e391] [cursor=pointer]:
+                    - /url: /personal/promotions.html
+                - listitem [ref=e392]:
+                  - link "Switch to StarHub" [ref=e393] [cursor=pointer]:
+                    - /url: https://www.starhub.com/personal/switch-to-starhub.html
+                - listitem [ref=e394]:
+                  - link "Store Locations" [ref=e395] [cursor=pointer]:
+                    - /url: https://www.starhub.com/shop-locations.html
+                - listitem [ref=e396]:
+                  - link "Reviews, Guides & How-To's" [ref=e397] [cursor=pointer]:
+                    - /url: https://www.starhub.com/personal/how-to.html
+            - generic [ref=e398]:
+              - generic [ref=e400]: Support
+              - list [ref=e401]:
+                - listitem [ref=e402]:
+                  - link "Contact Us" [ref=e403] [cursor=pointer]:
+                    - /url: https://www.starhub.com/personal/support/contact-us.html
+                - listitem [ref=e404]:
+                  - link "FAQ" [ref=e405] [cursor=pointer]:
+                    - /url: https://www.starhub.com/personal/support.html
+            - generic [ref=e406]:
+              - generic [ref=e408]: StarHub App
+              - generic [ref=e410]:
+                - link [ref=e411] [cursor=pointer]:
+                  - /url: https://www.starhub.com/personal/starhub-apps/my-starhub-app.html
+                  - img [ref=e412]
+                - link [ref=e413] [cursor=pointer]:
+                  - /url: https://itunes.apple.com/sg/app/my-starhub/id470460379?mt=8
+                  - img [ref=e414]
+                - link [ref=e415] [cursor=pointer]:
+                  - /url: https://play.google.com/store/apps/details?id=com.starhub.csselfhelp
+                  - img [ref=e416]
+          - generic [ref=e417]:
+            - generic [ref=e418]:
+              - generic [ref=e419]:
+                - link "Legal Notices" [ref=e420] [cursor=pointer]:
+                  - /url: /about-us/legal-notices-and-terms.html
+                - link "Data Protection Policy" [ref=e421] [cursor=pointer]:
+                  - /url: /about-us/legal-notices-and-terms/personal-data-protection.html
+                - link "Report Vulnerability" [ref=e422] [cursor=pointer]:
+                  - /url: https://vdp.starhub.com
+                - link "Clickable Links" [ref=e423] [cursor=pointer]:
+                  - /url: /about-us/legal-notices-and-terms/clickable-links.html
+              - generic [ref=e424]: © StarHub 2026. All rights reserved.
+            - generic [ref=e427]:
+              - link [ref=e428] [cursor=pointer]:
+                - /url: https://www.facebook.com/starhub
+                - img [ref=e429]
+              - link [ref=e430] [cursor=pointer]:
+                - /url: https://instagram.com/starhub
+                - img [ref=e431]
+              - link [ref=e432] [cursor=pointer]:
+                - /url: https://twitter.com/StarHub
+                - img [ref=e433]
+              - link [ref=e434] [cursor=pointer]:
+                - /url: https://www.youtube.com/user/StarHub
+                - img [ref=e435]
+    - generic "Back to top" [ref=e436] [cursor=pointer]

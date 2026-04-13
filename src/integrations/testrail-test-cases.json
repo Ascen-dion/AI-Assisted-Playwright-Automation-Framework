@@ -46,5 +46,13 @@
     "steps": "1. Click the \"Broadband\" navigation tab to open the dropdown megamenu.\n2. Click the \"Broadband overview\" link in the dropdown.",
     "expected": "Browser navigates to https://www.starhub.com/personal/broadband.html.\nPage title or heading confirms the Broadband overview page has loaded.",
     "jiraRef": "AU-6"
+  },
+  {
+    "specTitle": "Test Case 7: Navigate to Entertainment overview via Entertainment dropdown",
+    "title": "AC7: Navigate to Entertainment overview page via Entertainment tab",
+    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
+    "steps": "1. Click the \"Entertainment\" navigation tab to open the dropdown megamenu.\n2. Click the \"Entertainment overview\" link in the dropdown.",
+    "expected": "Browser navigates to https://www.starhub.com/personal/tvplus/passes.html.\nPage title or heading confirms the Entertainment overview page has loaded.",
+    "jiraRef": "AU-7"
   }
 ]
