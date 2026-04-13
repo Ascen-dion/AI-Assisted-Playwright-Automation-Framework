@@ -1,103 +1,227 @@
+// === FILE: src/pages/starhub-mobile-purchase.page.js ===
 const loc = require('./locators/starhub-mobile-purchase.locators');
-const BASE_URL = 'https://www.starhub.com/personal.html';
-const PDP_URL = 'https://consumer.starhub.com/personal/store/mobile/devices/samsung/galaxy-a57-5g';
+
+const HOMEPAGE_URL = 'https://www.starhub.com/personal.html';
+const DEVICES_URL = 'https://consumer.starhub.com/personal/store/mobile/devices';
+const GALAXY_A57_URL = 'https://consumer.starhub.com/personal/store/mobile/devices/samsung/galaxy-a57-5g';
 
 class StarHubMobilePurchasePage {
   constructor(page) {
     this.page = page;
   }
 
+  // ── Navigation helpers ───────────────────────────────────────────────────
+
+  /**
+   * Navigate to the StarHub personal homepage.
+   * Used as entry point for AC1 nav-flow tests.
+   */
   async goto() {
-    await this.page.goto(BASE_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await this.page.goto(HOMEPAGE_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
   }
 
-  async gotoPDP() {
-    await this.page.goto(PDP_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
-    await this.page.waitForLoadState('networkidle', { timeout: 30000 });
+  /**
+   * Navigate directly to the All Phones device listing page.
+   * consumer.starhub.com is a heavy React SPA; networkidle waits for JS hydration.
+   */
+  async gotoDeviceListing() {
+    await this.page.goto(DEVICES_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await this.page.waitForLoadState('networkidle');
   }
 
+  /**
+   * Navigate directly to the Samsung Galaxy A57 5G product detail page.
+   */
+  async gotoGalaxyA57() {
+    await this.page.goto(GALAXY_A57_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await this.page.waitForLoadState('networkidle');
+  }
+
+  /**
+   * Safely dismiss cookie / consent banners.
+   * Swallows errors when the banner is absent.
+   */
   async dismissCookieConsent() {
     try {
-      await loc.cookieConsentButton(this.page).click({ timeout: 3000 });
-    } catch { /* already dismissed */ }
+      await this.page
+        .getByRole('button', { name: /got it|accept|agree|consent/i })
+        .first()
+        .click({ timeout: 3000 });
+    } catch {}
   }
 
-  async navigateToMobileDropdown() {
-    await loc.mobileDropdownButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
-    await loc.mobileDropdownButton(this.page).click();
+  // ── AC1 — Mobile nav dropdown flow ──────────────────────────────────────
+
+  /**
+   * Click the "Mobile" top-nav button to expand the dropdown megamenu.
+   */
+  async openMobileDropdown() {
+    await loc.mobileNavButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    await loc.mobileNavButton(this.page).click();
   }
 
+  /**
+   * Click the "All Phones" link inside the expanded Mobile dropdown.
+   * Caller must have already called openMobileDropdown().
+   */
   async clickAllPhones() {
     await loc.allPhonesLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
     await loc.allPhonesLink(this.page).click();
-    await this.page.waitForLoadState('networkidle', { timeout: 30000 });
   }
 
-  async selectGalaxyA57Device() {
-    await loc.galaxyA57Device(this.page).waitFor({ state: 'visible', timeout: 15000 });
-    await loc.galaxyA57Device(this.page).click();
-    await this.page.waitForLoadState('networkidle', { timeout: 30000 });
+  /**
+   * Returns true when the "Mobile Devices" heading is visible on the listing page.
+   */
+  async isDeviceListingPageDisplayed() {
+    await loc.deviceListingHeading(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.deviceListingHeading(this.page).isVisible();
   }
 
-  async isProductDetailPageLoaded() {
-    await loc.productTitle(this.page).waitFor({ state: 'visible', timeout: 15000 });
-    return await loc.productTitle(this.page).isVisible();
+  /**
+   * Returns the item count text (e.g. "38 items") from the listing page header.
+   */
+  async getDeviceItemCountText() {
+    await loc.deviceItemCount(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.deviceItemCount(this.page).textContent();
   }
 
-  async getSelectedColor() {
-    await loc.colourSection(this.page).waitFor({ state: 'visible', timeout: 10000 });
-    const text = await loc.colourSection(this.page).textContent();
-    return text.replace('Colour:', '').trim();
+  // ── AC2 — Select device on listing page ─────────────────────────────────
+
+  /**
+   * Click the Samsung Galaxy A57 5G device card on the listing page.
+   */
+  async clickGalaxyA57() {
+    await loc.galaxyA57Card(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    await loc.galaxyA57Card(this.page).click();
   }
 
-  async getSelectedStorage() {
-    await loc.storageSection(this.page).waitFor({ state: 'visible', timeout: 10000 });
-    const text = await loc.storageSection(this.page).textContent();
-    const match = text.match(/(\d+\s?GB)/);
-    return match ? match[1] : text.replace('Storage:', '').trim();
+  /**
+   * Returns true when the Samsung Galaxy A57 5G device breadcrumb title is visible.
+   */
+  async isGalaxyA57PDPDisplayed() {
+    await loc.deviceBreadcrumbTitle(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.deviceBreadcrumbTitle(this.page).isVisible();
   }
 
-  async getSelectedPaymentOption() {
-    await loc.paymentOptionActive(this.page).waitFor({ state: 'visible', timeout: 10000 });
-    return (await loc.paymentOptionActive(this.page).textContent()).trim();
+  // ── AC3 — Verify default device configuration ────────────────────────────
+
+  /**
+   * Returns the full colour label text from the parent container, e.g. "Colour: Awesome Navy".
+   * The .f-label-phone span only contains "Colour: " — the colour name lives in a sibling span.
+   * Uses the parent div (xpath=..) which aggregates both prefix and colour value.
+   * Waits for the colour name to be hydrated by the SPA before reading.
+   */
+  async getDefaultColourLabel() {
+    // Wait for the parent container to be visible first
+    await loc.colourLabel(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    // Poll until the parent text contains more than just the "Colour: " prefix
+    await this.page.waitForFunction(
+      () => {
+        const spans = document.querySelectorAll('.f-label-phone');
+        for (const span of spans) {
+          if (span.textContent.trim().startsWith('Colour:')) {
+            const parentText = (span.parentElement?.textContent || '').trim();
+            if (parentText.includes(':') && parentText.split(':')[1].trim().length > 0) {
+              return true;
+            }
+          }
+        }
+        return false;
+      },
+      { timeout: 15000 }
+    );
+    return ((await loc.colourLabel(this.page).textContent()) || '').trim();
   }
 
+  /**
+   * Returns the full storage label text from the parent container, e.g. "Storage: 256GB".
+   * Uses the same parent-traversal approach as getDefaultColourLabel().
+   */
+  async getDefaultStorageLabel() {
+    await loc.storageLabel(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    await this.page.waitForFunction(
+      () => {
+        const spans = document.querySelectorAll('.f-label-phone');
+        for (const span of spans) {
+          if (span.textContent.trim().startsWith('Storage:')) {
+            const parentText = (span.parentElement?.textContent || '').trim();
+            if (parentText.includes(':') && parentText.split(':')[1].trim().length > 0) {
+              return true;
+            }
+          }
+        }
+        return false;
+      },
+      { timeout: 15000 }
+    );
+    return ((await loc.storageLabel(this.page).textContent()) || '').trim();
+  }
+
+  /**
+   * Returns the text of the currently active (selected) payment option chip.
+   */
+  async getActivePaymentOptionText() {
+    await loc.activePaymentOption(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.activePaymentOption(this.page).textContent();
+  }
+
+  /**
+   * Returns true when the 256GB storage option chip is visible on the page.
+   */
+  async isStorage256GBVisible() {
+    await loc.storage256GBOption(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.storage256GBOption(this.page).isVisible();
+  }
+
+  /**
+   * Returns true when the 24-month payment option is visible on the page.
+   */
+  async is24MonthPaymentVisible() {
+    await loc.payment24MonthOption(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.payment24MonthOption(this.page).isVisible();
+  }
+
+  // ── AC4 / AC5 — Next button and auth popup ───────────────────────────────
+
+  /**
+   * Click the "Next" purchase CTA button on the device PDP.
+   * Note: uses exact match to avoid targeting the image carousel "Next Item" button.
+   */
   async clickNextButton() {
     await loc.nextButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
-    await loc.nextButton(this.page).scrollIntoViewIfNeeded();
     await loc.nextButton(this.page).click();
   }
 
-  async isAuthModalVisible() {
-    try {
-      await loc.authMessage(this.page).waitFor({ state: 'visible', timeout: 15000 });
-      return await loc.authMessage(this.page).isVisible();
-    } catch {
-      return false;
-    }
+  /**
+   * Returns true when the login/signup overlay modal is visible.
+   */
+  async isLoginPopupVisible() {
+    await loc.loginPopupModal(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.loginPopupModal(this.page).isVisible();
   }
 
-  async getAuthMessage() {
-    await loc.authMessage(this.page).waitFor({ state: 'visible', timeout: 15000 });
-    return (await loc.authMessage(this.page).textContent()).trim();
+  /**
+   * Returns the message text displayed inside the login popup.
+   */
+  async getLoginPopupMessageText() {
+    await loc.loginPopupMessage(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.loginPopupMessage(this.page).textContent();
   }
 
-  async isHubIdLoginButtonVisible() {
-    await loc.hubIdLoginButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
-    return await loc.hubIdLoginButton(this.page).isVisible();
+  /**
+   * Returns true when the "Log in with Hub ID" button is visible inside the popup.
+   */
+  async isLoginWithHubIDButtonVisible() {
+    await loc.loginWithHubIDButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.loginWithHubIDButton(this.page).isVisible();
   }
 
-  async isSignUpLinkVisible() {
-    await loc.signUpLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
-    return await loc.signUpLink(this.page).isVisible();
-  }
-
-  async getCurrentUrl() {
-    return this.page.url();
-  }
-
-  async getPageTitle() {
-    return await this.page.title();
+  /**
+   * Returns true when the "Don't have an account? Sign up here" button is visible.
+   */
+  async isSignUpButtonVisible() {
+    await loc.signUpButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.signUpButton(this.page).isVisible();
   }
 }
 

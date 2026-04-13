@@ -1,30 +1,42 @@
+// === FILE: src/pages/locators/starhub-mobile-purchase.locators.js ===
 const locators = {
-  // Cookie consent
-  cookieConsentButton: (page) => page.getByRole('button', { name: /got it|accept|agree|consent/i }).first(),
+  // Homepage navigation — Mobile tab
+  mobileNavButton: (page) => page.getByRole('button', { name: 'Mobile' }),
+  allPhonesLink: (page) => page.getByRole('link', { name: 'All Phones' }).first(),
 
-  // Main navigation (www.starhub.com)
-  mobileDropdownButton: (page) => page.getByRole('button', { name: 'Mobile' }),
-  allPhonesLink: (page) => page.getByRole('link', { name: 'All Phones' }),
+  // Device listing page (consumer.starhub.com/personal/store/mobile/devices)
+  deviceListingHeading: (page) => page.getByText('Mobile Devices', { exact: true }).first(),
+  deviceItemCount: (page) => page.locator('text=/\\d+ items/').first(),
+  galaxyA57Card: (page) => page.getByText('Galaxy A57 5G', { exact: true }).first(),
 
-  // Product listing page (consumer.starhub.com/personal/store/mobile/devices)
-  // Confirmed live DOM: class="product-item-card ..." — 39 devices on listing
-  galaxyA57Device: (page) => page.locator('[class*="product-item-card"]').filter({ hasText: 'Galaxy A57 5G' }).first(),
+  // Device PDP — product identification
+  // Breadcrumb shows "Samsung Galaxy A57 5G" - two elements match, use .first() (the breadcrumb link)
+  deviceBreadcrumbTitle: (page) => page.getByText('Samsung Galaxy A57 5G', { exact: true }).first(),
+  // Product title (brand + model are sibling elements; locate model text)
+  deviceModelName: (page) => page.getByText('Galaxy A57 5G', { exact: true }).first(),
 
-  // Product detail page (consumer.starhub.com/.../samsung/galaxy-a57-5g)
-  // Confirmed live DOM 2026-04-13
-  productTitle: (page) => page.locator('.product-detail-supernova'),
-  colourSection: (page) => page.locator('.colour-section').first(),
-  storageSection: (page) => page.locator('.storage-section').first(),
-  // Active payment option — class includes both 'paymentoption-selection-option' AND 'active'
-  paymentOptionActive: (page) => page.locator('.paymentoption-selection-option.active'),
-  // Desktop-visible Next button (two exist; the mobile one is hidden)
-  nextButton: (page) => page.locator('button.add-to-cart-button.width-full-desktop'),
+  // Device PDP — configuration selectors
+  // .f-label-phone span holds only "Colour: " prefix; colour name lives in a sibling span.
+  // Use xpath=.. to get the parent div which has both prefix + value as combined textContent.
+  colourLabel: (page) => page.locator('.f-label-phone').filter({ hasText: /^Colour:/ }).locator('xpath=..'),
+  // Similarly for storage label — parent div contains "Storage: 256GB" combined
+  storageLabel: (page) => page.locator('.f-label-phone').filter({ hasText: /^Storage:/ }).locator('xpath=..'),
+  // The 256GB option chip visible below the storage label — two spans match, use .first()
+  storage256GBOption: (page) => page.getByText('256GB', { exact: true }).first(),
+  // Active (selected) payment option — scope to paymentoption class to exclude
+  // the storage .shop-option.active which also carries the active modifier
+  activePaymentOption: (page) => page.locator('.paymentoption-selection-option.active'),
+  payment24MonthOption: (page) => page.getByText('24-month', { exact: true }),
 
-  // Authentication popup (overlay-modal shown after clicking Next when unauthenticated)
-  authMessage: (page) => page.locator('.overlay-modal-title'),
-  authModalFooter: (page) => page.locator('.overlay-modal-footer-content'),
-  hubIdLoginButton: (page) => page.getByRole('button', { name: 'Log in with Hub ID' }),
-  signUpLink: (page) => page.getByRole('button', { name: "Don't have an account? Sign up here" }),
+  // Device PDP — purchase CTA
+  // 'Next' (exact) distinguishes from 'Next Item' (carousel button)
+  nextButton: (page) => page.getByRole('button', { name: 'Next', exact: true }),
+
+  // Auth gate popup rendered after unauthenticated Next click
+  loginPopupModal: (page) => page.locator('.overlay-modal'),
+  loginPopupMessage: (page) => page.locator('.overlay-modal-title'),
+  loginWithHubIDButton: (page) => page.getByRole('button', { name: 'Log in with Hub ID' }),
+  signUpButton: (page) => page.getByRole('button', { name: "Don't have an account? Sign up here" }),
 };
 
 module.exports = locators;
