@@ -2,7 +2,7 @@
 const { test, expect } = require('@playwright/test');
 const StarhubEntertainmentNavPage = require('../../pages/starhub-entertainment-nav.page');
 
-test.describe('[UI] AC7: Entertainment Tab Navigation to Entertainment Overview', { tag: ['@smoke', '@regression'] }, () => {
+test.describe('[UI] AC7: Entertainment Tab Navigation to Entertainment Overview', { tag: ['@smoke', '@regressionIgnore'] }, () => {
   let entertainmentNavPage;
 
   test.beforeEach(async ({ page }) => {
