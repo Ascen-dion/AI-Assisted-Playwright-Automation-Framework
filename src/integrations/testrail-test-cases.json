@@ -62,5 +62,13 @@
     "steps": "1. Click the \"Membership\" navigation tab to open the dropdown megamenu.\n2. Click the \"Membership overview\" link in the dropdown.",
     "expected": "Browser navigates to https://www.starhub.com/personal/membership.html.\nPage title or heading confirms the Membership overview page has loaded.",
     "jiraRef": "AU-8"
+  },
+  {
+    "specTitle": "Test Case 10: Navigate to About Us page via About Us footer link",
+    "title": "AC10: Clicking About Us link navigates to corporate About Us page",
+    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
+    "steps": "1. Scroll to the footer of the page.\n2. Click the \"About Us\" link in the footer.",
+    "expected": "Browser navigates to https://corporate.starhub.com/about-us.html.\nThe About Us page on the corporate subdomain is loaded successfully.",
+    "jiraRef": "AU-10"
   }
 ]

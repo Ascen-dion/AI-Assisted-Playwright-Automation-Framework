@@ -274,6 +274,10 @@ jobs:
         console.log(`Email prepared: ${passed} passed, ${failed} failed, ${skipped} skipped`);
         NODEOF
 
+    - name: Zip Playwright report
+      if: always()
+      run: zip -r playwright-report.zip playwright-report/ || true
+
     - name: Send Email Notification
       if: always()
       continue-on-error: true
@@ -288,9 +292,7 @@ jobs:
         to: ${{ secrets.EMAIL_TO }}
         from: Playwright AI Framework <${{ secrets.EMAIL_USERNAME }}>
         html_body: file://email-body.html
-        attachments: |
-          playwright-report/**/*
-          test-results/**/*.png
+        attachments: playwright-report.zip
 
     - name: Comment PR with Results
       if: github.event_name == 'pull_request' && always()

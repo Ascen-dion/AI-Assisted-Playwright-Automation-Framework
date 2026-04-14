@@ -16,12 +16,14 @@ module.exports = {
     broadband:       'https://www.starhub.com/personal/broadband.html',
     entertainment:   'https://www.starhub.com/personal/tvplus/passes.html',
     membership:      'https://www.starhub.com/personal/membership.html',
+    aboutUs:         'https://corporate.starhub.com/about-us.html',
   },
 
   // ── URL patterns (regex for toHaveURL assertions) ────────────────────────
   urlPatterns: {
     allPhones:  /consumer\.starhub\.com\/personal\/store\/mobile\/devices/,
     galaxyA57:  /galaxy-a57-5g/,
+    aboutUs:    /corporate\.starhub\.com\/about-us/,
   },
 
   // ── Galaxy A57 5G — default product configuration ────────────────────────

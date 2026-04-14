@@ -68,3 +68,4 @@ out/
 *.cpuprofile
 *.heapsnapshot
 .playwright-cli/
+.playwright-mcp/
