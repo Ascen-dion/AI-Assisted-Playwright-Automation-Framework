@@ -2,7 +2,7 @@
 const { test, expect } = require('@playwright/test');
 const StarhubMembershipNavPage = require('../../pages/starhub-membership-nav.page');
 
-test.describe('[UI] AC8: Membership Tab Navigation to Membership Overview', { tag: ['@smoke', '@regressionIgnore'] }, () => {
+test.describe('[UI] AC8: Membership Tab Navigation to Membership Overview', { tag: ['@smoke', '@skip'] }, () => {
   let membershipNavPage;
 
   test.beforeEach(async ({ page }) => {

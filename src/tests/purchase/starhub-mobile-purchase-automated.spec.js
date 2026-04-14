@@ -16,7 +16,7 @@ const { test, expect } = require('@playwright/test');
 const StarHubMobilePurchasePage = require('../../pages/starhub-mobile-purchase.page');
 const TD = require('../../data/test-data');
 
-test.describe('[UI] StarHub Mobile Purchase Journey', { tag: ['@regressionRemoved'] }, () => {
+test.describe('[UI] StarHub Mobile Purchase Journey', { tag: ['@skip'] }, () => {
   let pageObj;
 
   // ── AC1: Navigate to Mobile Devices Listing via nav dropdown ─────────────
