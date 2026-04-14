@@ -8,7 +8,42 @@ Hosted UI:
 - https://ascen-dion.github.io/AI-Assisted-Playwright-Automation-Framework/
 
 Current brownfield target:
-- https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/
+- https://www.starhub.com (marketing / info pages)
+- https://consumer.starhub.com (store / purchase pages)
+
+## Preferred Agent — `starhub-automation-agent`
+
+To generate, extend, or fix any test in this repository, use the **`starhub-automation-agent`** defined in `.github/agents/brownfield-automation.agent.md`.
+
+Invoke it in GitHub Copilot Chat by selecting the agent from the agent picker, then describe the acceptance criteria in plain English:
+
+```
+Automate AC11: Given user is on the homepage, When user clicks "Business", Then user is navigated to https://www.starhub.com/business.html
+```
+
+The agent operates in 8 phases automatically — no manual steps required:
+
+| Phase | What happens |
+|---|---|
+| **1 — Load Context** | Reads all four `context/` files to understand the app, framework conventions, domain rules, and guardrails |
+| **2 — Audit Assets** | Scans `src/pages/`, `src/pages/locators/`, and `src/tests/` to reuse existing locators, page objects, and specs before creating anything new |
+| **2.2 — Check TestRail** | Reads `testrail-case-map.json` and existing spec titles for `[Cxxx]` IDs — skips TestRail push if already covered |
+| **3 — TestRail Cases** | Parses ACs into structured test case objects and pushes them to TestRail via `push-to-testrail.js`; embeds the assigned `[Cxxx]` ID into every test title |
+| **4 — Live Inspection** | Navigates the live application in a browser, inspects the real DOM, and confirms every selector before writing any code |
+| **5 — Decide Test Type** | Chooses UI test, API test, or both based on the AC |
+| **6 — Generate Code** | Produces three POM-structured files: `<name>.locators.js`, `<name>.page.js`, and `<name>-automated.spec.js` |
+| **7 — Quality Gates** | Verifies no raw selectors in specs, no duplication, correct timeouts, `TD.*` values, and `[Cxxx]` prefix on every test title |
+| **8 — Run & Verify** | Executes the new spec, fixes failures, and confirms TestRail results are posted |
+
+The traceability chain the agent produces:
+
+```
+Plain English AC  →  TestRail Case (Cxxx)  →  Playwright spec title [Cxxx]  →  TestRail Run (pass/fail auto-posted)
+```
+
+All TestRail credentials are pre-configured in `.env`. The only value to supply per story is the Jira reference (e.g. `AU-11`).
+
+---
 
 ## What This Framework Can Do
 
@@ -155,13 +190,25 @@ That context is normalized and merged into prompts through `src/helpers/project-
 
 ## 7. Page Object Model and Reusable Assets
 
-The repository includes reusable POM assets for the brownfield sample implementation:
+The repository includes production-grade POM assets for the StarHub brownfield implementation:
 
-- `src/pages/ecomm-brownfield.page.js`
-- `src/pages/locators/ecomm-brownfield.locators.js`
-- `src/tests/ecomm-brownfield-smoke.spec.js`
+**Page objects** (`src/pages/`):
+- `starhub-personal-nav.page.js`
+- `starhub-broadband-nav.page.js`
+- `starhub-entertainment-nav.page.js`
+- `starhub-membership-nav.page.js`
+- `starhub-about-us-nav.page.js`
+- `starhub-mobile-purchase.page.js`
 
-The framework is structured so these assets can act as seeds for future generated tests.
+**Locator files** (`src/pages/locators/`):
+- `starhub-personal-nav.locators.js`
+- `starhub-broadband-nav.locators.js`
+- `starhub-entertainment-nav.locators.js`
+- `starhub-membership-nav.locators.js`
+- `starhub-about-us-nav.locators.js`
+- `starhub-mobile-purchase.locators.js`
+
+All locators are derived from live DOM inspection. No hardcoded CSS or XPath. The framework is structured so these assets act as seeds and can be extended test-by-test without duplication.
 
 ## 8. Enterprise Integrations
 
@@ -187,11 +234,14 @@ This repository also includes assets for agent-based development workflows insid
 Included assets:
 
 - Custom agent definitions in `.github/agents/`
-- `playwright-test-planner`
-- `playwright-test-generator`
-- `playwright-test-healer`
+  - `starhub-automation-agent` (`brownfield-automation.agent.md`) — end-to-end brownfield agent covering context loading, TestRail traceability, live DOM inspection, POM code generation, and test execution
+  - `playwright-test-planner`
+  - `playwright-test-generator`
+  - `playwright-test-healer`
 - Copilot setup workflow in `.github/workflows/copilot-setup-steps.yml`
-- Local skill asset in `.claude/skills/playwright-cli/SKILL.md`
+- Skill assets in `.claude/skills/` — `playwright-cli`, `api-testing`, `brownfield-context`
+
+The `starhub-automation-agent` implements a full AC → TestRail → Playwright → TestRail results traceability chain automatically. Every generated test title carries a `[Cxxx]` TestRail case ID that is parsed by the reporter after each run.
 
 That makes the framework usable not only as a test runtime, but also as an agent-enabled automation workspace.
 
@@ -202,7 +252,13 @@ This framework is structured so it can plug into delivery pipelines instead of b
 Current pipeline and hosting signals in the repo include:
 
 - GitHub Actions workflow for UI deployment
-- GitHub Actions workflow for Playwright execution
+- GitHub Actions workflow for Playwright execution (`.github/workflows/playwright.yml`)
+  - `smoke` job: runs `@smoke` tests on every push — fast nav checks
+  - `test` job: runs `@regression` tests with full suite
+  - Automatic TestRail run created and results posted after every execution via `testrail-reporter.js`
+  - Modern dark-theme HTML email report generated by `scripts/generate-email.js` and sent via `dawidd6/action-send-mail`
+  - GitHub Actions step summary with pass/fail counts
+  - PR comment with run link on pull request events
 - Railway deployment configuration
 - Procfile and Nixpacks support
 - Static UI hosting via GitHub Pages
@@ -238,17 +294,23 @@ High-level flow:
 ## Repository Structure
 
 ```text
-ui/                     React workflow UI
-server/                 Express workflow API
-src/core/               AI engine, AI page layer, agents, runner
-src/helpers/            Context handling, inspection, reporting, healing helpers
-src/integrations/       Jira and TestRail integrations
-src/mcp/                MCP manager, clients, and server
-src/pages/              Brownfield POM page objects and locators
-src/tests/              Brownfield Playwright tests
-docs/                   Brownfield context documentation
-scripts/                Local setup and startup scripts
-.github/agents/         Custom planner/generator/healer agent definitions
+ui/                         React workflow UI
+server/                     Express workflow API
+src/core/                   AI engine, AI page layer, agents, runner
+src/helpers/                Context handling, inspection, reporting, healing helpers
+src/integrations/           Jira, TestRail integrations, logging reporter, self-healing queue
+src/mcp/                    MCP manager, clients, and server
+src/pages/                  StarHub POM page objects (one per feature area)
+src/pages/locators/         StarHub locator files (one per feature area)
+src/tests/nav/              Navigation smoke + regression specs (Personal, Broadband, Entertainment, Membership, About Us)
+src/tests/purchase/         Purchase journey specs (Mobile device flow, auth gate)
+src/data/                   Centralised test data module (TD.*)
+src/fixtures/               Extended Playwright fixture with self-healing queue
+context/                    Live project context files (application, framework, domain, prompt)
+docs/                       Architecture diagrams and brownfield context documentation
+scripts/                    Local setup, startup, and email generation scripts
+.github/agents/             Custom agent definitions (starhub-automation-agent, planner, generator, healer)
+.github/workflows/          CI/CD pipeline (Playwright smoke + regression, TestRail reporting, email notification)
 ```
 
 ## Run Locally
@@ -269,11 +331,27 @@ npm install
 npm start
 ```
 
-### Smoke Test
+### Smoke Tests (navigation — fast)
 
 ```bash
-npx playwright test src/tests/ecomm-brownfield-smoke.spec.js --config=config/playwright.config.js --reporter=list
+# PowerShell
+npx playwright test src/tests/nav/ --config=config/playwright.config.js --grep "@smoke" --reporter=list
+
+# bash / CI
+npx playwright test src/tests/ --config=config/playwright.config.js --project=chromium --grep @smoke
 ```
+
+### Regression Tests (full suite)
+
+```bash
+# PowerShell
+npx playwright test src/tests/ --config=config/playwright.config.js --grep "@regression" --reporter=list
+
+# bash / CI
+npx playwright test src/tests/ --config=config/playwright.config.js --project=chromium --grep @regression
+```
+
+> **PowerShell note:** always quote the grep value (`"@smoke"`) — unquoted `@smoke` is treated as a PowerShell splat variable and will error.
 
 ## Deployment Options
 
@@ -289,4 +367,17 @@ npx playwright test src/tests/ecomm-brownfield-smoke.spec.js --config=config/pla
 
 ## Branch Context
 
-This branch is currently centered on the brownfield e-commerce project and deterministic POM-oriented generation. That focus does not remove the broader framework capabilities listed above. It simply provides a concrete implementation and seed project for the wider platform.
+This branch is centred on the StarHub Singapore telecommunications site (`www.starhub.com` + `consumer.starhub.com`) as the brownfield target. It demonstrates deterministic POM-oriented test generation with full AC → TestRail → Playwright traceability.
+
+Test coverage implemented on this branch:
+
+| TestRail ID | AC | Description |
+|---|---|---|
+| C499–C503 | AC1–AC5 | Mobile device purchase journey (Galaxy A57 5G) |
+| C504 | AC6 | Broadband overview navigation |
+| C536 | AC7 | Entertainment overview navigation |
+| C572 | AC8 | Membership overview navigation |
+| C573 | AC10 | About Us footer link navigation |
+| C574 | AC9 | Personal top-nav link navigation |
+
+That focus does not remove the broader framework capabilities listed above. It simply provides a concrete, fully-traced implementation and seed project for the wider platform.
