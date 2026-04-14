@@ -54,5 +54,13 @@
     "steps": "1. Click the \"Entertainment\" navigation tab to open the dropdown megamenu.\n2. Click the \"Entertainment overview\" link in the dropdown.",
     "expected": "Browser navigates to https://www.starhub.com/personal/tvplus/passes.html.\nPage title or heading confirms the Entertainment overview page has loaded.",
     "jiraRef": "AU-7"
+  },
+  {
+    "specTitle": "Test Case 8: Navigate to Membership overview via Membership dropdown",
+    "title": "AC8: Navigate to Membership overview page via Membership tab",
+    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
+    "steps": "1. Click the \"Membership\" navigation tab to open the dropdown megamenu.\n2. Click the \"Membership overview\" link in the dropdown.",
+    "expected": "Browser navigates to https://www.starhub.com/personal/membership.html.\nPage title or heading confirms the Membership overview page has loaded.",
+    "jiraRef": "AU-8"
   }
 ]

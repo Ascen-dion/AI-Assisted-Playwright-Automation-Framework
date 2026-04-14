@@ -7,6 +7,7 @@
     "Test Case 4: Click Next to initiate the purchase journey next step": 502,
     "Test Case 5: Verify login and sign-up popup after clicking Next": 503,
     "Test Case 6: Navigate to Broadband overview via Broadband dropdown": 504,
-    "Test Case 7: Navigate to Entertainment overview via Entertainment dropdown": 536
+    "Test Case 7: Navigate to Entertainment overview via Entertainment dropdown": 536,
+    "Test Case 8: Navigate to Membership overview via Membership dropdown": 572
   }
 }
