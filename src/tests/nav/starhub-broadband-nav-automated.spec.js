@@ -1,8 +1,8 @@
 // === FILE: src/tests/starhub-broadband-nav-automated.spec.js ===
 const { test, expect } = require('@playwright/test');
-const StarhubBroadbandNavPage = require('../pages/starhub-broadband-nav.page');
+const StarhubBroadbandNavPage = require('../../pages/starhub-broadband-nav.page');
 
-test.describe('[UI] AC6: Broadband Tab Navigation to Broadband Overview', () => {
+test.describe('[UI] AC6: Broadband Tab Navigation to Broadband Overview', { tag: ['@smoke', '@regression'] }, () => {
   let broadbandNavPage;
 
   test.beforeEach(async ({ page }) => {

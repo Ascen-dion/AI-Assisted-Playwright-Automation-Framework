@@ -57,9 +57,11 @@ StarHub Singapore telecommunications provider offering mobile plans, devices, br
 - **Plan Configurations**: Various plan tiers for compatibility testing
 
 ## Test Data Rules
+- All assertion values (device names, colours, storage sizes, payment periods, URLs, popup messages) must be sourced from `src/data/test-data.js` — never hardcode them in specs
+- `src/data/test-data.js` exports: `urls`, `urlPatterns`, `galaxyA57`, `authPopup`, `deviceListing`, `pageTitles`
+- Add new entries to `src/data/test-data.js` whenever a spec introduces new string assertions or URL patterns
 - Do not use shared test accounts — isolate per test run where possible
 - If test data creates state (e.g. adds to cart), clean up after or use a fresh session
-- Price and quantity assertions must use exact values, not regex patterns
 
 ## Edge Cases to Cover
 - Empty cart state — verify messaging and call-to-action

@@ -1,8 +1,8 @@
 // === FILE: src/tests/starhub-membership-nav-automated.spec.js ===
 const { test, expect } = require('@playwright/test');
-const StarhubMembershipNavPage = require('../pages/starhub-membership-nav.page');
+const StarhubMembershipNavPage = require('../../pages/starhub-membership-nav.page');
 
-test.describe('[UI] AC8: Membership Tab Navigation to Membership Overview', () => {
+test.describe('[UI] AC8: Membership Tab Navigation to Membership Overview', { tag: ['@smoke', '@regression'] }, () => {
   let membershipNavPage;
 
   test.beforeEach(async ({ page }) => {

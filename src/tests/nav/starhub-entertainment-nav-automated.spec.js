@@ -1,8 +1,8 @@
 // === FILE: src/tests/starhub-entertainment-nav-automated.spec.js ===
 const { test, expect } = require('@playwright/test');
-const StarhubEntertainmentNavPage = require('../pages/starhub-entertainment-nav.page');
+const StarhubEntertainmentNavPage = require('../../pages/starhub-entertainment-nav.page');
 
-test.describe('[UI] AC7: Entertainment Tab Navigation to Entertainment Overview', () => {
+test.describe('[UI] AC7: Entertainment Tab Navigation to Entertainment Overview', { tag: ['@smoke', '@regression'] }, () => {
   let entertainmentNavPage;
 
   test.beforeEach(async ({ page }) => {

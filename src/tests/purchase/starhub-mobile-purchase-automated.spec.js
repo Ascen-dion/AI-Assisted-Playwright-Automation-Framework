@@ -13,9 +13,10 @@
  * Raise with PO if "Black" is the intended default.
  */
 const { test, expect } = require('@playwright/test');
-const StarHubMobilePurchasePage = require('../pages/starhub-mobile-purchase.page');
+const StarHubMobilePurchasePage = require('../../pages/starhub-mobile-purchase.page');
+const TD = require('../../data/test-data');
 
-test.describe('[UI] StarHub Mobile Purchase Journey', () => {
+test.describe('[UI] StarHub Mobile Purchase Journey', { tag: ['@regression'] }, () => {
   let pageObj;
 
   // ── AC1: Navigate to Mobile Devices Listing via nav dropdown ─────────────
@@ -33,7 +34,7 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
     await pageObj.clickAllPhones();
 
     // AC1: URL must resolve to the All Phones device listing page
-    await expect(page).toHaveURL(/consumer\.starhub\.com\/personal\/store\/mobile\/devices/);
+    await expect(page).toHaveURL(TD.urlPatterns.allPhones);
 
     // AC1: Page must display the device listing heading
     const listingVisible = await pageObj.isDeviceListingPageDisplayed();
@@ -41,7 +42,7 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
 
     // AC1: Listing must show at least one device (count contains a number)
     const itemCountText = await pageObj.getDeviceItemCountText();
-    expect(itemCountText).toMatch(/\d+ items/);
+    expect(itemCountText).toMatch(TD.deviceListing.itemCountRegex);
   });
 
   // ── AC2: Select Samsung Galaxy A57 5G from listing ───────────────────────
@@ -56,7 +57,7 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
     await page.waitForLoadState('networkidle');
 
     // AC2: URL must resolve to the Galaxy A57 5G product detail page
-    await expect(page).toHaveURL(/galaxy-a57-5g/);
+    await expect(page).toHaveURL(TD.urlPatterns.galaxyA57);
 
     // AC2: Device details page must display the product breadcrumb title
     const pdpDisplayed = await pageObj.isGalaxyA57PDPDisplayed();
@@ -74,14 +75,14 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
     // NOTE: Jira AC3 specifies "Black"; live PDP defaults to "Awesome Navy" (April 2026).
     // Asserting actual application behaviour. Consult PO if "Black" is intended.
     const colourText = await pageObj.getDefaultColourLabel();
-    expect(colourText).toContain('Colour:');
-    expect(colourText).toContain('Awesome Navy');
+    expect(colourText).toContain(TD.galaxyA57.colourLabelPrefix);
+    expect(colourText).toContain(TD.galaxyA57.defaultColour);
 
     // AC3: Storage default — 256GB
     const storageText = await pageObj.getDefaultStorageLabel();
     expect(storageText).toHaveLength(storageText.length); // guard: ensure not empty
-    expect(storageText).toContain('Storage:');
-    expect(storageText).toContain('256GB');
+    expect(storageText).toContain(TD.galaxyA57.storageLabelPrefix);
+    expect(storageText).toContain(TD.galaxyA57.defaultStorage);
 
     // AC3: Storage option chip clearly visible
     const storage256Visible = await pageObj.isStorage256GBVisible();
@@ -89,7 +90,7 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
 
     // AC3: Payment option — 24-month installment must be the active selection
     const activePaymentText = await pageObj.getActivePaymentOptionText();
-    expect(activePaymentText).toContain('24-month');
+    expect(activePaymentText).toContain(TD.galaxyA57.defaultPaymentPeriod);
 
     // AC3: 24-month label also visible to the user
     const payment24Visible = await pageObj.is24MonthPaymentVisible();
@@ -128,9 +129,7 @@ test.describe('[UI] StarHub Mobile Purchase Journey', () => {
 
     // AC5: Popup message must match exactly
     const popupMessage = await pageObj.getLoginPopupMessageText();
-    expect(popupMessage).toContain(
-      'Please log in or create an account to continue with your purchase'
-    );
+    expect(popupMessage).toContain(TD.authPopup.message);
 
     // AC5: "Log in with Hub ID" button must be visible
     const loginBtnVisible = await pageObj.isLoginWithHubIDButtonVisible();

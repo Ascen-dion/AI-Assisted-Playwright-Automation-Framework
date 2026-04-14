@@ -316,7 +316,10 @@ module.exports = <Name>Page;
 const { test, expect } = require('@playwright/test');
 const <Name>Page = require('../pages/<name>.page');
 
-test.describe('[UI] <Story Title>', () => {
+// Tag convention:
+//   @smoke      — nav/visibility tests; fast; run on every push
+//   @regression — full journey tests; run on PR and nightly
+test.describe('[UI] <Story Title>', { tag: ['@smoke', '@regression'] }, () => {
   let pageObj;
 
   test.beforeEach(async ({ page }) => {
@@ -407,6 +410,9 @@ After generating and saving files:
 5. Re-run until all tests pass or are marked `test.fixme()` with a documented reason
 6. After all tests pass, the `testrail-reporter.js` (wired into `config/playwright.config.js`)
    automatically creates a dated TestRail run and posts pass/fail for every `[Cxxx]` case
+7. The `logging-reporter.js` (also wired into `config/playwright.config.js`) automatically writes
+   structured step-level logs to `logs/combined.log` and `logs/error.log` — no changes to page
+   objects or specs are needed; always run with `--config=config/playwright.config.js` to activate
 
 ---
 
@@ -434,9 +440,129 @@ The agent behaviour does not change — only the context files and `.env` change
 - **Navigation tabs**: 5 tabs open megamenu dropdowns — all covered by existing nav page objects
 - **Purchase auth gate**: Clicking "Next" on any device PDP triggers a login popup — use `starhub-mobile-purchase.page.js` for auth popup assertions
 - **Page load strategy**: Use `waitUntil: 'domcontentloaded'` + `waitForTimeout(3000)` for heavy JS pages on `consumer.starhub.com`
-- **Cookie consent**: Must be dismissed with `button "Got it"` on first load — all page objects handle this in `dismissCookieConsent()`
+- **Cookie consent**: `globalSetup` (config/globalSetup.js) now dismisses it once and saves storage state to `playwright/.auth/storageState.json`; all subsequent tests inherit the dismissed state. The `dismissCookieConsent()` try/catch in page objects stays as a safety net for stale storage.
 - **Default device config**: Galaxy A57 5G defaults to Colour "Awesome Navy", Storage "256GB", Payment "24-month"
 - **Selector for Next button**: Use `.last()` — two "Next" buttons exist on PDP (image carousel "Next Item" + purchase "Next")
+
+---
+
+## TEST DIRECTORY STRUCTURE
+
+```
+src/tests/
+  nav/        ← navigation/smoke specs (broadband, entertainment, membership)
+  purchase/   ← purchase journey spec (mobile, broadband order flows)
+```
+
+When creating a new spec, place it in the appropriate subdirectory. The `testDir`
+in `config/playwright.config.js` is `src/tests` — it discovers recursively, so no
+config change is needed when adding subdirectories.
+
+Page object require paths from `src/tests/nav/` or `src/tests/purchase/`:
+```js
+const Page = require('../../pages/my-page.page');      // two levels up
+const TD   = require('../../data/test-data');           // test data module
+const { test, expect } = require('../../fixtures');    // extended fixture (optional)
+```
+
+---
+
+## TEST DATA MODULE
+
+All hardcoded assertion strings must come from **`src/data/test-data.js`**.
+
+```js
+const TD = require('../../data/test-data');
+// Available exports:
+//   TD.urls.* — canonical page URLs
+//   TD.urlPatterns.* — URL regex patterns for expect().toHaveURL()
+//   TD.galaxyA57.* — Galaxy A57 defaults: defaultColour, defaultStorage, defaultPaymentPeriod, colourLabelPrefix, storageLabelPrefix
+//   TD.authPopup.message — login-required popup text
+//   TD.deviceListing.itemCountRegex — /\d+ items/ regex
+//   TD.pageTitles.* — page title regex patterns
+```
+
+Add new entries to `src/data/test-data.js` whenever a spec introduces new assertion
+strings or URLs. Never hardcode assertion values directly in specs.
+
+---
+
+## EXTENDED FIXTURE (SELF-HEALING)
+
+`src/fixtures/index.js` exports an extended `test` that wraps Playwright's built-in
+`page` fixture. On test failure, it writes the error context to
+`test-results/healing-queue.json` for offline AI batch repair.
+
+**For new specs, prefer importing from fixtures:**
+```js
+const { test, expect } = require('../../fixtures');
+```
+This is a drop-in replacement for `@playwright/test` — no other code changes needed.
+Existing specs using `require('@playwright/test')` continue to work unchanged.
+
+**Batch AI repair after failures:**
+```bash
+node src/helpers/self-healing.js --queue test-results/healing-queue.json
+```
+
+---
+
+## ENVIRONMENT PROFILES
+
+`config/playwright.config.js` defines two Playwright projects:
+
+| Project name       | Used for                   | Override URL                    |
+|--------------------|----------------------------|---------------------------------|
+| `chromium`         | Production (default)       | `BASE_URL` env var              |
+| `chromium-staging` | Staging / pre-prod testing | `STAGING_URL` or `BASE_URL` env |
+
+Run against staging:
+```bash
+npx playwright test --project=chromium-staging --config=config/playwright.config.js
+STAGING_URL=https://staging.starhub.com npx playwright test --project=chromium-staging
+```
+
+---
+
+## FLAKE DETECTION IN LOGS
+
+The logging reporter (`src/integrations/logging-reporter.js`) automatically detects
+flaky tests (passed status with `retry > 0`) and emits:
+
+```
+[FLAKY] <test title>  { retriesNeeded: 1, hint: '...' }
+```
+
+At the end of a run:
+```
+[FLAKY SUMMARY] 2 test(s) passed only after retry — check logs/combined.log for [FLAKY] entries
+```
+
+Search for flaky tests after a run:
+```bash
+Select-String "\[FLAKY\]" logs/combined.log
+```
+
+Blob reporter output (`test-results/blob-report/`) is produced on every run and can
+be merged for cross-shard reporting:
+```bash
+npx playwright merge-reports --reporter=html test-results/blob-report
+```
+
+---
+
+## HTML REPORT
+
+The HTML report is written to **`playwright-report/`** (project root). This is
+Playwright's default location, so `npx playwright show-report` works without arguments.
+
+```bash
+npx playwright show-report          # opens playwright-report/
+npx playwright show-report ./playwright-report  # explicit path
+```
+
+Do NOT change the `outputFolder` in playwright.config.js to a custom subdirectory —
+it will break `show-report` and CI artifact uploads.
 
 ---
 

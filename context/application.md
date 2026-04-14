@@ -154,7 +154,7 @@ There are 5 primary navigation tabs on `https://www.starhub.com/personal.html`. 
 ### Page Loading Characteristics
 - **Initial load time**: 3-5 seconds for product pages
 - **JavaScript heavy**: SPA-style navigation with dynamic content loading
-- **Cookie consent**: Required dismissal on first visit
+- **Cookie consent**: Dismissed once by `globalSetup` before any test runs; storage state saved to `playwright/.auth/storageState.json`
 - **Network requests**: Heavy API usage for product data
 
 ## Key UI Elements & Selectors
@@ -163,7 +163,7 @@ There are 5 primary navigation tabs on `https://www.starhub.com/personal.html`. 
 - **Mobile dropdown button**: `button[text="Mobile"]`
 - **All Phones link**: `link[text="All Phones"]`
 - **Breadcrumb navigation**: Present on all product pages
-- **Cookie consent button**: `button[text="Got it"]`
+- **Cookie consent button**: `button[text="Got it"]` (handled by globalSetup; page objects retain try/catch as safety net)
 
 ### Product Listing Page
 - **Device cards**: Grid layout with product images, names, pricing
@@ -202,7 +202,7 @@ There are 5 primary navigation tabs on `https://www.starhub.com/personal.html`. 
 
 ### Error Handling
 - **Slow loading**: Pages may take 3-5 seconds to fully render
-- **Cookie consent**: Must be dismissed before interaction
+- **Cookie consent**: Dismissed by globalSetup before test run; page objects retain fallback dismissal for stale storage
 - **Dynamic content**: Wait for product data to load before assertions
 
 ## Environment Configuration

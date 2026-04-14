@@ -5,11 +5,13 @@ They act as guardrails to keep all generated output aligned with this project.
 
 ## Always Do
 - Always reference the target URL explicitly: https://www.starhub.com
-- Always generate locators in `src/pages/locators/`, page objects in `src/pages/`, specs in `src/tests/`
+- Always generate locators in `src/pages/locators/`, page objects in `src/pages/`
+- Place specs in the correct subdirectory: `src/tests/nav/` for navigation/smoke, `src/tests/purchase/` for purchase journeys
 - Always use `waitFor` before asserting on any dynamically loaded content
 - Always wrap navigation in `goto()` methods on the page object — never call `page.goto()` directly in specs
-- Always produce deterministic assertions — assert exact text, exact URL patterns, exact visibility
-- Always generate a beforeEach that navigates to the page and handles cookie/consent dialogs safely
+- Always produce deterministic assertions — use `TD.*` values from `src/data/test-data.js` for all assertion strings, URLs, and regex patterns
+- Always generate a beforeEach that navigates to the page; include a try/catch for cookies as a safety net (globalSetup handles primary dismissal)
+- Always embed a `[Cxxx]` TestRail case ID in every test title before writing any spec
 
 ## Always Avoid
 - Never generate placeholder text like "TODO", "your selector here", or "implement this"
@@ -24,6 +26,9 @@ They act as guardrails to keep all generated output aligned with this project.
 - Each block must start with `// === FILE: <relative-path> ===` as the first line
 - Use CommonJS (`require`/`module.exports`) — this project does not use ES modules
 - Use 2-space indentation throughout
+- Spec imports: use `require('../../fixtures')` (not `@playwright/test`) for new specs to enable self-healing
+- Test data: all assertion strings/URLs must reference `const TD = require('../../data/test-data')` — never hardcode them inline
+- Tags: add `{ tag: ['@smoke', '@regression'] }` to nav specs; `{ tag: ['@regression'] }` to purchase/journey specs
 
 ## Jira Story Generation Format
 - Story title format: `[UI] <brief action or verification>`
