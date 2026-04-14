@@ -70,5 +70,13 @@
     "steps": "1. Scroll to the footer of the page.\n2. Click the \"About Us\" link in the footer.",
     "expected": "Browser navigates to https://corporate.starhub.com/about-us.html.\nThe About Us page on the corporate subdomain is loaded successfully.",
     "jiraRef": "AU-10"
+  },
+  {
+    "specTitle": "Test Case 9: Navigate to Personal page via Personal link in top navigation",
+    "title": "AC9: Clicking Personal link in top nav navigates to Personal page",
+    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
+    "steps": "1. Locate the \"Personal\" link in the top-left navigation bar.\n2. Click the \"Personal\" link.",
+    "expected": "Browser navigates to https://www.starhub.com/personal.html.\nThe Personal page loads successfully.",
+    "jiraRef": "AU-9"
   }
 ]

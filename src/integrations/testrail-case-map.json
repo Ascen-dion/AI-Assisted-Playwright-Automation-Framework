@@ -9,6 +9,7 @@
     "Test Case 6: Navigate to Broadband overview via Broadband dropdown": 504,
     "Test Case 7: Navigate to Entertainment overview via Entertainment dropdown": 536,
     "Test Case 8: Navigate to Membership overview via Membership dropdown": 572,
-    "Test Case 10: Navigate to About Us page via About Us footer link": 573
+    "Test Case 10: Navigate to About Us page via About Us footer link": 573,
+    "Test Case 9: Navigate to Personal page via Personal link in top navigation": 574
   }
 }
