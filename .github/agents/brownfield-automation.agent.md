@@ -310,35 +310,45 @@ class <Name>Page {
 module.exports = <Name>Page;
 ```
 
-**Spec file** (`src/tests/<name>-automated.spec.js`):
+**Spec file** (`src/tests/nav/<name>-automated.spec.js` or `src/tests/purchase/<name>-automated.spec.js`):
 ```js
-// === FILE: src/tests/<name>-automated.spec.js ===
-const { test, expect } = require('@playwright/test');
-const <Name>Page = require('../pages/<name>.page');
+// === FILE: src/tests/nav/<name>-automated.spec.js ===
+const { test, expect } = require('../../fixtures');
+const <Name>Page = require('../../pages/<name>.page');
+const TD = require('../../data/test-data');
 
 // Tag convention:
 //   @smoke      — nav/visibility tests; fast; run on every push
 //   @regression — full journey tests; run on PR and nightly
-test.describe('[UI] <Story Title>', { tag: ['@smoke', '@regression'] }, () => {
+// NAV specs: goto() in beforeEach (all tests start from the same entry point)
+// PURCHASE specs: goto() / gotoXxx() called per-test (each test navigates to a different URL)
+test.describe('[UI] ACN: <short description>', { tag: ['@smoke', '@regression'] }, () => {
   let pageObj;
 
+  // ── NAV spec pattern: goto in beforeEach ─────────────────────────────────
   test.beforeEach(async ({ page }) => {
     pageObj = new <Name>Page(page);
-    // Cookie consent is dismissed once by globalSetup and stored in
-    // playwright/.auth/storageState.json — no per-test dismissal needed
+    await pageObj.goto();  // omit for purchase specs — call per-test instead
+    // Cookie consent is dismissed once by globalSetup — do NOT call dismissCookieConsent() here
   });
 
-  test('Test Case 1: <description>', async ({ page }) => {
-    // Arrange, Act, Assert — one logical concern per test
-    const value = await pageObj.getElementText();
-    expect(value).toBe('Expected exact value from context/domain.md');
+  test('[Cxxx] Test Case N: <action verb> <what is verified>', async ({ page }) => {
+    // Act
+    await pageObj.openDropdown();
+    await pageObj.clickLink();
+
+    // Assert — always use TD constants, never hardcode strings
+    await expect(page).toHaveURL(TD.urls.someUrl, { timeout: 15000 });
+    await expect(page).toHaveTitle(TD.pageTitles.someTitle, { timeout: 15000 });
+    const visible = await pageObj.isElementVisible();
+    expect(visible).toBe(true);
   });
 });
 ```
 
-### API Test structure (`src/tests/<name>-api.spec.js`):
+### API Test structure (`src/tests/purchase/<name>-api.spec.js`):
 ```js
-// === FILE: src/tests/<name>-api.spec.js ===
+// === FILE: src/tests/purchase/<name>-api.spec.js ===
 const { test, expect, request } = require('@playwright/test');
 
 const BASE_URL = '<api-base-url-from-context-or-inspection>';
@@ -388,7 +398,7 @@ Before writing any file, verify:
 - [ ] beforeEach only instantiates the page object — cookie consent is handled by globalSetup, NOT in specs
 - [ ] Tests are independent — no shared mutable state between test cases
 - [ ] API tests dispose of `apiContext` in `afterAll`
-- [ ] File names follow convention: `<jira-id-lowercase>-automated.spec.js` or `<jira-id-lowercase>-api.spec.js`
+- [ ] File names follow convention: `starhub-<feature-area>-automated.spec.js` or `starhub-<feature-area>-api.spec.js` placed under `src/tests/nav/` or `src/tests/purchase/` as appropriate
 - [ ] Three separate file blocks each starting with `// === FILE: <relative-path> ===`
 - [ ] Every test title carries a `[Cxxx]` TestRail case ID (Phase 3.3)
 - [ ] `src/integrations/testrail-case-map.json` exists and contains all case IDs for this story
@@ -435,8 +445,8 @@ The agent behaviour does not change — only the context files and `.env` change
 - **Two subdomains**: `www.starhub.com` (marketing/info pages) and `consumer.starhub.com` (store/purchase pages)
 - **Navigation tabs**: 5 tabs open megamenu dropdowns — all covered by existing nav page objects
 - **Purchase auth gate**: Clicking "Next" on any device PDP triggers a login popup — use `starhub-mobile-purchase.page.js` for auth popup assertions
-- **Page load strategy**: Use `waitUntil: 'domcontentloaded'` + `waitForTimeout(3000)` for heavy JS pages on `consumer.starhub.com`
-- **Cookie consent**: `globalSetup` (config/globalSetup.js) now dismisses it once and saves storage state to `playwright/.auth/storageState.json`; all subsequent tests inherit the dismissed state. The `dismissCookieConsent()` try/catch in page objects stays as a safety net for stale storage.
+- **Page load strategy**: Use `waitUntil: 'domcontentloaded'` + `await this.page.waitForLoadState('networkidle')` for heavy React SPA pages on `consumer.starhub.com`. Never use `waitForTimeout()` — it is banned by ABSOLUTE RULES.
+- **Cookie consent**: `globalSetup` (config/globalSetup.js) dismisses it once and saves storage state to `playwright/.auth/storageState.json`. New specs do NOT call `dismissCookieConsent()` in `beforeEach` — `globalSetup` handles it. The `dismissCookieConsent()` method stays in page objects as a safety net ONLY; it must not be called from new spec `beforeEach` hooks. Legacy nav specs that still call it are OLD pattern — do not copy.
 - **Default device config**: Galaxy A57 5G defaults to Colour "Awesome Navy", Storage "256GB", Payment "24-month"
 - **Selector for Next button**: Use `.last()` — two "Next" buttons exist on PDP (image carousel "Next Item" + purchase "Next")
 

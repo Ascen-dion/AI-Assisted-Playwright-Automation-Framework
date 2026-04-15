@@ -1,4 +1,4 @@
-// === FILE: src/tests/starhub-mobile-purchase-automated.spec.js ===
+// === FILE: src/tests/purchase/starhub-mobile-purchase-automated.spec.js ===
 /**
  * [UI] StarHub Mobile Purchase Journey
  *
@@ -12,7 +12,7 @@
  * PDP defaults to "Awesome Navy". Tests assert actual application state.
  * Raise with PO if "Black" is the intended default.
  */
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('../../fixtures');
 const StarHubMobilePurchasePage = require('../../pages/starhub-mobile-purchase.page');
 const TD = require('../../data/test-data');
 
@@ -24,7 +24,6 @@ test.describe('[UI] StarHub Mobile Purchase Journey', { tag: ['@skip'] }, () => 
   test('[C499] Test Case 1: Navigate to All Phones listing via Mobile dropdown', async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
     await pageObj.goto();
-    await pageObj.dismissCookieConsent();
 
     // Open the Mobile mega-menu
     await pageObj.openMobileDropdown();
@@ -50,7 +49,6 @@ test.describe('[UI] StarHub Mobile Purchase Journey', { tag: ['@skip'] }, () => 
   test('[C500] Test Case 2: Select Samsung Galaxy A57 5G from the device listing', async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
     await pageObj.gotoDeviceListing();
-    await pageObj.dismissCookieConsent();
 
     // Click the Galaxy A57 5G device card
     await pageObj.clickGalaxyA57();
@@ -69,7 +67,6 @@ test.describe('[UI] StarHub Mobile Purchase Journey', { tag: ['@skip'] }, () => 
   test('[C501] Test Case 3: Verify Samsung Galaxy A57 5G default configuration', async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
     await pageObj.gotoGalaxyA57();
-    await pageObj.dismissCookieConsent();
 
     // AC3: Colour default — live app shows "Awesome Navy"
     // NOTE: Jira AC3 specifies "Black"; live PDP defaults to "Awesome Navy" (April 2026).
@@ -102,7 +99,6 @@ test.describe('[UI] StarHub Mobile Purchase Journey', { tag: ['@skip'] }, () => 
   test('[C502] Test Case 4: Click Next to initiate the purchase journey next step', async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
     await pageObj.gotoGalaxyA57();
-    await pageObj.dismissCookieConsent();
 
     // AC4: Next button must be visible and clickable
     await pageObj.clickNextButton();
@@ -118,7 +114,6 @@ test.describe('[UI] StarHub Mobile Purchase Journey', { tag: ['@skip'] }, () => 
   test('[C503] Test Case 5: Verify login and sign-up popup after clicking Next', async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
     await pageObj.gotoGalaxyA57();
-    await pageObj.dismissCookieConsent();
 
     // Click Next to trigger the unauthenticated auth gate
     await pageObj.clickNextButton();
