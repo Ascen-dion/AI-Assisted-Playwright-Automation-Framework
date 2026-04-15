@@ -9,9 +9,6 @@ test.describe('[UI] AC10: About Us Footer Link Navigation', { tag: ['@smoke', '@
   test.beforeEach(async ({ page }) => {
     pageObj = new StarhubAboutUsNavPage(page);
     await pageObj.goto();
-    try {
-      await page.getByRole('button', { name: /got it/i }).first().click({ timeout: 3000 });
-    } catch {}
   });
 
   test('[C573] Test Case 10: Navigate to About Us page via About Us footer link', async ({ page }) => {

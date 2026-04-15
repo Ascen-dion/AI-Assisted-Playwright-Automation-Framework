@@ -1,21 +1,12 @@
 // === FILE: src/pages/starhub-membership-nav.page.js ===
+const BasePage = require('./base.page');
 const loc = require('./locators/starhub-membership-nav.locators');
 
 const URL = 'https://www.starhub.com/personal.html';
 
-class StarhubMembershipNavPage {
-  constructor(page) {
-    this.page = page;
-  }
-
+class StarhubMembershipNavPage extends BasePage {
   async goto() {
-    await this.page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  }
-
-  async dismissCookieConsent() {
-    try {
-      await loc.cookieConsentButton(this.page).click({ timeout: 3000 });
-    } catch {}
+    await super.goto(URL);
   }
 
   async openMembershipDropdown() {
@@ -26,14 +17,6 @@ class StarhubMembershipNavPage {
   async clickMembershipOverview() {
     await loc.membershipOverviewLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
     await loc.membershipOverviewLink(this.page).click();
-  }
-
-  async getPageUrl() {
-    return this.page.url();
-  }
-
-  async getPageTitle() {
-    return this.page.title();
   }
 }
 

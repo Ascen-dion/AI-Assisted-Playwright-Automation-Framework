@@ -9,9 +9,6 @@ test.describe('[UI] AC8: Membership Tab Navigation to Membership Overview', { ta
   test.beforeEach(async ({ page }) => {
     membershipNavPage = new StarhubMembershipNavPage(page);
     await membershipNavPage.goto();
-    try {
-      await page.getByRole('button', { name: /got it/i }).first().click({ timeout: 3000 });
-    } catch {}
   });
 
   test('[C572] Test Case 8: Navigate to Membership overview via Membership dropdown', async ({ page }) => {

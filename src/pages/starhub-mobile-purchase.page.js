@@ -1,4 +1,5 @@
 // === FILE: src/pages/starhub-mobile-purchase.page.js ===
+const BasePage = require('./base.page');
 const loc = require('./locators/starhub-mobile-purchase.locators');
 
 const HOMEPAGE_URL = 'https://www.starhub.com/personal.html';
@@ -7,10 +8,7 @@ const GALAXY_A57_URL = 'https://consumer.starhub.com/personal/store/mobile/devic
 const MOBILE_PLANS_URL = 'https://consumer.starhub.com/personal/store/mobile-plans';
 const REVIEW_ORDER_URL = 'https://consumer.starhub.com/personal/revieworder';
 
-class StarHubMobilePurchasePage {
-  constructor(page) {
-    this.page = page;
-  }
+class StarHubMobilePurchasePage extends BasePage {
 
   // ── Navigation helpers ───────────────────────────────────────────────────
 
@@ -19,7 +17,7 @@ class StarHubMobilePurchasePage {
    * Used as entry point for AC1 nav-flow tests.
    */
   async goto() {
-    await this.page.goto(HOMEPAGE_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await super.goto(HOMEPAGE_URL);
   }
 
   /**
@@ -27,7 +25,7 @@ class StarHubMobilePurchasePage {
    * consumer.starhub.com is a heavy React SPA; networkidle waits for JS hydration.
    */
   async gotoDeviceListing() {
-    await this.page.goto(DEVICES_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await super.goto(DEVICES_URL);
     await this.page.waitForLoadState('networkidle');
   }
 
@@ -35,21 +33,8 @@ class StarHubMobilePurchasePage {
    * Navigate directly to the Samsung Galaxy A57 5G product detail page.
    */
   async gotoGalaxyA57() {
-    await this.page.goto(GALAXY_A57_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await super.goto(GALAXY_A57_URL);
     await this.page.waitForLoadState('networkidle');
-  }
-
-  /**
-   * Safely dismiss cookie / consent banners.
-   * Swallows errors when the banner is absent.
-   */
-  async dismissCookieConsent() {
-    try {
-      await this.page
-        .getByRole('button', { name: /got it|accept|agree|consent/i })
-        .first()
-        .click({ timeout: 3000 });
-    } catch {}
   }
 
   // ── AC1 — Mobile nav dropdown flow ──────────────────────────────────────
@@ -229,11 +214,11 @@ class StarHubMobilePurchasePage {
   // ── AC13 — 5G Lite plan selection journey ────────────────────────────────
 
   async gotoMobilePlans() {
-    await this.page.goto(MOBILE_PLANS_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await super.goto(MOBILE_PLANS_URL);
   }
 
   async gotoReviewOrder() {
-    await this.page.goto(REVIEW_ORDER_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await super.goto(REVIEW_ORDER_URL);
   }
 
   async clickFiveGUnlimitedLink() {

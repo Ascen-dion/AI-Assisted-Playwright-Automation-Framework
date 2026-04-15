@@ -9,9 +9,6 @@ test.describe('[UI] AC12: Enterprise Link Top Navigation', { tag: ['@smoke', '@r
   test.beforeEach(async ({ page }) => {
     pageObj = new StarhubPersonalNavPage(page);
     await pageObj.goto();
-    try {
-      await page.getByRole('button', { name: /got it/i }).first().click({ timeout: 3000 });
-    } catch {}
   });
 
   test('[C584] Test Case 12: Navigate to Enterprise page via Enterprise link in top navigation', async ({ page }) => {

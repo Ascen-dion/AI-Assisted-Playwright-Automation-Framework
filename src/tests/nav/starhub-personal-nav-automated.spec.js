@@ -9,9 +9,6 @@ test.describe('[UI] AC9: Personal Link Top Navigation', { tag: ['@skip'] }, () =
   test.beforeEach(async ({ page }) => {
     pageObj = new StarhubPersonalNavPage(page);
     await pageObj.goto();
-    try {
-      await page.getByRole('button', { name: /got it/i }).first().click({ timeout: 3000 });
-    } catch {}
   });
 
   test('[C574] Test Case 9: Navigate to Personal page via Personal link in top navigation', async ({ page }) => {

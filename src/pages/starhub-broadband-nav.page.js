@@ -1,22 +1,12 @@
 // === FILE: src/pages/starhub-broadband-nav.page.js ===
+const BasePage = require('./base.page');
 const loc = require('./locators/starhub-broadband-nav.locators');
 
 const URL = 'https://www.starhub.com/personal.html';
-const BROADBAND_PAGE_URL = 'https://www.starhub.com/personal/broadband.html';
 
-class StarhubBroadbandNavPage {
-  constructor(page) {
-    this.page = page;
-  }
-
+class StarhubBroadbandNavPage extends BasePage {
   async goto() {
-    await this.page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
-  }
-
-  async dismissCookieConsent() {
-    try {
-      await loc.cookieConsentButton(this.page).click({ timeout: 3000 });
-    } catch {}
+    await super.goto(URL);
   }
 
   async openBroadbandDropdown() {
@@ -27,14 +17,6 @@ class StarhubBroadbandNavPage {
   async clickBroadbandOverview() {
     await loc.broadbandOverviewLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
     await loc.broadbandOverviewLink(this.page).click();
-  }
-
-  async getBroadbandPageUrl() {
-    return this.page.url();
-  }
-
-  async getBroadbandPageTitle() {
-    return this.page.title();
   }
 }
 

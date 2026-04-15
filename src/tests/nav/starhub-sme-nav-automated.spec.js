@@ -9,9 +9,6 @@ test.describe('[UI] AC11: SME Link Top Navigation', { tag: ['@smoke', '@regressi
   test.beforeEach(async ({ page }) => {
     pageObj = new StarhubPersonalNavPage(page);
     await pageObj.goto();
-    try {
-      await page.getByRole('button', { name: /got it/i }).first().click({ timeout: 3000 });
-    } catch {}
   });
 
   test('[C583] Test Case 11: Navigate to SME page via SME link in top navigation', async ({ page }) => {

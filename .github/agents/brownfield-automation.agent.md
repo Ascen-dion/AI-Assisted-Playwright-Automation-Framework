@@ -285,14 +285,17 @@ module.exports = locators;
 **Page object** (`src/pages/<name>.page.js`):
 ```js
 // === FILE: src/pages/<name>.page.js ===
+const BasePage = require('./base.page');
 const loc = require('./locators/<name>.locators');
+
 const URL = '<target-url-from-context>';
 
-class <Name>Page {
-  constructor(page) { this.page = page; }
+class <Name>Page extends BasePage {
+  // BasePage provides: constructor(page), goto(url), dismissCookieConsent(),
+  // getPageUrl(), getPageTitle() — do NOT re-implement these here
 
   async goto() {
-    await this.page.goto(URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await super.goto(URL);
   }
 
   // Each method does ONE thing — navigate, get value, or return boolean
@@ -390,6 +393,7 @@ test.describe('[API] <Story Title>', () => {
 
 Before writing any file, verify:
 
+- [ ] New page objects extend `BasePage` (`src/pages/base.page.js`) — never re-implement `constructor`, `goto(url)`, `dismissCookieConsent()`, `getPageUrl()`, or `getPageTitle()`
 - [ ] No raw selectors exist directly in spec files — all go through page objects
 - [ ] No selector string is duplicated across files
 - [ ] Every `waitFor` has an explicit timeout from context (15000ms standard)
