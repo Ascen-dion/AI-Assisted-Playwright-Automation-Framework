@@ -18,9 +18,6 @@ test.describe('[UI] AC13: 5G Lite Plan Selection and Checkout Journey', { tag: [
 
   test.beforeEach(async ({ page }) => {
     pageObj = new StarHubMobilePurchasePage(page);
-    try {
-      await page.getByRole('button', { name: /got it/i }).first().click({ timeout: 3000 });
-    } catch {}
   });
 
   // ── AC13a: Navigate to 5G Unlimited+ plans page via Mobile dropdown ──────

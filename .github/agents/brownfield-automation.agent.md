@@ -324,12 +324,8 @@ test.describe('[UI] <Story Title>', { tag: ['@smoke', '@regression'] }, () => {
 
   test.beforeEach(async ({ page }) => {
     pageObj = new <Name>Page(page);
-    await pageObj.goto();
-    // Dismiss consent dialogs safely
-    try {
-      await page.getByRole('button', { name: /accept|agree|consent/i })
-        .first().click({ timeout: 3000 });
-    } catch {}
+    // Cookie consent is dismissed once by globalSetup and stored in
+    // playwright/.auth/storageState.json — no per-test dismissal needed
   });
 
   test('Test Case 1: <description>', async ({ page }) => {
@@ -389,7 +385,7 @@ Before writing any file, verify:
 - [ ] Every `waitFor` has an explicit timeout from context (15000ms standard)
 - [ ] Every assertion uses exact values from domain.md, not generic patterns
 - [ ] `goto()` uses `waitUntil: 'domcontentloaded'` with `timeout: 60000`
-- [ ] beforeEach dismisses consent dialogs safely with try/catch
+- [ ] beforeEach only instantiates the page object — cookie consent is handled by globalSetup, NOT in specs
 - [ ] Tests are independent — no shared mutable state between test cases
 - [ ] API tests dispose of `apiContext` in `afterAll`
 - [ ] File names follow convention: `<jira-id-lowercase>-automated.spec.js` or `<jira-id-lowercase>-api.spec.js`
