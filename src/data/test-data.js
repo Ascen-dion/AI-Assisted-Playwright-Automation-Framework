@@ -19,13 +19,17 @@ module.exports = {
     aboutUs:         'https://corporate.starhub.com/about-us.html',
     sme:             'https://www.starhub.com/sme.html',
     enterprise:      'https://www.starhub.com/business.html',
+    mobilePlans:     'https://consumer.starhub.com/personal/store/mobile-plans',
+    reviewOrder:     'https://consumer.starhub.com/personal/revieworder',
   },
 
   // ── URL patterns (regex for toHaveURL assertions) ────────────────────────
   urlPatterns: {
-    allPhones:  /consumer\.starhub\.com\/personal\/store\/mobile\/devices/,
-    galaxyA57:  /galaxy-a57-5g/,
-    aboutUs:    /corporate\.starhub\.com\/about-us/,
+    allPhones:   /consumer\.starhub\.com\/personal\/store\/mobile\/devices/,
+    galaxyA57:   /galaxy-a57-5g/,
+    aboutUs:     /corporate\.starhub\.com\/about-us/,
+    mobilePlans: /consumer\.starhub\.com\/personal\/store\/mobile-plans/,
+    reviewOrder: /consumer\.starhub\.com\/personal\/revieworder/,
   },
 
   // ── Galaxy A57 5G — default product configuration ────────────────────────
@@ -52,7 +56,13 @@ module.exports = {
     itemCountRegex: /\d+ items/,
   },
 
-  // ── Page titles ───────────────────────────────────────────────────────────
+  // ── 5G Lite plan ─────────────────────────────────────────────────────────
+  fiveGLitePlan: {
+    name:  '5G Lite',
+    price: '$22.00/mth',
+  },
+
+  // ── Page titles ───────────────────────────────────────────────────────
   pageTitles: {
     homepage:      /StarHub|Best Mobile/i,
     broadband:     /broadband/i,
@@ -60,6 +70,8 @@ module.exports = {
     membership:    /membership/i,
     sme:           /sme/i,
     enterprise:    /business/i,
+    mobilePlans:   /5G Unlimited\+|SIM Only Mobile Plans/i,
+    reviewOrder:   /Review Order/i,
   },
 
 };

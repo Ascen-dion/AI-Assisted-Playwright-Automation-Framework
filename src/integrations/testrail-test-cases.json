@@ -94,5 +94,29 @@
     "steps": "1. Locate the \"Enterprise\" link in the top-left navigation bar.\n2. Click the \"Enterprise\" link.",
     "expected": "Browser navigates to https://www.starhub.com/business.html.\nThe Enterprise (business) page loads successfully.",
     "jiraRef": "AU-12"
+  },
+  {
+    "specTitle": "Test Case 13a: Navigate to 5G Unlimited+ plans page via Mobile dropdown",
+    "title": "AC13a: Navigate to 5G Unlimited+ mobile plans page via Mobile nav dropdown",
+    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
+    "steps": "1. Click the \"Mobile\" navigation tab to open the dropdown megamenu.\n2. Click the \"5G Unlimited+\" link under the Mobile Plans column.",
+    "expected": "Browser navigates to https://consumer.starhub.com/personal/store/mobile-plans.\nPage title confirms StarHub 5G Unlimited+ SIM Only Mobile Plans page has loaded.",
+    "jiraRef": "AU-13"
+  },
+  {
+    "specTitle": "Test Case 13b: Select 5G Lite plan and verify Review Order page with cart",
+    "title": "AC13b: Clicking Select Plan for 5G Lite lands on Review Order page with plan in cart",
+    "preconditions": "User is on https://consumer.starhub.com/personal/store/mobile-plans.\nNo prior session / not logged in.",
+    "steps": "1. Locate the 5G Lite plan card under the 5G Unlimited+ tab (first card).\n2. Click the \"Select plan\" button on the 5G Lite card.\n3. Wait for the Review Order page to load.",
+    "expected": "Browser navigates to https://consumer.starhub.com/personal/revieworder.\n\"5G Lite\" plan is visible in the cart summary.",
+    "jiraRef": "AU-13"
+  },
+  {
+    "specTitle": "Test Case 13c: Proceed to checkout from Review Order page",
+    "title": "AC13c: Clicking Proceed to checkout on Review Order page initiates checkout flow",
+    "preconditions": "User is on https://consumer.starhub.com/personal/revieworder.\nCart contains the 5G Lite plan (set up by Test Case 13b).\nUser is NOT logged in.",
+    "steps": "1. Verify the \"Proceed to checkout\" button is visible on the Review Order page.\n2. Click the \"Proceed to checkout\" button.",
+    "expected": "The Proceed to checkout button is visible and enabled.\nClickng the button initiates the checkout/authentication flow — browser navigates away from the Review Order page.",
+    "jiraRef": "AU-13"
   }
 ]

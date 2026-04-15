@@ -4,6 +4,8 @@ const loc = require('./locators/starhub-mobile-purchase.locators');
 const HOMEPAGE_URL = 'https://www.starhub.com/personal.html';
 const DEVICES_URL = 'https://consumer.starhub.com/personal/store/mobile/devices';
 const GALAXY_A57_URL = 'https://consumer.starhub.com/personal/store/mobile/devices/samsung/galaxy-a57-5g';
+const MOBILE_PLANS_URL = 'https://consumer.starhub.com/personal/store/mobile-plans';
+const REVIEW_ORDER_URL = 'https://consumer.starhub.com/personal/revieworder';
 
 class StarHubMobilePurchasePage {
   constructor(page) {
@@ -222,6 +224,47 @@ class StarHubMobilePurchasePage {
   async isSignUpButtonVisible() {
     await loc.signUpButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
     return await loc.signUpButton(this.page).isVisible();
+  }
+
+  // ── AC13 — 5G Lite plan selection journey ────────────────────────────────
+
+  async gotoMobilePlans() {
+    await this.page.goto(MOBILE_PLANS_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  }
+
+  async gotoReviewOrder() {
+    await this.page.goto(REVIEW_ORDER_URL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+  }
+
+  async clickFiveGUnlimitedLink() {
+    await loc.fiveGUnlimitedLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    await loc.fiveGUnlimitedLink(this.page).click();
+  }
+
+  async clickSelectPlanFor5GLite() {
+    await loc.selectPlanFor5GLite(this.page).waitFor({ state: 'visible', timeout: 30000 });
+    await loc.selectPlanFor5GLite(this.page).click();
+    // Dismiss the "Protect from scams" complimentary services popup that
+    // appears on the boc-bos intermediate page before redirecting to revieworder
+    try {
+      await loc.scamProtectionPopupDismiss(this.page).waitFor({ state: 'visible', timeout: 10000 });
+      await loc.scamProtectionPopupDismiss(this.page).click();
+    } catch {}
+  }
+
+  async is5GLiteInCart() {
+    await loc.cartItemFiveGLite(this.page).waitFor({ state: 'visible', timeout: 30000 });
+    return await loc.cartItemFiveGLite(this.page).isVisible();
+  }
+
+  async isProceedToCheckoutVisible() {
+    await loc.proceedToCheckoutButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.proceedToCheckoutButton(this.page).isVisible();
+  }
+
+  async clickProceedToCheckout() {
+    await loc.proceedToCheckoutButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    await loc.proceedToCheckoutButton(this.page).click();
   }
 }
 

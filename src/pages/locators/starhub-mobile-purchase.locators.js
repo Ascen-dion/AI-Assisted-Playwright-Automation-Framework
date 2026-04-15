@@ -37,6 +37,20 @@ const locators = {
   loginPopupMessage: (page) => page.locator('.overlay-modal-title'),
   loginWithHubIDButton: (page) => page.getByRole('button', { name: 'Log in with Hub ID' }),
   signUpButton: (page) => page.getByRole('button', { name: "Don't have an account? Sign up here" }),
+
+  // 5G Unlimited+ link in Mobile dropdown
+  fiveGUnlimitedLink: (page) => page.getByRole('link', { name: '5G Unlimited+' }),
+
+  // Mobile Plans page — 5G Lite is the first plan card under the default 5G Unlimited+ tab
+  selectPlanFor5GLite: (page) => page.getByRole('button', { name: 'Select plan' }).first(),
+
+  // boc-bos add-on popup — "Protect from scams" complimentary services modal
+  // Appears after clicking Select plan; must be dismissed to proceed to revieworder
+  scamProtectionPopupDismiss: (page) => page.getByRole('button', { name: 'No, thanks' }),
+
+  // Review Order page
+  cartItemFiveGLite: (page) => page.getByText('5G Lite').first(),
+  proceedToCheckoutButton: (page) => page.getByRole('button', { name: 'Proceed to checkout' }),
 };
 
 module.exports = locators;
