@@ -28,6 +28,11 @@ class StarhubPersonalNavPage {
     await loc.smeLink(this.page).click();
   }
 
+  async clickEnterpriseLink() {
+    await loc.enterpriseLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    await loc.enterpriseLink(this.page).click();
+  }
+
   async getPageUrl() {
     return this.page.url();
   }

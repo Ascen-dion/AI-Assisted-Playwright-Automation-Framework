@@ -18,6 +18,7 @@ module.exports = {
     membership:      'https://www.starhub.com/personal/membership.html',
     aboutUs:         'https://corporate.starhub.com/about-us.html',
     sme:             'https://www.starhub.com/sme.html',
+    enterprise:      'https://www.starhub.com/business.html',
   },
 
   // ── URL patterns (regex for toHaveURL assertions) ────────────────────────
@@ -58,6 +59,7 @@ module.exports = {
     entertainment: /entertainment|tv\+/i,
     membership:    /membership/i,
     sme:           /sme/i,
+    enterprise:    /business/i,
   },
 
 };

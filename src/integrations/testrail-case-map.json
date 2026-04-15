@@ -11,6 +11,7 @@
     "Test Case 8: Navigate to Membership overview via Membership dropdown": 572,
     "Test Case 10: Navigate to About Us page via About Us footer link": 573,
     "Test Case 9: Navigate to Personal page via Personal link in top navigation": 574,
-    "Test Case 11: Navigate to SME page via SME link in top navigation": 583
+    "Test Case 11: Navigate to SME page via SME link in top navigation": 583,
+    "Test Case 12: Navigate to Enterprise page via Enterprise link in top navigation": 584
   }
 }

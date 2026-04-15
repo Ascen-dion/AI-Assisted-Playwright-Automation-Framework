@@ -86,5 +86,13 @@
     "steps": "1. Locate the \"SME\" link in the top-left navigation bar.\n2. Click the \"SME\" link.",
     "expected": "Browser navigates to https://www.starhub.com/sme.html.\nThe SME page loads successfully.",
     "jiraRef": "AU-11"
+  },
+  {
+    "specTitle": "Test Case 12: Navigate to Enterprise page via Enterprise link in top navigation",
+    "title": "AC12: Clicking Enterprise link in top nav navigates to Enterprise (business) page",
+    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
+    "steps": "1. Locate the \"Enterprise\" link in the top-left navigation bar.\n2. Click the \"Enterprise\" link.",
+    "expected": "Browser navigates to https://www.starhub.com/business.html.\nThe Enterprise (business) page loads successfully.",
+    "jiraRef": "AU-12"
   }
 ]
