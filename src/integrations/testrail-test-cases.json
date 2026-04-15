@@ -78,5 +78,13 @@
     "steps": "1. Locate the \"Personal\" link in the top-left navigation bar.\n2. Click the \"Personal\" link.",
     "expected": "Browser navigates to https://www.starhub.com/personal.html.\nThe Personal page loads successfully.",
     "jiraRef": "AU-9"
+  },
+  {
+    "specTitle": "Test Case 11: Navigate to SME page via SME link in top navigation",
+    "title": "AC11: Clicking SME link in top nav navigates to SME page",
+    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
+    "steps": "1. Locate the \"SME\" link in the top-left navigation bar.\n2. Click the \"SME\" link.",
+    "expected": "Browser navigates to https://www.starhub.com/sme.html.\nThe SME page loads successfully.",
+    "jiraRef": "AU-11"
   }
 ]
