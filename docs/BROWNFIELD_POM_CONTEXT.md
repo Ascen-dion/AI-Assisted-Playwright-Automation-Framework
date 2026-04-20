@@ -33,6 +33,8 @@ This branch is dedicated to automating the OCBC Bank Singapore website:
 
 ## Reusable Artifacts
 
-- Seed locators: `src/pages/locators/starhub-mobile-purchase.locators.js`
-- Seed page object: `src/pages/starhub-mobile-purchase.page.js`
-- Seed smoke spec: `src/tests/starhub-mobile-purchase-automated.spec.js`
+- Seed locators: `src/pages/locators/ocbc-accounts-nav.locators.js`
+- Seed locators: `src/pages/locators/ocbc-cards-nav.locators.js`
+- Seed page object: `src/pages/ocbc-accounts-nav.page.js`
+- Seed page object: `src/pages/ocbc-cards-nav.page.js`
+- Seed smoke specs: `src/tests/nav/` (place all navigation specs here)

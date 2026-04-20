@@ -117,6 +117,12 @@
     "preconditions": "User is on https://consumer.starhub.com/personal/revieworder.\nCart contains the 5G Lite plan (set up by Test Case 13b).\nUser is NOT logged in.",
     "steps": "1. Verify the \"Proceed to checkout\" button is visible on the Review Order page.\n2. Click the \"Proceed to checkout\" button.",
     "expected": "The Proceed to checkout button is visible and enabled.\nClickng the button initiates the checkout/authentication flow — browser navigates away from the Review Order page.",
-    "jiraRef": "AU-13"
-  }
+    "jiraRef": "AU-13"  },
+  {
+    "specTitle": "Test Case 1: Navigate to Personal Banking via Banking for individuals link on gateway page",
+    "title": "AC1: Clicking Personal Banking link under Banking for individuals navigates to Personal Banking page",
+    "preconditions": "User has launched https://www.ocbc.com/group/gateway in a browser.\nNo prior session / not logged in.",
+    "steps": "1. Click the 'Banking for individuals' link in the top navigation header.\n2. Click the 'Personal Banking' link in the Banking for individuals section.",
+    "expected": "Browser navigates to https://www.ocbc.com/personal-banking.\nThe Personal Banking page loads successfully with URL containing /personal-banking.",
+    "jiraRef": "OCBC-1"  }
 ]

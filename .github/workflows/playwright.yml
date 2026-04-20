@@ -2,12 +2,12 @@
 
 on:
   push:
-    branches: [ master, main, star_hub_green_field ]
+    branches: [master, main, ocbc_brown_field]
   pull_request:
-    branches: [ master, main, star_hub_green_field ]
+    branches: [master, main, ocbc_brown_field]
   workflow_dispatch:
   #schedule:
-    # Run tests daily at 9 AM UTC
+  # Run tests daily at 9 AM UTC
   #  - cron: '0 9 * * *'
 
 jobs:
@@ -18,41 +18,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps chromium
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
 
-    - name: Run Smoke Tests
-      continue-on-error: true
-      env:
-        HEADLESS: 'true'
-        CI: 'true'
-        TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
-        TESTRAIL_USER: ${{ secrets.TESTRAIL_USER }}
-        TESTRAIL_API_KEY: ${{ secrets.TESTRAIL_API_KEY }}
-        TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
-        TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
-        TESTRAIL_SECTION_ID: ${{ secrets.TESTRAIL_SECTION_ID }}
-      run: npx playwright test src/tests/ --config=config/playwright.config.js --project=chromium --grep @smoke
+      - name: Run Smoke Tests
+        continue-on-error: true
+        env:
+          HEADLESS: "true"
+          CI: "true"
+          TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
+          TESTRAIL_USER: ${{ secrets.TESTRAIL_USER }}
+          TESTRAIL_API_KEY: ${{ secrets.TESTRAIL_API_KEY }}
+          TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+          TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
+          TESTRAIL_SECTION_ID: ${{ secrets.TESTRAIL_SECTION_ID }}
+        run: npx playwright test src/tests/ --config=config/playwright.config.js --project=chromium --grep @smoke
 
-    - name: Upload Smoke Results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: smoke-results-${{ github.run_number }}
-        path: test-results/
-        retention-days: 7
+      - name: Upload Smoke Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-results-${{ github.run_number }}
+          path: test-results/
+          retention-days: 7
 
   # ── Regression: full suite ────────────────────────────────────────────────
   test:
@@ -61,115 +61,115 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
 
-    - name: Install dependencies
-      run: npm install
+      - name: Install dependencies
+        run: npm install
 
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps chromium
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
 
-    - name: Run Playwright tests
-      continue-on-error: true
-      env:
-        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        HEADLESS: 'true'
-        CI: 'true'
-        TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
-        TESTRAIL_USER: ${{ secrets.TESTRAIL_USER }}
-        TESTRAIL_API_KEY: ${{ secrets.TESTRAIL_API_KEY }}
-        TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
-        TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
-        TESTRAIL_SECTION_ID: ${{ secrets.TESTRAIL_SECTION_ID }}
-      run: npx playwright test src/tests/ --config=config/playwright.config.js --project=chromium --grep @regression
+      - name: Run Playwright tests
+        continue-on-error: true
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          HEADLESS: "true"
+          CI: "true"
+          TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
+          TESTRAIL_USER: ${{ secrets.TESTRAIL_USER }}
+          TESTRAIL_API_KEY: ${{ secrets.TESTRAIL_API_KEY }}
+          TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+          TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
+          TESTRAIL_SECTION_ID: ${{ secrets.TESTRAIL_SECTION_ID }}
+        run: npx playwright test src/tests/ --config=config/playwright.config.js --project=chromium --grep @regression
 
-    - name: Generate test report
-      if: always()
-      run: |
-        echo "Test execution completed"
-        if [ -d "playwright-report" ]; then
-          echo "Report generated successfully"
-        fi
+      - name: Generate test report
+        if: always()
+        run: |
+          echo "Test execution completed"
+          if [ -d "playwright-report" ]; then
+            echo "Report generated successfully"
+          fi
 
-    - name: Upload Playwright Report as Artifact
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: playwright-report-${{ github.run_number }}
-        path: playwright-report/
-        retention-days: 30
+      - name: Upload Playwright Report as Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 30
 
-    - name: Upload Test Results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: test-results-${{ github.run_number }}
-        path: test-results/
-        retention-days: 30
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ github.run_number }}
+          path: test-results/
+          retention-days: 30
 
-    - name: Prepare email content
-      if: always()
-      run: node scripts/generate-email.js
+      - name: Prepare email content
+        if: always()
+        run: node scripts/generate-email.js
 
-    - name: Send Email Notification
-      if: always()
-      continue-on-error: true
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 587
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
-        subject: |
-          [Playwright Tests] ${{ job.status == 'success' && '✅ PASSED' || '❌ FAILED' }} - Run #${{ github.run_number }}
-        to: ${{ secrets.EMAIL_TO }}
-        from: Playwright AI Framework <${{ secrets.EMAIL_USERNAME }}>
-        html_body: file://email-body.html
+      - name: Send Email Notification
+        if: always()
+        continue-on-error: true
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: |
+            [Playwright Tests] ${{ job.status == 'success' && '✅ PASSED' || '❌ FAILED' }} - Run #${{ github.run_number }}
+          to: ${{ secrets.EMAIL_TO }}
+          from: Playwright AI Framework <${{ secrets.EMAIL_USERNAME }}>
+          html_body: file://email-body.html
 
-    - name: Comment PR with Results
-      if: github.event_name == 'pull_request' && always()
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const status = '${{ job.status }}';
-          const runUrl = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
-          
-          const comment = `## 🎭 Playwright Test Results
-          
-          **Status:** ${status === 'success' ? '✅ Passed' : '❌ Failed'}
-          **Run:** [#${{ github.run_number }}](${runUrl})
-          
-          ### 📊 Reports Available
-          - [View Playwright HTML Report](${runUrl})
-          - [Download Test Screenshots](${runUrl})
-          
-          ---
-          *Automated by Playwright AI Framework*`;
-          
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: comment
-          });
+      - name: Comment PR with Results
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ job.status }}';
+            const runUrl = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
 
-    - name: Publish Test Results Summary
-      if: always()
-      run: |
-        echo "## 🎭 Playwright Test Results" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-        echo "**Run:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
-        echo "- Playwright Report: playwright-report-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-        echo "- Test Results: test-results-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "[View Full Results](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+            const comment = `## 🎭 Playwright Test Results
+
+            **Status:** ${status === 'success' ? '✅ Passed' : '❌ Failed'}
+            **Run:** [#${{ github.run_number }}](${runUrl})
+
+            ### 📊 Reports Available
+            - [View Playwright HTML Report](${runUrl})
+            - [Download Test Screenshots](${runUrl})
+
+            ---
+            *Automated by Playwright AI Framework*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      - name: Publish Test Results Summary
+        if: always()
+        run: |
+          echo "## 🎭 Playwright Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Run:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- Playwright Report: playwright-report-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Test Results: test-results-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "[View Full Results](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
