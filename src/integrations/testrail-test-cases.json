@@ -124,5 +124,13 @@
     "preconditions": "User has launched https://www.ocbc.com/group/gateway in a browser.\nNo prior session / not logged in.",
     "steps": "1. Click the 'Banking for individuals' link in the top navigation header.\n2. Click the 'Personal Banking' link in the Banking for individuals section.",
     "expected": "Browser navigates to https://www.ocbc.com/personal-banking.\nThe Personal Banking page loads successfully with URL containing /personal-banking.",
-    "jiraRef": "OCBC-1"  }
+    "jiraRef": "OCBC-1"  },
+  {
+    "specTitle": "Test Case 1: Navigate to 360 Account page via Accounts dropdown",
+    "title": "AC3: Clicking 360 Account link under Accounts dropdown navigates to the 360 Account page",
+    "preconditions": "User has launched https://www.ocbc.com/personal-banking in a browser.\nNo prior session / not logged in.",
+    "steps": "1. Click the 'Accounts' tab in the top navigation to open the Accounts dropdown.\n2. Click the '360 Account' link in the Accounts dropdown.",
+    "expected": "Browser navigates to https://www.ocbc.com/personal-banking/deposits/360-account.\nURL contains /deposits/360-account.",
+    "jiraRef": "OCBC-2"
+  }
 ]
