@@ -6,15 +6,15 @@
 - Page objects live in: `src/pages/<name>.page.js`
 - Test specs live in subdirectories of `src/tests/`:
   - Navigation/smoke specs → `src/tests/nav/<name>-automated.spec.js`
-  - Purchase/journey specs → `src/tests/purchase/<name>-automated.spec.js`
+  - Application/journey specs → `src/tests/application/<name>-automated.spec.js`
 - Never put raw selectors directly inside spec files — always use the page object
 - Never duplicate a selector string across files
 
 ## File Naming Convention
-- Locator file: `<feature-name>.locators.js` (e.g. `starhub-mobile-purchase.locators.js`)
-- Page file: `<feature-name>.page.js` (e.g. `starhub-mobile-purchase.page.js`)
-- Spec file: `<feature-name>-automated.spec.js` (e.g. `starhub-mobile-purchase-automated.spec.js`)
-- Spec subdirectory: `nav/` for navigation specs; `purchase/` for purchase journey specs
+- Locator file: `<feature-name>.locators.js` (e.g. `ocbc-cards-nav.locators.js`)
+- Page file: `<feature-name>.page.js` (e.g. `ocbc-cards-nav.page.js`)
+- Spec file: `<feature-name>-automated.spec.js` (e.g. `ocbc-cards-nav-automated.spec.js`)
+- Spec subdirectory: `nav/` for navigation specs; `application/` for application journey specs
 
 ## Require Paths (from spec subdirectory)
 When writing specs in `src/tests/nav/` or `src/tests/purchase/`, require paths are two levels up:
@@ -30,9 +30,9 @@ All hardcoded assertion values and URLs must come from the test data module. Nev
 const TD = require('../../data/test-data');
 // TD.urls.*            — canonical page URLs
 // TD.urlPatterns.*     — URL regex patterns for expect().toHaveURL()
-// TD.galaxyA57.*       — defaultColour, defaultStorage, defaultPaymentPeriod, colourLabelPrefix, storageLabelPrefix
-// TD.authPopup.message — login-required popup text
-// TD.deviceListing.itemCountRegex — /\d+ items/ regex
+// TD.accounts.*        — savings/current account product details
+// TD.cards.*           — credit card product names and details
+// TD.loans.*           — loan product details
 // TD.pageTitles.*      — page title regex patterns
 ```
 Add new entries to `src/data/test-data.js` for any new assertion strings or URLs.
@@ -92,7 +92,7 @@ test.describe('[UI] <Story Title>', { tag: ['@smoke', '@regression'] }, () => {
 - Always catch async errors with try/catch and re-throw for clear failure messages
 
 ## Reuse Before Creating
-- Check `src/pages/starhub-mobile-purchase.page.js` and its locators before creating new helpers
+- Check existing page objects in `src/pages/` and their locators before creating new helpers
 - If a method already exists in a page object, call it — do not reimplement
 - Extend existing page objects rather than duplicating them
 
@@ -109,7 +109,7 @@ test.describe('[UI] <Story Title>', { tag: ['@smoke', '@regression'] }, () => {
 - Run smoke only: `npx playwright test --config=config/playwright.config.js --grep "@smoke"`
 - Run regression only: `npx playwright test --config=config/playwright.config.js --grep "@regression"`
 - Run against staging: `npx playwright test --project=chromium-staging --config=config/playwright.config.js`
-- Run single spec: `npx playwright test src/tests/nav/starhub-broadband-nav-automated.spec.js --config=config/playwright.config.js`
+- Run single spec: `npx playwright test src/tests/nav/ocbc-accounts-nav-automated.spec.js --config=config/playwright.config.js`
 - HTML report: written to `playwright-report/` (Playwright default); open with `npx playwright show-report`
 - Blob report: written to `test-results/blob-report/`; merge shards with `npx playwright merge-reports --reporter=html test-results/blob-report`
 - Videos and traces are recorded by default for CI debugging

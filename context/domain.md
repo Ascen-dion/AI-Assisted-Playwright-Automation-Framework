@@ -1,83 +1,112 @@
-# Domain Knowledge — Telecommunications E-commerce
+# Domain Knowledge — Banking & Financial Services
 
 ## Business Domain
-StarHub Singapore telecommunications provider offering mobile plans, devices, broadband, and entertainment services to personal and business customers.
+OCBC Bank Singapore — a leading financial services group offering personal banking, business banking, premier banking, wealth management, and insurance products to retail and corporate customers.
 
 ## Core Business Concepts
 
-### Device Sales Process
-- **Device Selection**: Browse mobile devices by brand (Apple, Samsung, OPPO, etc.)
-- **Configuration**: Select color, storage capacity, and payment terms
-- **Payment Options**: 24-month installment (default), 12-month, or pay in full
-- **Plan Integration**: Devices tied to mobile plan subscriptions
-- **Authentication Required**: Login/account creation needed for purchase
+### Account Opening Process
+- **Account Selection**: Browse savings, current, and fixed deposit accounts
+- **Eligibility Check**: Age, residency, minimum deposit requirements
+- **Application Form**: Personal details, income declaration, identification documents
+- **Authentication Required**: SingPass MyInfo or manual verification for new customers
+- **Approval**: Instant for basic accounts, 1-3 days for premium accounts
 
-### Product Catalog Structure
-- **Devices**: Mobile phones, tablets, watches, accessories
-- **Plans**: 5G Unlimited+ plans with different tiers (Core, Plus, Platinum)
-- **Add-ons**: SmartSupport, DeviceDollars, Value-added services
-- **Promotions**: New line bonuses, trade-in programs, pay-later discounts
+### Credit Card Application Process
+- **Card Comparison**: Browse cards by rewards type (cashback, miles, rewards points)
+- **Eligibility**: Minimum income requirements (typically $30K-$120K annual)
+- **Application**: Online form with income proof
+- **Card Categories**: Cashback, Travel/Miles, Rewards, Business, Student
+- **Key Products**: 365 Credit Card (cashback), 90°N Card (travel), Titanium Rewards
 
-### Pricing and Commercial Rules
-- **Device Pricing**: Installment plans reduce upfront cost
-- **Plan Integration**: Device discounts tied to plan tier selection
-- **Promotional Offers**:
-  - Up to $300 off with 5G Unlimited+ plans (Core & above)
-  - New line/port-in bonuses up to $300
-  - CIS customer discounts up to $250
-  - DeviceDollars for existing customers
-- **SmartSupport**: Optional $14.26/month with free first month
+### Loan & Mortgage Products
+- **Home Loans**: Fixed rate, floating rate, SORA-pegged packages
+- **Renovation Loans**: Up to $30,000 for HDB, higher for private property
+- **Car Loans**: New and used car financing
+- **Personal Loans**: EasiCredit personal line of credit
+- **Calculators**: Loan eligibility, monthly repayment, refinancing comparison
+
+### Investment Products
+- **Unit Trusts**: Managed funds across various asset classes
+- **Stocks & Shares**: Trading via iOCBC platform
+- **Bonds**: Government and corporate bonds
+- **RoboInvest**: Automated portfolio management
+- **SRS**: Supplementary Retirement Scheme investments
+- **Structured Deposits**: Principal-protected investments
+
+### Insurance Products (via Great Eastern)
+- **Life Insurance**: Term, whole life, endowment plans
+- **Health Insurance**: Hospitalisation, critical illness, personal accident
+- **Travel Insurance**: Single trip and annual plans
+- **Motor Insurance**: Comprehensive and third-party coverage
+- **Home Insurance**: Fire and contents protection
+
+### Digital Banking
+- **OCBC Digital App**: Mobile banking with PayAnyone, bill payments
+- **Internet Banking**: Full-service online banking portal
+- **PayAnyone**: P2P transfers via mobile number or QR code
+- **OneAdvisor**: Digital financial planning tool
+
+### Pricing and Rate Information
+- **Interest Rates**: Savings rates, FD rates, loan rates (SORA-based)
+- **Fees & Charges**: Card annual fees, account maintenance, loan processing
+- **Promotional Rates**: Introductory offers on cards and deposits
+- **Cashback Tiers**: Category-based cashback percentages on 365 Card
 
 ### Customer Journey Requirements
-1. **Device Selection**: Must select specific model (e.g., Samsung Galaxy A57 5G)
-2. **Configuration**: Color and storage selection required
-3. **Payment Terms**: Choose installment period (24/12 months) or full payment
-4. **Authentication**: Hub ID login or account creation mandatory
-5. **Plan Selection**: Choose compatible mobile plan
-6. **Checkout**: Complete purchase with selected options
+1. **Product Discovery**: Compare products via navigation and comparison tools
+2. **Eligibility Assessment**: Check income/age/residency criteria
+3. **Application**: Online form completion with document upload
+4. **Verification**: SingPass MyInfo or manual identity verification
+5. **Approval**: Instant or delayed based on product type
+6. **Activation**: Card activation, account funding, first login
 
 ### Business Validation Points
-- **Device Availability**: Stock status and color/storage options
-- **Price Calculations**: Installment amounts match retail price / months
-- **Plan Compatibility**: Device works with selected plan tier
-- **Promotional Eligibility**: Customer qualifies for advertised discounts
-- **Authentication Flow**: Secure login/signup process completion
+- **Rate Accuracy**: Displayed rates match current published rates
+- **Eligibility Criteria**: Income requirements correctly stated per product
+- **Calculator Accuracy**: Loan/mortgage calculators produce correct results
+- **Navigation Integrity**: All links resolve to correct product pages
+- **Form Validation**: Required fields enforced, format validation active
+- **Security**: Login redirects use HTTPS, session timeouts enforced
 
 ### Error States and Edge Cases
-- **Out of Stock**: Alternative options suggested
-- **Invalid Configuration**: Color/storage combination not available
-- **Plan Conflicts**: Device not compatible with selected plan
-- **Authentication Failures**: Login errors, account creation issues
-- **Payment Failures**: Invalid payment methods or declined transactions
+- **Ineligible Application**: User below income threshold shown rejection message
+- **Session Timeout**: Internet banking session expires after inactivity
+- **Rate Changes**: Promotional rates with expiry dates
+- **Document Upload Failures**: File type/size validation errors
+- **Calculator Edge Cases**: Zero values, maximum loan tenure exceeded
+- **Cross-product Navigation**: Moving between personal and business banking segments
 
 ## Test Data Requirements
-- **Device Models**: Focus on actively promoted devices (Galaxy A57 5G)
-- **Test Accounts**: Valid Hub ID credentials for authenticated flows
-- **Payment Methods**: Test payment instruments for checkout validation
-- **Plan Configurations**: Various plan tiers for compatibility testing
+- **Product Details**: Current rates, fees, eligibility criteria
+- **Test Accounts**: Demo/sandbox credentials for authenticated flows (if available)
+- **Calculator Inputs**: Standard scenarios for loan/mortgage calculators
+- **Card Categories**: Active card products for comparison testing
 
 ## Test Data Rules
-- All assertion values (device names, colours, storage sizes, payment periods, URLs, popup messages) must be sourced from `src/data/test-data.js` — never hardcode them in specs
-- `src/data/test-data.js` exports: `urls`, `urlPatterns`, `galaxyA57`, `authPopup`, `deviceListing`, `pageTitles`
+- All assertion values (product names, rates, URLs, page titles) must be sourced from `src/data/test-data.js` — never hardcode them in specs
+- `src/data/test-data.js` exports: `urls`, `urlPatterns`, `accounts`, `cards`, `loans`, `pageTitles`
 - Add new entries to `src/data/test-data.js` whenever a spec introduces new string assertions or URL patterns
 - Do not use shared test accounts — isolate per test run where possible
-- If test data creates state (e.g. adds to cart), clean up after or use a fresh session
+- If test data creates state (e.g. starts an application), clean up after or use a fresh session
 
 ## Edge Cases to Cover
-- Empty cart state — verify messaging and call-to-action
-- Products loading state — do not assert before async data resolves
-- Cold start delays on Azure hosting — use generous timeouts
-- Navigation between pages — SPA routing means URL changes without full reload
-- Cart count badge — must update immediately after add without page refresh
+- Promotional banner rotations — do not assert on carousel content that changes
+- Rate update lag — cached rates vs live rates
+- SingPass redirect flow — external authentication handoff
+- Mobile-responsive navigation — mega menu vs hamburger menu
+- Cross-domain navigation — www.ocbc.com to internet.ocbc.com handoff
+- PDF download links — terms and conditions, product brochures
 
 ## Acceptance Criteria Patterns
 When a Jira story says "verify X is visible" — test both isVisible AND position (above fold)
 When a Jira story says "verify X text" — assert exact text content, not partial
 When a Jira story says "verify navigation" — test all nav links are present and clickable
 When a Jira story says "verify page loads" — test URL, title, and at least one key element
+When a Jira story says "verify rate" — assert against test-data constant; flag if rate may change
 
 ## Quality Expectations
-- Smoke tests: cover homepage, navigation, products page load, cart empty state
-- Regression tests: cover add-to-cart, cart total, feature card content
+- Smoke tests: cover gateway, personal banking nav, key product pages load
+- Regression tests: cover card comparison, loan calculators, account navigation
 - All tests must pass in headed and headless Chromium
 - Flaky tests should be triaged and healed within one sprint

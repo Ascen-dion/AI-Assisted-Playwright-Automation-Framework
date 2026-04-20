@@ -1,17 +1,17 @@
-# Brownfield POM Project Context — StarHub
+# Brownfield POM Project Context — OCBC Bank
 
-This branch is dedicated to automating the StarHub Singapore telecommunications website:
+This branch is dedicated to automating the OCBC Bank Singapore website:
 
-- Target app: https://www.starhub.com
-- Store: https://consumer.starhub.com/personal/store
+- Target app: https://www.ocbc.com/group/gateway
+- Personal Banking: https://www.ocbc.com/personal-banking
 - Automation style: Playwright + Page Object Model (POM)
 - Goal: Deterministic test generation using project-specific context and reusable assets
 
 ## Knowledge Layers To Maintain
 
 1. Application knowledge
-- Main user journeys: mobile device browsing, device selection, purchase flow, authentication
-- Environment assumptions: production site with heavy JavaScript/API loading (3-5s page loads)
+- Main user journeys: gateway navigation, product browsing (accounts, cards, loans, investments, insurance), application flows
+- Environment assumptions: production site with dynamic rate tables and carousels (2-4s page loads)
 - Selector strategy: prefer role/text; avoid positional selectors unless required
 
 2. Framework knowledge
@@ -20,8 +20,8 @@ This branch is dedicated to automating the StarHub Singapore telecommunications 
 - Reuse common helper methods before creating new utilities
 
 3. Domain knowledge
-- Telecom e-commerce flows must validate device configuration defaults (colour, storage, payment)
-- Authentication is required to proceed past device selection — popup validation is key
+- Banking product pages must validate rates, eligibility criteria, and product details
+- Internet Banking login redirects to a separate domain (internet.ocbc.com) — do not follow in nav tests
 - Test data should isolate state per test case to avoid shared-state flakiness
 
 ## Prompting Rules

@@ -2,7 +2,7 @@
 /**
  * Playwright globalSetup — runs once before all tests.
  *
- * Navigates to the StarHub homepage, dismisses the cookie consent banner,
+ * Navigates to the OCBC personal banking page, dismisses the cookie consent banner,
  * and saves the resulting browser storage state (cookies + localStorage)
  * to playwright/.auth/storageState.json.
  *
@@ -19,7 +19,7 @@ const fs = require('fs');
 
 const HOMEPAGE = process.env.BASE_URL
   ? `${process.env.BASE_URL}`
-  : 'https://www.starhub.com/personal.html';
+  : 'https://www.ocbc.com/personal-banking';
 
 const STORAGE_STATE_PATH = path.resolve(__dirname, '../playwright/.auth/storageState.json');
 

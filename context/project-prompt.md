@@ -4,9 +4,9 @@ These instructions are injected into every AI prompt regardless of what the UI p
 They act as guardrails to keep all generated output aligned with this project.
 
 ## Always Do
-- Always reference the target URL explicitly: https://www.starhub.com
+- Always reference the target URL explicitly: https://www.ocbc.com/group/gateway (gateway) or https://www.ocbc.com/personal-banking (personal banking)
 - Always generate locators in `src/pages/locators/`, page objects in `src/pages/`
-- Place specs in the correct subdirectory: `src/tests/nav/` for navigation/smoke, `src/tests/purchase/` for purchase journeys
+- Place specs in the correct subdirectory: `src/tests/nav/` for navigation/smoke, `src/tests/application/` for application journeys
 - Always use `waitFor` before asserting on any dynamically loaded content
 - Always wrap navigation in `goto()` methods on the page object — never call `page.goto()` directly in specs
 - Always produce deterministic assertions — use `TD.*` values from `src/data/test-data.js` for all assertion strings, URLs, and regex patterns
@@ -28,7 +28,7 @@ They act as guardrails to keep all generated output aligned with this project.
 - Use 2-space indentation throughout
 - Spec imports: use `require('../../fixtures')` (not `@playwright/test`) for new specs to enable self-healing
 - Test data: all assertion strings/URLs must reference `const TD = require('../../data/test-data')` — never hardcode them inline
-- Tags: add `{ tag: ['@smoke', '@regression'] }` to nav specs; `{ tag: ['@regression'] }` to purchase/journey specs
+- Tags: add `{ tag: ['@smoke', '@regression'] }` to nav specs; `{ tag: ['@regression'] }` to application/journey specs
 
 ## Jira Story Generation Format
 - Story title format: `[UI] <brief action or verification>`
