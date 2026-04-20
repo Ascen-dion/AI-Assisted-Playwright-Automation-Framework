@@ -3,13 +3,13 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
-const STORAGE_STATE = path.resolve(__dirname, '../playwright/.auth/storageState.json');
+const STORAGE_STATE = path.resolve(__dirname, '../playwright/.auth/workday-storageState.json');
 
 /**
- * Playwright configuration with AI framework settings
+ * Playwright configuration — Capital One Workday Finance Automation (AAVA)
  */
 module.exports = defineConfig({
-  // Global setup: dismisses cookie consent once and saves storage state
+  // Global setup: logs into Workday once and saves storage state
   globalSetup: require.resolve('./globalSetup.js'),
 
   testDir: path.resolve(__dirname, '../src/tests'),  // Absolute path from config location
@@ -53,10 +53,10 @@ module.exports = defineConfig({
   ],
 
   use: {
-    // Base URL — override via BASE_URL env var for staging runs
-    baseURL: process.env.BASE_URL || 'https://www.ocbc.com',
+    // Base URL — override via WORKDAY_BASE_URL env var
+    baseURL: process.env.WORKDAY_BASE_URL || 'https://impl.workday.com/capitaloneimpl1',
 
-    // Use saved cookie-consent state so no test needs to dismiss the banner itself
+    // Use saved Workday login state so no test needs to re-authenticate
     storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,
 
     // Collect trace when retrying the failed test
@@ -103,12 +103,12 @@ module.exports = defineConfig({
     },
 
     // Staging environment — run with: npx playwright test --project=chromium-staging
-    // Requires STAGING_URL env var or falls back to www.starhub.com
+    // Requires WORKDAY_BASE_URL env var pointing to a staging Workday tenant
     // {
     //   name: 'chromium-staging',
     //   use: {
     //     ...devices['Desktop Chrome'],
-    //     baseURL: process.env.STAGING_URL || process.env.BASE_URL || 'https://www.ocbc.com',
+    //     baseURL: process.env.WORKDAY_STAGING_URL || process.env.WORKDAY_BASE_URL,
     //     launchOptions: {
     //       args: process.env.RAILWAY_STATIC_URL ? [
     //         '--no-sandbox',

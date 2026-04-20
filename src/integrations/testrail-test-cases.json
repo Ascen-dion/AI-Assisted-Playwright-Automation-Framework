@@ -1,136 +1,114 @@
 [
   {
-    "specTitle": "Test Case 1: Navigate to All Phones listing via Mobile dropdown",
-    "title": "AC1: Navigate to Mobile Devices Listing via Mobile dropdown",
-    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Click the \"Mobile\" navigation tab to open the dropdown megamenu.\n2. In the \"Mobile Phones\" column click \"All Phones\".",
-    "expected": "Browser navigates to consumer.starhub.com/personal/store/mobile/devices.\n\"Mobile Devices\" heading is visible.\nDevice listing shows at least one item (count text matches /\\d+ items/).",
-    "jiraRef": "AU-1"
+    "specTitle": "Test Case 1: Journal Entry form loads with Draft status",
+    "title": "AC1: Navigate to Create Journal Entry — form loads in Draft state",
+    "preconditions": "User is logged in to Workday as a Finance Analyst.\nWorkday impl tenant is accessible at the configured WORKDAY_BASE_URL.",
+    "steps": "1. Navigate to Create Journal Entry (direct URL or via global search).\n2. Wait for the form to fully load.",
+    "expected": "Page URL matches the Journal Entry pattern.\nPage title contains 'Journal Entry' or 'Create Journal Entry'.\nJournal Entry Status field displays 'Draft'.",
+    "jiraRef": "CAP-101"
   },
   {
-    "specTitle": "Test Case 2: Select Samsung Galaxy A57 5G from the device listing",
-    "title": "AC2: Select Samsung Galaxy A57 5G device from All Phones listing",
-    "preconditions": "User is on the All Phones listing page: consumer.starhub.com/personal/store/mobile/devices.",
-    "steps": "1. Locate the \"Galaxy A57 5G\" device card.\n2. Click the card.",
-    "expected": "Browser navigates to a URL containing \"galaxy-a57-5g\".\n\"Samsung Galaxy A57 5G\" breadcrumb title is visible on the product detail page.",
-    "jiraRef": "AU-1"
+    "specTitle": "Test Case 2: System rejects an out-of-balance journal entry",
+    "title": "AC2: Out-of-balance Journal Entry is rejected with clear validation error",
+    "preconditions": "User is on the Create Journal Entry form.\nAccounting period for 04/20/2026 is open.",
+    "steps": "1. Set Accounting Date to 04/20/2026.\n2. Enter a memo with [AAVA-TEST] prefix.\n3. Add one debit line: GL 5001, amount 1000.00, cost centre CC-FIN-001.\n4. Do NOT add a matching credit line.\n5. Click Post.",
+    "expected": "Workday displays validation error: 'Journal Entry does not balance'.\nThe Journal Entry is NOT posted.\nStatus remains 'Draft'.",
+    "jiraRef": "CAP-101"
   },
   {
-    "specTitle": "Test Case 3: Verify Samsung Galaxy A57 5G default configuration",
-    "title": "AC3: Verify default colour, storage, and payment options on Galaxy A57 5G PDP",
-    "preconditions": "User is on the Galaxy A57 5G product detail page.\nNo prior selection has been made.",
-    "steps": "1. Observe the Colour label above the colour swatches.\n2. Observe the Storage label and storage option chips.\n3. Observe the Payment option selector.",
-    "expected": "Colour label reads \"Colour: Awesome Navy\" (live default as of April 2026).\nStorage label reads \"Storage: 256GB\" and the 256GB chip is visible.\nThe \"24-month\" payment option chip is marked active.",
-    "jiraRef": "AU-1"
+    "specTitle": "Test Case 3: Successfully post a balanced journal entry",
+    "title": "AC3: A balanced Journal Entry posts successfully and status changes to Posted",
+    "preconditions": "User is on the Create Journal Entry form.\nAccounting period for 04/20/2026 is open.",
+    "steps": "1. Set Accounting Date to 04/20/2026.\n2. Enter a memo with [AAVA-TEST] prefix.\n3. Add debit line: GL 5001, amount 1000.00, cost centre CC-FIN-001.\n4. Add credit line: GL 1000, amount 1000.00, cost centre CC-FIN-001.\n5. Click Post.\n6. After test, click Reverse to clean up.",
+    "expected": "Workday posts the journal entry without errors.\nJournal Entry Status changes to 'Posted'.\nAfter reversal, status changes to 'Reversed'.",
+    "jiraRef": "CAP-101"
   },
   {
-    "specTitle": "Test Case 4: Click Next to initiate the purchase journey next step",
-    "title": "AC4: Clicking Next on the PDP initiates the next purchase step",
-    "preconditions": "User is on the Galaxy A57 5G PDP.\nDefault configuration is applied (colour, storage, 24-month payment).\nUser is NOT logged in.",
-    "steps": "1. Click the \"Next\" button in the purchase summary section.",
-    "expected": "System initiates the next step — confirmed by the auth gate popup becoming visible.\nUser remains on the same URL (no full-page redirect).",
-    "jiraRef": "AU-1"
+    "specTitle": "Test Case 4: Posted journal entry appears in GL Balance Report",
+    "title": "AC4: Posted Journal Entry is visible in the GL Balance Report for the same period",
+    "preconditions": "A balanced Journal Entry with a unique [AAVA-TEST] memo has been posted successfully.\nGL Balance Report is accessible to the Finance Analyst role.",
+    "steps": "1. Navigate to GL Balance Report.\n2. Filter by GL Account 5001 and period 2026-Q2.\n3. Run the report.\n4. Search the report results for the memo used in the journal entry.",
+    "expected": "The report renders without errors.\nThe journal entry row matching the [AAVA-TEST] memo is visible in the results.\nAmount column shows 1,000.00.",
+    "jiraRef": "CAP-101"
   },
   {
-    "specTitle": "Test Case 5: Verify login and sign-up popup after clicking Next",
-    "title": "AC5: Login/Sign-up popup is displayed for unauthenticated users clicking Next",
-    "preconditions": "User is on the Galaxy A57 5G PDP and is NOT logged in.",
-    "steps": "1. Click the \"Next\" button.\n2. Observe the popup that appears.",
-    "expected": "An overlay modal becomes visible.\nModal message reads: \"Please log in or create an account to continue with your purchase\".\n\"Log in with Hub ID\" button is visible.\n\"Don't have an account? Sign up here\" button is visible.",
-    "jiraRef": "AU-1"
+    "specTitle": "Test Case 5: Invalid GL account code shows correct error message",
+    "title": "AC5: Entry of an invalid GL account code displays 'not a valid account' error",
+    "preconditions": "User is on the Create Journal Entry form.\nGL code 9999-INVALID does not exist in the chart of accounts.",
+    "steps": "1. Set Accounting Date to 04/20/2026.\n2. In the Ledger Account field, type '9999-INVALID'.\n3. Press Tab to trigger validation.",
+    "expected": "Workday displays inline error: 'The value entered is not a valid account'.\nThe field is highlighted in error state.",
+    "jiraRef": "CAP-101"
   },
   {
-    "specTitle": "Test Case 6: Navigate to Broadband overview via Broadband dropdown",
-    "title": "AC6: Navigate to Broadband overview page via Broadband tab",
-    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Click the \"Broadband\" navigation tab to open the dropdown megamenu.\n2. Click the \"Broadband overview\" link in the dropdown.",
-    "expected": "Browser navigates to https://www.starhub.com/personal/broadband.html.\nPage title or heading confirms the Broadband overview page has loaded.",
-    "jiraRef": "AU-6"
+    "specTitle": "Test Case 6: Accounting date in closed period is rejected",
+    "title": "AC6: Journal Entry with a closed-period accounting date is rejected on Post",
+    "preconditions": "User is on the Create Journal Entry form.\nAccounting period for 01/01/2020 is closed.",
+    "steps": "1. Set Accounting Date to 01/01/2020 (known closed period).\n2. Add a balanced debit/credit entry.\n3. Click Post.",
+    "expected": "Workday displays validation error: 'The selected period is closed for journal entry'.\nThe journal entry is NOT posted.",
+    "jiraRef": "CAP-101"
   },
   {
-    "specTitle": "Test Case 7: Navigate to Entertainment overview via Entertainment dropdown",
-    "title": "AC7: Navigate to Entertainment overview page via Entertainment tab",
-    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Click the \"Entertainment\" navigation tab to open the dropdown megamenu.\n2. Click the \"Entertainment overview\" link in the dropdown.",
-    "expected": "Browser navigates to https://www.starhub.com/personal/tvplus/passes.html.\nPage title or heading confirms the Entertainment overview page has loaded.",
-    "jiraRef": "AU-7"
+    "specTitle": "Test Case 7: Supplier Invoice form loads correctly",
+    "title": "AC1: Navigate to Create Supplier Invoice — form loads correctly",
+    "preconditions": "User is logged in to Workday as a Finance AP Analyst.",
+    "steps": "1. Navigate to Create Supplier Invoice.\n2. Wait for the form to fully load.",
+    "expected": "Page URL matches the Supplier Invoice pattern.\nPage title contains 'Supplier Invoice'.\nInvoice Number and Supplier fields are visible.",
+    "jiraRef": "CAP-102"
   },
   {
-    "specTitle": "Test Case 8: Navigate to Membership overview via Membership dropdown",
-    "title": "AC8: Navigate to Membership overview page via Membership tab",
-    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Click the \"Membership\" navigation tab to open the dropdown megamenu.\n2. Click the \"Membership overview\" link in the dropdown.",
-    "expected": "Browser navigates to https://www.starhub.com/personal/membership.html.\nPage title or heading confirms the Membership overview page has loaded.",
-    "jiraRef": "AU-8"
+    "specTitle": "Test Case 8: Successfully submit a supplier invoice",
+    "title": "AC2: A valid Supplier Invoice is submitted and reaches Draft/Matched status",
+    "preconditions": "User is on the Create Supplier Invoice form.\nTest vendor 'Ascendion Test Vendor' exists in Workday.",
+    "steps": "1. Enter a unique invoice number (INV-AAVA-<timestamp>).\n2. Select supplier 'Ascendion Test Vendor'.\n3. Set Invoice Date to 04/20/2026.\n4. Enter line amount 5000.00.\n5. Click Submit.",
+    "expected": "Invoice is submitted without errors.\nInvoice Status is 'Draft' or 'Matched' (depending on PO matching configuration).",
+    "jiraRef": "CAP-102"
   },
   {
-    "specTitle": "Test Case 10: Navigate to About Us page via About Us footer link",
-    "title": "AC10: Clicking About Us link navigates to corporate About Us page",
-    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Scroll to the footer of the page.\n2. Click the \"About Us\" link in the footer.",
-    "expected": "Browser navigates to https://corporate.starhub.com/about-us.html.\nThe About Us page on the corporate subdomain is loaded successfully.",
-    "jiraRef": "AU-10"
+    "specTitle": "Test Case 9: Duplicate invoice number triggers a warning",
+    "title": "AC3: Submitting a duplicate Supplier Invoice Number triggers a duplicate warning",
+    "preconditions": "An invoice with number 'INV-AAVA-TEST-001' already exists for 'Ascendion Test Vendor'.",
+    "steps": "1. Enter invoice number 'INV-AAVA-TEST-001'.\n2. Select supplier 'Ascendion Test Vendor'.\n3. Enter invoice date and amount.\n4. Click Submit.",
+    "expected": "Workday displays a duplicate invoice warning.\nThe duplicate warning element is visible on the page.",
+    "jiraRef": "CAP-102"
   },
   {
-    "specTitle": "Test Case 9: Navigate to Personal page via Personal link in top navigation",
-    "title": "AC9: Clicking Personal link in top nav navigates to Personal page",
-    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Locate the \"Personal\" link in the top-left navigation bar.\n2. Click the \"Personal\" link.",
-    "expected": "Browser navigates to https://www.starhub.com/personal.html.\nThe Personal page loads successfully.",
-    "jiraRef": "AU-9"
+    "specTitle": "Test Case 10: Budget vs Actual report page loads",
+    "title": "AC1: Navigate to Budget vs Actual report — page loads with filter fields",
+    "preconditions": "User is logged in to Workday as a Budget Owner or Finance Manager.",
+    "steps": "1. Navigate to Budget vs Actual report.\n2. Wait for the page to load.",
+    "expected": "Page URL matches the Budget vs Actual pattern.\nPage title contains 'Budget vs Actual' or 'Budget vs. Actual'.\nCompany, Fiscal Year, and Cost Centre filter fields are visible.",
+    "jiraRef": "CAP-103"
   },
   {
-    "specTitle": "Test Case 11: Navigate to SME page via SME link in top navigation",
-    "title": "AC11: Clicking SME link in top nav navigates to SME page",
-    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Locate the \"SME\" link in the top-left navigation bar.\n2. Click the \"SME\" link.",
-    "expected": "Browser navigates to https://www.starhub.com/sme.html.\nThe SME page loads successfully.",
-    "jiraRef": "AU-11"
+    "specTitle": "Test Case 11: Report grid renders with data when filters are applied",
+    "title": "AC2: Applying company and fiscal year filters renders a populated report grid",
+    "preconditions": "User is on the Budget vs Actual report page.\nBudget data exists for 'Capital One Financial', Fiscal Year 2026.",
+    "steps": "1. Set Company filter to 'Capital One Financial'.\n2. Set Fiscal Year to '2026'.\n3. Set Cost Centre to 'CC-FIN-001'.\n4. Click Run Report.",
+    "expected": "Report grid is visible.\nGrid contains at least one budget row and one actual row.",
+    "jiraRef": "CAP-103"
   },
   {
-    "specTitle": "Test Case 12: Navigate to Enterprise page via Enterprise link in top navigation",
-    "title": "AC12: Clicking Enterprise link in top nav navigates to Enterprise (business) page",
-    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Locate the \"Enterprise\" link in the top-left navigation bar.\n2. Click the \"Enterprise\" link.",
-    "expected": "Browser navigates to https://www.starhub.com/business.html.\nThe Enterprise (business) page loads successfully.",
-    "jiraRef": "AU-12"
+    "specTitle": "Test Case 12: Variance column is present in Budget vs Actual report",
+    "title": "AC3: Budget vs Actual report contains a Variance column with a value",
+    "preconditions": "Budget vs Actual report has been run with valid filters and the grid is populated.",
+    "steps": "1. Apply filters: Company = Capital One Financial, FY = 2026, CC = CC-FIN-001.\n2. Run report.\n3. Inspect the report grid columns.",
+    "expected": "Variance column is present in the report.\nVariance column contains a numeric value (may be positive or negative).",
+    "jiraRef": "CAP-103"
   },
   {
-    "specTitle": "Test Case 13a: Navigate to 5G Unlimited+ plans page via Mobile dropdown",
-    "title": "AC13a: Navigate to 5G Unlimited+ mobile plans page via Mobile nav dropdown",
-    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Click the \"Mobile\" navigation tab to open the dropdown megamenu.\n2. Click the \"5G Unlimited+\" link under the Mobile Plans column.",
-    "expected": "Browser navigates to https://consumer.starhub.com/personal/store/mobile-plans.\nPage title confirms StarHub 5G Unlimited+ SIM Only Mobile Plans page has loaded.",
-    "jiraRef": "AU-13"
+    "specTitle": "Test Case 13: Payroll Results page loads",
+    "title": "AC1: Navigate to View Payroll Results — page loads correctly",
+    "preconditions": "User is logged in to Workday as a Payroll Manager.",
+    "steps": "1. Navigate to View Payroll Results.\n2. Wait for the page to load.",
+    "expected": "Page URL matches the Payroll Results pattern.\nPage title contains 'Payroll Results'.\nPay Period filter is visible.",
+    "jiraRef": "CAP-104"
   },
   {
-    "specTitle": "Test Case 13b: Select 5G Lite plan and verify Review Order page with cart",
-    "title": "AC13b: Clicking Select Plan for 5G Lite lands on Review Order page with plan in cart",
-    "preconditions": "User is on https://consumer.starhub.com/personal/store/mobile-plans.\nNo prior session / not logged in.",
-    "steps": "1. Locate the 5G Lite plan card under the 5G Unlimited+ tab (first card).\n2. Click the \"Select plan\" button on the 5G Lite card.\n3. Wait for the Review Order page to load.",
-    "expected": "Browser navigates to https://consumer.starhub.com/personal/revieworder.\n\"5G Lite\" plan is visible in the cart summary.",
-    "jiraRef": "AU-13"
-  },
-  {
-    "specTitle": "Test Case 13c: Proceed to checkout from Review Order page",
-    "title": "AC13c: Clicking Proceed to checkout on Review Order page initiates checkout flow",
-    "preconditions": "User is on https://consumer.starhub.com/personal/revieworder.\nCart contains the 5G Lite plan (set up by Test Case 13b).\nUser is NOT logged in.",
-    "steps": "1. Verify the \"Proceed to checkout\" button is visible on the Review Order page.\n2. Click the \"Proceed to checkout\" button.",
-    "expected": "The Proceed to checkout button is visible and enabled.\nClickng the button initiates the checkout/authentication flow — browser navigates away from the Review Order page.",
-    "jiraRef": "AU-13"  },
-  {
-    "specTitle": "Test Case 1: Navigate to Personal Banking via Banking for individuals link on gateway page",
-    "title": "AC1: Clicking Personal Banking link under Banking for individuals navigates to Personal Banking page",
-    "preconditions": "User has launched https://www.ocbc.com/group/gateway in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Click the 'Banking for individuals' link in the top navigation header.\n2. Click the 'Personal Banking' link in the Banking for individuals section.",
-    "expected": "Browser navigates to https://www.ocbc.com/personal-banking.\nThe Personal Banking page loads successfully with URL containing /personal-banking.",
-    "jiraRef": "OCBC-1"  },
-  {
-    "specTitle": "Test Case 1: Navigate to 360 Account page via Accounts dropdown",
-    "title": "AC3: Clicking 360 Account link under Accounts dropdown navigates to the 360 Account page",
-    "preconditions": "User has launched https://www.ocbc.com/personal-banking in a browser.\nNo prior session / not logged in.",
-    "steps": "1. Click the 'Accounts' tab in the top navigation to open the Accounts dropdown.\n2. Click the '360 Account' link in the Accounts dropdown.",
-    "expected": "Browser navigates to https://www.ocbc.com/personal-banking/deposits/360-account.\nURL contains /deposits/360-account.",
-    "jiraRef": "OCBC-2"
+    "specTitle": "Test Case 14: Payroll grid renders for current pay period",
+    "title": "AC2: Selecting Q1 2026 pay period renders the payroll results grid",
+    "preconditions": "User is on the View Payroll Results page.\nPayroll has been run for Q1 2026.",
+    "steps": "1. Set Pay Period filter to 'Q1 2026'.\n2. Click View Results.",
+    "expected": "Payroll results grid is visible.\nGrid contains at least one row of payroll data.",
+    "jiraRef": "CAP-104"
   }
 ]

@@ -1,6 +1,6 @@
 // === FILE: src/pages/base.page.js ===
 /**
- * BasePage — shared foundation for all OCBC Bank page objects.
+ * BasePage — shared foundation for all Workday Finance page objects.
  *
  * Every page object extends this class to inherit:
  *   - constructor(page)

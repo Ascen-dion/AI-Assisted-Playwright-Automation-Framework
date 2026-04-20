@@ -12,7 +12,7 @@
  *   TESTRAIL_SUITE_ID=<numeric suite id>
  *
  * Optional:
- *   TESTRAIL_SECTION_NAME=StarHub Mobile Purchase  (default shown)
+ *   TESTRAIL_SECTION_NAME=Capital One Workday Finance  (default shown)
  *   JIRA_REF=AU-1                                  (Jira story key for traceability)
  *
  * Output:

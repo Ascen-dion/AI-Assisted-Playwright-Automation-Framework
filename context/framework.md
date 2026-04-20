@@ -11,31 +11,34 @@
 - Never duplicate a selector string across files
 
 ## File Naming Convention
-- Locator file: `<feature-name>.locators.js` (e.g. `ocbc-cards-nav.locators.js`)
-- Page file: `<feature-name>.page.js` (e.g. `ocbc-cards-nav.page.js`)
-- Spec file: `<feature-name>-automated.spec.js` (e.g. `ocbc-cards-nav-automated.spec.js`)
-- Spec subdirectory: `nav/` for navigation specs; `application/` for application journey specs
+- Locator file: `workday-<area>.locators.js` (e.g. `workday-finance.locators.js`)
+- Page file: `workday-<area>.page.js` (e.g. `workday-finance.page.js`)
+- Spec file: `workday-<area>-automated.spec.js` or `workday-<area>-e2e.spec.js`
+- Spec subdirectory: `application/` for all Workday specs
 
 ## Require Paths (from spec subdirectory)
-When writing specs in `src/tests/nav/` or `src/tests/purchase/`, require paths are two levels up:
+When writing specs in `src/tests/application/`, require paths are two levels up:
 ```js
-const Page = require('../../pages/my-page.page');     // page object
-const TD   = require('../../data/test-data');          // test data module
-const { test, expect } = require('../../fixtures');   // extended fixture (preferred for new specs)
+const Page = require('../../pages/workday-finance.page');      // page object
+const TD   = require('../../data/workday-test-data');           // test data module
+const { test, expect } = require('../../fixtures');            // extended fixture (preferred for new specs)
 ```
 
-## Test Data Module — `src/data/test-data.js`
+## Test Data Module — `src/data/workday-test-data.js`
 All hardcoded assertion values and URLs must come from the test data module. Never hardcode them in specs.
 ```js
-const TD = require('../../data/test-data');
-// TD.urls.*            — canonical page URLs
+const TD = require('../../data/workday-test-data');
+// TD.urls.*            — canonical Workday task URLs
 // TD.urlPatterns.*     — URL regex patterns for expect().toHaveURL()
-// TD.accounts.*        — savings/current account product details
-// TD.cards.*           — credit card product names and details
-// TD.loans.*           — loan product details
+// TD.glAccounts.*      — GL account codes
+// TD.costCentres.*     — cost centre codes
+// TD.journalEntry.*    — journal entry test values and field data
+// TD.statuses.*        — expected status strings (Draft, Posted, Reversed, etc.)
+// TD.errors.*          — exact Workday validation error messages
 // TD.pageTitles.*      — page title regex patterns
+// TD.downstream.*      — downstream API base URLs
 ```
-Add new entries to `src/data/test-data.js` for any new assertion strings or URLs.
+Add new entries to `src/data/workday-test-data.js` for any new assertion strings, URLs, or values.
 
 ## Locator File Structure
 ```js
@@ -62,23 +65,22 @@ module.exports = <Name>Page;
 ## Spec File Structure
 ```js
 const { test, expect } = require('../../fixtures');  // preferred — enables self-healing queue
-// OR: const { test, expect } = require('@playwright/test'); // for existing specs
-const <Name>Page = require('../../pages/<name>.page');
-const TD = require('../../data/test-data');
+// OR: const { test, expect } = require('@playwright/test'); // for E2E/API tests
+const WorkdayPage = require('../../pages/workday-finance.page');
+const TD = require('../../data/workday-test-data');
 
 // Tags:
-//   @smoke      — nav/visibility checks; fast; run on every push
-//   @regression — full journey tests; run on PR and nightly
-test.describe('[UI] <Story Title>', { tag: ['@smoke', '@regression'] }, () => {
-  let pagObj;
-  test.beforeEach(async ({ page }) => {
-    pagObj = new <Name>Page(page);
-    await pagObj.goto();
-    // Cookie consent handled by globalSetup — try/catch here as safety net only
-    try { await page.getByRole('button', { name: /got it/i }).first().click({ timeout: 3000 }); } catch {}
-  });
+//   @smoke       — page load / status field visible checks; fast
+//   @regression  — full workflow tests (post, validate, report); run nightly and on Workday releases
+//   @e2e         — cross-system journey tests (Workday → downstream API/UI)
+//   @capital-one — scopes all Capital One Workday tests
+test.describe('[UI] CAPxxx: <Story Title>', { tag: ['@smoke', '@regression', '@capital-one'] }, () => {
+  let finance;
 
+  // APPLICATION spec: gotoXxx() called per-test (each test has its own navigation)
   test('[Cxxx] Test Case N: <description>', async ({ page }) => {
+    finance = new WorkdayPage(page);
+    await finance.gotoCreateJournalEntry();
     // arrange, act, assert — use TD.* for all assertion values
   });
 });
@@ -103,13 +105,13 @@ test.describe('[UI] <Story Title>', { tag: ['@smoke', '@regression'] }, () => {
 
 ## Playwright Config
 - Config file: `config/playwright.config.js`
-- `globalSetup`: `config/globalSetup.js` — dismisses cookie consent once, saves `playwright/.auth/storageState.json`
+- `globalSetup`: `config/globalSetup.js` — logs into Workday once, saves `playwright/.auth/workday-storageState.json`
 - Default browser: Chromium (production) + `chromium-staging` (staging)
 - Run all tests: `npx playwright test --config=config/playwright.config.js`
 - Run smoke only: `npx playwright test --config=config/playwright.config.js --grep "@smoke"`
 - Run regression only: `npx playwright test --config=config/playwright.config.js --grep "@regression"`
 - Run against staging: `npx playwright test --project=chromium-staging --config=config/playwright.config.js`
-- Run single spec: `npx playwright test src/tests/nav/ocbc-accounts-nav-automated.spec.js --config=config/playwright.config.js`
+- Run single spec: `npx playwright test src/tests/application/workday-finance-regression.spec.js --config=config/playwright.config.js`
 - HTML report: written to `playwright-report/` (Playwright default); open with `npx playwright show-report`
 - Blob report: written to `test-results/blob-report/`; merge shards with `npx playwright merge-reports --reporter=html test-results/blob-report`
 - Videos and traces are recorded by default for CI debugging
