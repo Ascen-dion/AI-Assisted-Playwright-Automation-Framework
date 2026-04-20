@@ -54,7 +54,7 @@ module.exports = defineConfig({
 
   use: {
     // Base URL — override via BASE_URL env var for staging runs
-    baseURL: process.env.BASE_URL || 'https://www.starhub.com',
+    baseURL: process.env.BASE_URL || 'https://www.ocbc.com',
 
     // Use saved cookie-consent state so no test needs to dismiss the banner itself
     storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,
@@ -104,20 +104,20 @@ module.exports = defineConfig({
 
     // Staging environment — run with: npx playwright test --project=chromium-staging
     // Requires STAGING_URL env var or falls back to www.starhub.com
-    {
-      name: 'chromium-staging',
-      use: {
-        ...devices['Desktop Chrome'],
-        baseURL: process.env.STAGING_URL || process.env.BASE_URL || 'https://www.starhub.com',
-        launchOptions: {
-          args: process.env.RAILWAY_STATIC_URL ? [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage'
-          ] : []
-        }
-      },
-    },
+    // {
+    //   name: 'chromium-staging',
+    //   use: {
+    //     ...devices['Desktop Chrome'],
+    //     baseURL: process.env.STAGING_URL || process.env.BASE_URL || 'https://www.ocbc.com',
+    //     launchOptions: {
+    //       args: process.env.RAILWAY_STATIC_URL ? [
+    //         '--no-sandbox',
+    //         '--disable-setuid-sandbox',
+    //         '--disable-dev-shm-usage'
+    //       ] : []
+    //     }
+    //   },
+    // },
 
     // {
     //   name: 'firefox',
