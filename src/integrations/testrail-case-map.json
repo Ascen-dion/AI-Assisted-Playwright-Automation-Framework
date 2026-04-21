@@ -17,6 +17,7 @@
     "Test Case 13b: Select 5G Lite plan and verify Review Order page with cart": 592,
     "Test Case 13c: Proceed to checkout from Review Order page": 593,
     "Test Case 1: Navigate to Personal Banking via Banking for individuals link on gateway page": 622,
-    "Test Case 1: Navigate to 360 Account page via Accounts dropdown": 632
+    "Test Case 1: Navigate to 360 Account page via Accounts dropdown": 632,
+    "Test Case 2: Validate Apply Online button is visible and enabled on the 360 Account page": 633
   }
 }

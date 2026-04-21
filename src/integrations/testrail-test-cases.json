@@ -132,5 +132,13 @@
     "steps": "1. Click the 'Accounts' tab in the top navigation to open the Accounts dropdown.\n2. Click the '360 Account' link in the Accounts dropdown.",
     "expected": "Browser navigates to https://www.ocbc.com/personal-banking/deposits/360-account.\nURL contains /deposits/360-account.",
     "jiraRef": "OCBC-2"
+  },
+  {
+    "specTitle": "Test Case 2: Validate Apply Online button is visible and enabled on the 360 Account page",
+    "title": "AC4: Apply Online button is visible and enabled on the 360 Account page",
+    "preconditions": "User has navigated to https://www.ocbc.com/personal-banking/deposits/360-savings-account.",
+    "steps": "1. Navigate directly to the OCBC 360 Savings Account page.\n2. Observe the 'Apply online' button in the hero section.",
+    "expected": "The 'Apply online' button/link is visible on the page.\nThe 'Apply online' button/link is enabled (not disabled).",
+    "jiraRef": "OCBC-4"
   }
 ]

@@ -3,6 +3,7 @@ const BasePage = require('./base.page');
 const loc = require('./locators/ocbc-accounts-nav.locators');
 
 const URL = 'https://www.ocbc.com/personal-banking';
+const URL_360 = 'https://www.ocbc.com/personal-banking/deposits/360-savings-account';
 
 class OcbcAccountsNavPage extends BasePage {
   async goto() {
@@ -37,6 +38,20 @@ class OcbcAccountsNavPage extends BasePage {
   async clickCompareAccounts() {
     await loc.compareAccountsLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
     await loc.compareAccountsLink(this.page).click();
+  }
+
+  async gotoAccount360() {
+    await super.goto(URL_360);
+  }
+
+  async isApplyOnlineButtonVisible() {
+    await loc.applyOnlineButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.applyOnlineButton(this.page).isVisible();
+  }
+
+  async isApplyOnlineButtonEnabled() {
+    await loc.applyOnlineButton(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.applyOnlineButton(this.page).isEnabled();
   }
 }
 

@@ -10,6 +10,10 @@ const locators = {
   fixedDepositsLink: (page) => page.getByRole('link', { name: /Fixed Deposits/i }).first(),
   account360Link: (page) => page.getByRole('link', { name: /360 Account/i }).first(),
   compareAccountsLink: (page) => page.getByRole('link', { name: /Compare Accounts/i }).first(),
+
+  // 360 Account page — confirmed via live DOM inspection 2026-04-20
+  // <a class="button button--primary button--red2 ... d-block" href="#apply-online">Apply online</a>
+  applyOnlineButton: (page) => page.getByRole('link', { name: 'Apply online' }).first(),
 };
 
 module.exports = locators;
