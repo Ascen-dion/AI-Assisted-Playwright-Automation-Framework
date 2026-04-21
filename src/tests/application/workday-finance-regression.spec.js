@@ -19,7 +19,7 @@
  *     --config=config/playwright.config.js
  *
  * Run with Workday credentials:
- *   WORKDAY_BASE_URL=https://impl.workday.com/capitaloneimpl1 \
+ *   WORKDAY_BASE_URL=https://capitalone.wd12.myworkdayjobs.com/Capital_One \
  *   WORKDAY_USERNAME=finance.analyst@capitalone.com \
  *   WORKDAY_PASSWORD=<password> \
  *   npx playwright test workday-finance-regression.spec.js --headed

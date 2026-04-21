@@ -5,10 +5,10 @@
  * Single source of truth for all assertion strings, URLs, GL codes, and expected values.
  * When Workday changes a label or value, update here — not in each spec.
  *
- * Set WORKDAY_BASE_URL in .env — e.g. https://impl.workday.com/capitaloneimpl1
+ * Set WORKDAY_BASE_URL in .env — e.g. https://capitalone.wd12.myworkdayjobs.com/Capital_One
  */
 
-const BASE = process.env.WORKDAY_BASE_URL || 'https://impl.workday.com/capitaloneimpl1';
+const BASE = process.env.WORKDAY_BASE_URL || 'https://capitalone.wd12.myworkdayjobs.com/Capital_One';
 
 module.exports = {
 
@@ -23,6 +23,13 @@ module.exports = {
     glBalanceReport:    `${BASE}/d/task/TBB$GeneralLedgerBalanceReport.htmld`,
     viewPayrollResults: `${BASE}/d/task/TBB$ViewPayrollResults.htmld`,
     findWorkers:        `${BASE}/d/task/TBB$FindWorkers.htmld`,
+    careersHome:        `${BASE}`,
+  },
+
+  // ── Job Search ───────────────────────────────────────────────────────────
+  jobSearch: {
+    keyword:            'qa',
+    expectedJobCount:   '9 JOBS FOUND',
   },
 
   // ── URL patterns (regex for toHaveURL assertions) ─────────────────────────

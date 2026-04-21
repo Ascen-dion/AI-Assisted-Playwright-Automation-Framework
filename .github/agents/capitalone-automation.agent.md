@@ -3,7 +3,7 @@ name: capitalone-automation-agent
 description: >
   Brownfield automation agent for Capital One Workday Finance testing. Use this agent when you
   need to generate, extend, or improve Playwright UI tests or API tests for Capital One's Workday
-  Finance implementation (impl.workday.com tenant). This agent reads the project context files
+  Finance implementation (capitalone.wd12.myworkdayjobs.com tenant). This agent reads the project context files
   first, audits reusable assets, creates manual test cases in TestRail for full traceability,
   inspects the live Workday application, then produces deterministic POM-structured test code with
   TestRail case IDs embedded in every test title. Use for: new test generation from Jira stories
@@ -497,7 +497,7 @@ const { test, expect } = require('../../fixtures');            // extended fixtu
 
 ## CAPITAL ONE-SPECIFIC NOTES
 
-- **Workday tenant**: `impl.workday.com` (sandbox) — URL prefix from `WORKDAY_BASE_URL` env var
+- **Workday tenant**: `capitalone.wd12.myworkdayjobs.com` — URL prefix from `WORKDAY_BASE_URL` env var
 - **Authentication**: `globalSetup.js` handles login once and saves storage state to
   `playwright/.auth/workday-storageState.json`. New specs do NOT re-login in `beforeEach`.
 - **Workday `data-automation-id`**: The primary selector strategy. Workday's bi-annual release
@@ -527,10 +527,10 @@ const { test, expect } = require('../../fixtures');            // extended fixtu
 
 ```
 # Workday Sandbox
-WORKDAY_BASE_URL=https://impl.workday.com/capitaloneimpl1
+WORKDAY_BASE_URL=https://capitalone.wd12.myworkdayjobs.com/Capital_One
 WORKDAY_USERNAME=finance.analyst@capitalone.com
 WORKDAY_PASSWORD=<password>
-WORKDAY_TENANT=capitaloneimpl1
+WORKDAY_TENANT=Capital_One
 
 # Downstream systems (E2E only — skip gracefully if not set)
 RECON_API_BASE_URL=https://recon.capitalone-demo.internal

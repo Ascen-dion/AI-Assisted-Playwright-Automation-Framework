@@ -110,5 +110,13 @@
     "steps": "1. Set Pay Period filter to 'Q1 2026'.\n2. Click View Results.",
     "expected": "Payroll results grid is visible.\nGrid contains at least one row of payroll data.",
     "jiraRef": "CAP-104"
+  },
+  {
+    "specTitle": "Test Case 1: Search for qa jobs returns 9 JOBS FOUND",
+    "title": "AC1: Searching keyword 'qa' on Capital One careers page returns 9 JOBS FOUND",
+    "preconditions": "User navigates to https://capitalone.wd12.myworkdayjobs.com/Capital_One. No filters applied.",
+    "steps": "1. Navigate to https://capitalone.wd12.myworkdayjobs.com/Capital_One.\n2. Enter 'qa' in the search text box (keywordSearchInput).\n3. Click the Search button (keywordSearchButton).\n4. Wait for search results to load.",
+    "expected": "The jobs found count element (jobFoundText) displays '9 JOBS FOUND'.",
+    "jiraRef": "CAP-201"
   }
 ]

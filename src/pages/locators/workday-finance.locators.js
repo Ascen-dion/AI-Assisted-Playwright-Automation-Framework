@@ -108,6 +108,13 @@ const loc = {
     netPayRow:         (page) => page.locator('[data-automation-id="netPay"]'),
   },
 
+  // ── Job Search (Careers page) ─────────────────────────────────────────────
+  jobSearch: {
+    searchInput:   (page) => page.locator('[data-automation-id="keywordSearchInput"]'),
+    searchButton:  (page) => page.locator('[data-automation-id="keywordSearchButton"]'),
+    jobFoundText:  (page) => page.locator('[data-automation-id="jobFoundText"]'),
+  },
+
   // ── Generic / Shared ──────────────────────────────────────────────────────
   shared: {
     pageHeader:       (page) => page.locator('[data-automation-id="pageHeaderTitle"]'),

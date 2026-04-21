@@ -1,4 +1,20 @@
-﻿{
+{
   "sectionId": 50,
-  "cases": {}
+  "cases": {
+    "Test Case 1: Journal Entry form loads with Draft status": 644,
+    "Test Case 2: System rejects an out-of-balance journal entry": 645,
+    "Test Case 3: Successfully post a balanced journal entry": 646,
+    "Test Case 4: Posted journal entry appears in GL Balance Report": 647,
+    "Test Case 5: Invalid GL account code shows correct error message": 648,
+    "Test Case 6: Accounting date in closed period is rejected": 649,
+    "Test Case 7: Supplier Invoice form loads correctly": 650,
+    "Test Case 8: Successfully submit a supplier invoice": 651,
+    "Test Case 9: Duplicate invoice number triggers a warning": 652,
+    "Test Case 10: Budget vs Actual report page loads": 653,
+    "Test Case 11: Report grid renders with data when filters are applied": 654,
+    "Test Case 12: Variance column is present in Budget vs Actual report": 655,
+    "Test Case 13: Payroll Results page loads": 656,
+    "Test Case 14: Payroll grid renders for current pay period": 657,
+    "Test Case 1: Search for qa jobs returns 9 JOBS FOUND": 658
+  }
 }

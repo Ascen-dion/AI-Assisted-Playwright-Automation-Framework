@@ -8,10 +8,10 @@
 
 ```env
 # Workday Sandbox
-WORKDAY_BASE_URL=https://impl.workday.com/capitaloneimpl1
+WORKDAY_BASE_URL=https://capitalone.wd12.myworkdayjobs.com/Capital_One
 WORKDAY_USERNAME=finance.analyst@capitalone.com
 WORKDAY_PASSWORD=<password>
-WORKDAY_TENANT=capitaloneimpl1
+WORKDAY_TENANT=Capital_One
 
 # Downstream systems (UC4 only — can be skipped if not available)
 RECON_API_BASE_URL=https://recon.capitalone-demo.internal

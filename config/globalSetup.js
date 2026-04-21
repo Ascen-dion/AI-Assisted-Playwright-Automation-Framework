@@ -18,7 +18,7 @@ const { chromium } = require('@playwright/test');
 const path = require('path');
 const fs = require('fs');
 
-const BASE_URL = process.env.WORKDAY_BASE_URL || 'https://impl.workday.com/capitaloneimpl1';
+const BASE_URL = process.env.WORKDAY_BASE_URL || 'https://capitalone.wd12.myworkdayjobs.com/Capital_One';
 const LOGIN_URL = `${BASE_URL}/login.htmld`;
 const USERNAME = process.env.WORKDAY_USERNAME;
 const PASSWORD = process.env.WORKDAY_PASSWORD;

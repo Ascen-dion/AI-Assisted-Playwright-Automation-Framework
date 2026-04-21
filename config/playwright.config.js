@@ -54,7 +54,7 @@ module.exports = defineConfig({
 
   use: {
     // Base URL — override via WORKDAY_BASE_URL env var
-    baseURL: process.env.WORKDAY_BASE_URL || 'https://impl.workday.com/capitaloneimpl1',
+    baseURL: process.env.WORKDAY_BASE_URL || 'https://capitalone.wd12.myworkdayjobs.com/Capital_One',
 
     // Use saved Workday login state so no test needs to re-authenticate
     storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,

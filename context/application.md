@@ -2,11 +2,10 @@
 
 ## Base Configuration
 
-**Target Tenant URL**: `https://impl.workday.com/capitaloneimpl1/d/`
-*(Replace `capitaloneimpl1` with the actual tenant ID provided by Capital One)*
+**Target Tenant URL**: `https://capitalone.wd12.myworkdayjobs.com/Capital_One`
 
-**Login URL**: `https://impl.workday.com/capitaloneimpl1/login.htmld`
-**Home URL**: `https://impl.workday.com/capitaloneimpl1/d/home.htmld`
+**Login URL**: `https://capitalone.wd12.myworkdayjobs.com/Capital_One`
+**Home URL**: `https://capitalone.wd12.myworkdayjobs.com/Capital_One`
 **Application Type**: Enterprise ERP — Workday Finance & HCM
 **Environment**: Sandbox / impl tenant (staging)
 
@@ -131,8 +130,8 @@ Many Workday forms load asynchronously — wait for specific elements rather tha
 ## Environment Variables Required
 
 ```
-WORKDAY_BASE_URL=https://impl.workday.com/capitaloneimpl1
+WORKDAY_BASE_URL=https://capitalone.wd12.myworkdayjobs.com/Capital_One
 WORKDAY_USERNAME=<service-account-user>
 WORKDAY_PASSWORD=<service-account-password>
-WORKDAY_TENANT=capitaloneimpl1
+WORKDAY_TENANT=Capital_One
 ```

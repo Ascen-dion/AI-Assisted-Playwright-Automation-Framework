@@ -64,7 +64,7 @@ April 2026
 ```
 Capital One Environment
 ┌─────────────────────────────────────────────────────────┐
-│  Workday Finance Tenant (impl.workday.com / prod)        │
+│  Workday Finance Tenant (capitalone.wd12.myworkdayjobs.com)│
 │  ├── Journal Entry          ← UC2, UC4                   │
 │  ├── Supplier Invoice       ← UC2                        │
 │  ├── Budget vs Actual       ← UC2                        │

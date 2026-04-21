@@ -56,6 +56,29 @@ class WorkdayFinancePage extends BasePage {
     await this.page.waitForLoadState('networkidle', { timeout: 60000 });
   }
 
+  async gotoJobSearch() {
+    await super.goto(TD.urls.careersHome);
+    await this.page.waitForLoadState('networkidle', { timeout: 60000 });
+  }
+
+  // ── Job Search ─────────────────────────────────────────────────────────────
+
+  async searchJobsAndGetCount(keyword) {
+    await loc.jobSearch.searchInput(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    await loc.jobSearch.searchInput(this.page).fill(keyword);
+    await loc.jobSearch.searchButton(this.page).click();
+    await loc.jobSearch.jobFoundText(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    // Wait until the element text is no longer the transient "Loading" state
+    await this.page.waitForFunction(
+      () => {
+        const el = document.querySelector('[data-automation-id="jobFoundText"]');
+        return el && el.textContent && !el.textContent.includes('Loading');
+      },
+      { timeout: 30000 }
+    );
+    return (await loc.jobSearch.jobFoundText(this.page).textContent()).trim();
+  }
+
   // ── Login ──────────────────────────────────────────────────────────────────
 
   async login(username, password) {
