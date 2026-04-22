@@ -3,7 +3,7 @@ const { test, expect } = require('../../fixtures');
 const AdaptivePlanningPage = require('../../pages/adaptive-planning.page');
 const TD = require('../../data/adaptive-planning-test-data');
 
-test.describe('[UI] AP-001: Tab Navigation — Budget Entry - Sales', {
+test.describe('[UI] Adaptive Planning: Tab Navigation — Budget Entry - Sales', {
   tag: ['@smoke', '@regression', '@adaptive-planning'],
 }, () => {
   let planning;

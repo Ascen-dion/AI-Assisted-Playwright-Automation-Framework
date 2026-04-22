@@ -49,7 +49,9 @@ module.exports = defineConfig({
     // If credentials are missing, it silently skips (no-op)
     [path.resolve(__dirname, '../src/integrations/testrail-reporter.js')],
     // Logging reporter — writes structured logs to logs/ via Winston (no page object changes needed)
-    [path.resolve(__dirname, '../src/integrations/logging-reporter.js')]
+    [path.resolve(__dirname, '../src/integrations/logging-reporter.js')],
+    // Self-contained HTML evidence reporter — screenshots embedded as base64, unique timestamped files
+    [path.resolve(__dirname, '../src/integrations/html-evidence-reporter.js')]
   ],
 
   use: {

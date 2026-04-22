@@ -8,7 +8,9 @@
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
+    "test:ci": "CI=true playwright test --config=config/playwright.config.js --workers=1",
     "report": "playwright show-report",
+    "report:evidence": "node -e \"const p=require('path').resolve('test-results/reports/evidence-report-latest.html');require('child_process').exec(process.platform==='win32'?'start \\\"\\\" \\\"'+p+'\\\"':'open \\\"'+p+'\\\"')\"",
     "install:browsers": "playwright install"
   },
   "keywords": [
