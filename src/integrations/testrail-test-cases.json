@@ -118,5 +118,85 @@
     "steps": "1. Navigate to https://capitalone.wd12.myworkdayjobs.com/Capital_One.\n2. Enter 'qa' in the search text box (keywordSearchInput).\n3. Click the Search button (keywordSearchButton).\n4. Wait for search results to load.",
     "expected": "The jobs found count element (jobFoundText) displays '9 JOBS FOUND'.",
     "jiraRef": "CAP-201"
+  },
+  {
+    "specTitle": "Test Case 1: Budget Entry Sales page lands on Instructions tab by default",
+    "title": "AC-001: Default landing tab is Instructions on Budget Entry - Sales",
+    "preconditions": "User is logged in to Adaptive Planning as a Sales Budget Owner.\nBudget Entry - Sales page is accessible.",
+    "steps": "1. Navigate to the Budget Entry - Sales page.\n2. Wait for the page to fully load.\n3. Verify which tab is selected by default.",
+    "expected": "The Instructions tab is highlighted as the active tab (aria-selected='true').\nThe Instructions content panel is visible with budget guidelines.",
+    "jiraRef": "AP-001"
+  },
+  {
+    "specTitle": "Test Case 2: All 12 budget section tabs are visible in correct order",
+    "title": "AC-002: All 12 budget tabs display in the correct labelled order",
+    "preconditions": "User is logged in and on the Budget Entry - Sales page.",
+    "steps": "1. Navigate to the Budget Entry - Sales page.\n2. Collect all tab labels from the tab bar.\n3. Verify the count is 12.\n4. Verify the order matches the expected sequence.",
+    "expected": "12 tabs are present in this order: Instructions, Target Revenue, Target Expense, Workforce, Product Revenue, Sensitivity Analysis, Pipeline, Travel, Capital, Expenses, Variances, Review.",
+    "jiraRef": "AP-001"
+  },
+  {
+    "specTitle": "Test Case 3: Clicking a tab highlights it and loads its content",
+    "title": "AC-003: Clicking a tab highlights it as active and loads its content",
+    "preconditions": "User is logged in and on the Budget Entry - Sales page.",
+    "steps": "1. Navigate to the Budget Entry - Sales page.\n2. Click the 'Target Revenue' tab.\n3. Verify the clicked tab is highlighted.\n4. Verify no other tab is highlighted.",
+    "expected": "The Target Revenue tab has aria-selected='true'.\nAll other tabs have aria-selected='false'.\nThe tab content area updates to show Target Revenue content.",
+    "jiraRef": "AP-001"
+  },
+  {
+    "specTitle": "Test Case 4: Tab scroll arrows appear and left arrow is disabled at start",
+    "title": "AC-004: Scroll arrows are visible and left arrow is disabled at first tab",
+    "preconditions": "User is logged in and on the Budget Entry - Sales page.\nBrowser width is narrow enough that not all 12 tabs fit on screen.",
+    "steps": "1. Navigate to the Budget Entry - Sales page.\n2. Verify the left and right scroll arrows are present.\n3. Verify the left arrow is disabled when on the first tab.",
+    "expected": "Left scroll arrow (aria-label='Scroll left') is visible but disabled.\nRight scroll arrow (aria-label='Scroll right') is visible and enabled.",
+    "jiraRef": "AP-001"
+  },
+  {
+    "specTitle": "Test Case 5: Budget input sheet loads for Target Revenue, Target Expense, Workforce, Product Revenue",
+    "title": "AC-005: Budget input sheets load for revenue/expense/workforce/product tabs",
+    "preconditions": "User is logged in and on the Budget Entry - Sales page.",
+    "steps": "1. Click the 'Target Revenue' tab and verify a sheet/grid loads.\n2. Click the 'Target Expense' tab and verify a sheet/grid loads.\n3. Click the 'Workforce' tab and verify a sheet/grid loads.\n4. Click the 'Product Revenue' tab and verify a sheet/grid loads.",
+    "expected": "Each tab displays a budget input sheet or data grid in the content area.\nThe tab content area is not empty after each tab click.",
+    "jiraRef": "AP-001"
+  },
+  {
+    "specTitle": "Test Case 6: Planning view loads for Sensitivity Analysis and Pipeline tabs",
+    "title": "AC-006: Planning views load for Sensitivity Analysis and Pipeline tabs",
+    "preconditions": "User is logged in and on the Budget Entry - Sales page.",
+    "steps": "1. Click the 'Sensitivity Analysis' tab and verify a planning view loads.\n2. Click the 'Pipeline' tab and verify a planning view loads.",
+    "expected": "Each tab displays a planning view with content in the tab content area.\nThe tab content area is not empty after each tab click.",
+    "jiraRef": "AP-001"
+  },
+  {
+    "specTitle": "Test Case 7: Cost planning sheet loads for Travel, Capital, Expenses tabs",
+    "title": "AC-007: Cost planning sheets load for Travel, Capital, and Expenses tabs",
+    "preconditions": "User is logged in and on the Budget Entry - Sales page.",
+    "steps": "1. Click the 'Travel' tab and verify a cost planning sheet loads.\n2. Click the 'Capital' tab and verify a cost planning sheet loads.\n3. Click the 'Expenses' tab and verify a cost planning sheet loads.",
+    "expected": "Each tab displays a cost planning sheet or data grid in the content area.\nThe tab content area is not empty after each tab click.",
+    "jiraRef": "AP-001"
+  },
+  {
+    "specTitle": "Test Case 8: Summary view loads for Variances and Review tabs",
+    "title": "AC-008: Summary views load for Variances and Review tabs",
+    "preconditions": "User is logged in and on the Budget Entry - Sales page.",
+    "steps": "1. Click the 'Variances' tab and verify a summary view loads.\n2. Click the 'Review' tab and verify a summary view loads.",
+    "expected": "Each tab displays a summary view with budget performance data.\nThe tab content area is not empty after each tab click.",
+    "jiraRef": "AP-001"
+  },
+  {
+    "specTitle": "Test Case 9: Context selectors persist when switching tabs",
+    "title": "AC-009: Department, time period, currency, and version persist across tab switches",
+    "preconditions": "User is logged in and on the Budget Entry - Sales page.\nA department and time period are selected.",
+    "steps": "1. Note the current department, time period, currency, and version selectors.\n2. Click the 'Target Revenue' tab.\n3. Verify the context selectors have not changed.\n4. Click the 'Expenses' tab.\n5. Verify the context selectors still have not changed.",
+    "expected": "The department, time period, currency, and plan version selectors remain unchanged after switching between tabs.",
+    "jiraRef": "AP-001"
+  },
+  {
+    "specTitle": "Test Case 10: Back button navigates to previous page",
+    "title": "AC-010: Back button in toolbar navigates back to the previous page",
+    "preconditions": "User is logged in and has navigated to the Budget Entry - Sales page from another page.",
+    "steps": "1. Navigate to the Budget Entry - Sales page.\n2. Click the Back button in the toolbar.\n3. Verify the URL changes from the Budget Entry - Sales page.",
+    "expected": "The user is navigated away from the Budget Entry - Sales page.\nThe URL no longer matches the Budget Entry - Sales dashboard URL.",
+    "jiraRef": "AP-001"
   }
 ]
