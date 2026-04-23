@@ -184,8 +184,8 @@ prints the assigned case IDs, and writes `src/integrations/testrail-case-map.jso
 
 **Required `.env` variables** — already configured at the project root `.env`:
 ```
-TESTRAIL_HOST=https://ascendionqesmoke.testrail.io
-TESTRAIL_USER=sowmya.sridhar@ascendion.com
+TESTRAIL_HOST=https://ascendionqesmoketest.testrail.io
+TESTRAIL_USER=navneet.bhargavan@ascendion.com
 TESTRAIL_API_KEY=<key>
 TESTRAIL_PROJECT_ID=7
 TESTRAIL_SUITE_ID=11
