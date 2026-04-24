@@ -62,6 +62,47 @@ grounded in actual project context, real DOM inspection, and existing reusable a
 
 ---
 
+## PHASE 0 — FETCH JIRA STORY (when given a story key)
+
+When the user provides a Jira story key (e.g. `ED-74`, `UD-12`), **always** use the dedicated
+fetcher script before doing anything else. It resolves the correct module export and prints
+a clean, structured summary in one command — no manual API calls, no export-name guessing.
+
+### Command
+
+```bash
+node src/integrations/fetch-jira-story.js <ISSUE-KEY>
+```
+
+### What it prints
+
+- **Summary** — the story title
+- **Type / Status / Priority / Assignee**
+- **Description** — full plain-text description (includes inline ACs for stories like ED-74
+  that embed acceptance criteria directly in the description rather than a dedicated ADF section)
+- **Acceptance Criteria** — structured ACs when the story uses a labelled "Acceptance Criteria"
+  section (may be empty for simpler task-type issues)
+- **Test Scenarios** — any labelled test scenario blocks
+- **Extracted URLs** — any deep-link URLs found in the description
+
+### Decision after fetching
+
+```
+ACs returned in acceptanceCriteria[]?
+  ├── YES → use them as-is for Phase 3 test case objects
+  └── NO  → ACs are embedded in the description — parse them manually from the printed
+             description text before continuing to Phase 1
+```
+
+### Error handling built-in
+
+| Exit message | Cause | Fix |
+|---|---|---|
+| `Issue not found` | Wrong key or no project access | Verify key spelling |
+| `Authentication failed` | Bad credentials | Check `JIRA_EMAIL` / `JIRA_API_TOKEN` in `.env` |
+
+---
+
 ## PHASE 1 — LOAD CONTEXT (always first, no exceptions)
 
 Before writing a single line of test code, load all four project context files:

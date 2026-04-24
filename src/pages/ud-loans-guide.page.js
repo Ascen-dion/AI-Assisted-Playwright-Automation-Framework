@@ -48,6 +48,35 @@ class UdLoansGuidePage extends BasePage {
     const btn = await this.getHowToPayAccordionButton();
     return btn.getAttribute('aria-expanded');
   }
+
+  /**
+   * Expands the "How To Pay Your UD Loans" accordion by clicking the button.
+   * Waits for the accordion to reach expanded state before resolving.
+   */
+  async expandHowToPayAccordion() {
+    const btn = await this.getHowToPayAccordionButton();
+    await btn.click();
+    await btn.waitFor({ state: 'visible', timeout: 15000 });
+  }
+
+  /**
+   * ED-76: Returns the UPAY section text element.
+   * "2. Pay through your other bank accounts or e-wallets via UPAY."
+   * Only visible after the accordion is expanded.
+   */
+  async getUpaySectionText() {
+    await loc.upaySectionText(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return loc.upaySectionText(this.page);
+  }
+
+  /**
+   * ED-76: Returns the "Click here to pay via UPAY" link element.
+   * Only visible after the accordion is expanded.
+   */
+  async getUpayLink() {
+    await loc.upayLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return loc.upayLink(this.page);
+  }
 }
 
 module.exports = UdLoansGuidePage;

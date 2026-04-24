@@ -14,5 +14,13 @@
     "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Verify the page heading 'UD LOANS PAYMENT GUIDES' is visible\n3. Locate the accordion item 'How To Pay Your UD Loans'\n4. Verify the accordion button is in collapsed state (aria-expanded='false')\n5. Verify the '+' icon is displayed to the right of 'How To Pay Your UD Loans' text",
     "expected": "The accordion item 'How To Pay Your UD Loans' is visible and its expand button has aria-expanded='false', confirming the '+' icon is rendered on the right side of the text",
     "jiraRef": "ED-74"
+  },
+  {
+    "specTitle": "Test Case 1: Verify 'Click here to pay via UPAY' link is visible under the UPAY payment section",
+    "title": "ED-76 AC1: Validate UPAY Link - 'Click here to pay via UPAY' link is visible under UPAY section",
+    "preconditions": "User is on the UD Loans Payment Guide page (https://uniondigitalbank.io/en/guides-ud-loans) with payment option details displayed (accordion expanded)",
+    "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Click the 'How To Pay Your UD Loans' accordion button to expand payment options\n3. Scroll to the 'Pay through your other bank accounts or e-wallets via UPAY.' section\n4. Observe the 'Click here to pay via UPAY' link below the UPAY section heading",
+    "expected": "'Click here to pay via UPAY' link is displayed and visible under the 'Pay through your other bank accounts or e-wallets via UPAY.' section",
+    "jiraRef": "ED-76"
   }
 ]

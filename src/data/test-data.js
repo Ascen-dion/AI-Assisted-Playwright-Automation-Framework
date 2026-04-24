@@ -72,6 +72,9 @@ module.exports = {
   loansGuidePage: {
     pageHeading:          'UD LOANS PAYMENT GUIDES',
     accordionItemText:    'How To Pay Your UD Loans',
+    upaySection:          'Pay through your other bank accounts or e-wallets via UPAY.',
+    upayLinkText:         'Click here to pay via UPAY',
+    upayLinkHref:         'https://loans.uniondigitalbank.io/LoanPayment',
   },
 
   // ── Page titles ───────────────────────────────────────────────────────────

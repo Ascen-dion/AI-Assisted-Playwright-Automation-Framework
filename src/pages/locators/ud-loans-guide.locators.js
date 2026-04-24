@@ -24,6 +24,22 @@ const locators = {
       .locator('[data-accordion-component="AccordionItemButton"]')
       .filter({ hasText: 'How To Pay Your UD Loans' })
       .first(),
+
+  /**
+   * ED-76: Section heading strong text for the UPAY payment option.
+   * Appears inside a paragraph after the accordion is expanded.
+   * Text: "2. Pay through your other bank accounts or e-wallets via UPAY."
+   */
+  upaySectionText: (page) =>
+    page.getByText('Pay through your other bank accounts or e-wallets via UPAY.', { exact: false }).first(),
+
+  /**
+   * ED-76: "Click here to pay via UPAY" link.
+   * Rendered as an <a> inside a level-4 heading after the accordion is expanded.
+   * Href: https://loans.uniondigitalbank.io/LoanPayment
+   */
+  upayLink: (page) =>
+    page.getByRole('link', { name: 'Click here to pay via UPAY' }).first(),
 };
 
 module.exports = locators;

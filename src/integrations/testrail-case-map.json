@@ -2,6 +2,7 @@
   "sectionId": 46,
   "cases": {
     "Test Case 1: Navigate to UD Loans Payment Guide page via Loan Payment Guides dropdown": 127,
-    "Test Case 1: Verify '+' expand icon is visible on UD Loans Payment Guide accordion": 128
+    "Test Case 1: Verify '+' expand icon is visible on UD Loans Payment Guide accordion": 128,
+    "Test Case 1: Verify 'Click here to pay via UPAY' link is visible under the UPAY payment section": 129
   }
 }
