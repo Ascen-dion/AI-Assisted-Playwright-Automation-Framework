@@ -2,9 +2,9 @@
 
 on:
   push:
-    branches: [master, main, ocbc_brown_field]
+    branches: [master, main, union_digital_philipines_bank_poc]
   pull_request:
-    branches: [master, main, ocbc_brown_field]
+    branches: [master, main, union_digital_philipines_bank_poc]
   workflow_dispatch:
   #schedule:
   # Run tests daily at 9 AM UTC

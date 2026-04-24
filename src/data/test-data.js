@@ -68,11 +68,18 @@ module.exports = {
     feature2:             'Goodbye na sa mahabang pila! Pay your bills quickly and conveniently from your phone',
   },
 
+  // ── UD Loans Guide page content ───────────────────────────────────────────
+  loansGuidePage: {
+    pageHeading:          'UD LOANS PAYMENT GUIDES',
+    accordionItemText:    'How To Pay Your UD Loans',
+  },
+
   // ── Page titles ───────────────────────────────────────────────────────────
   pageTitles: {
     homepage:             /UnionDigital Bank/,
     productsSavings:      /UnionDigital Bank \| Savings/,
     productsTimeDeposit:  /Time Deposit \| UnionDigital Bank/,
+    udLoansGuide:         /UD Loans Payment Guides \| UnionDigital Bank/,
   },
 
 };

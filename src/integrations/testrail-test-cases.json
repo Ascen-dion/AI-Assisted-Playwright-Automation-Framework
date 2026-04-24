@@ -6,5 +6,13 @@
     "steps": "1. Navigate to https://uniondigitalbank.io/en\n2. Click on 'Loan Payment Guides' nav item\n3. Click on 'UD Loans' link in the dropdown",
     "expected": "UD Loans Payment Guide page is displayed at https://uniondigitalbank.io/en/guides-ud-loans",
     "jiraRef": "UD-LPG-1"
+  },
+  {
+    "specTitle": "Test Case 1: Verify '+' expand icon is visible on UD Loans Payment Guide accordion",
+    "title": "ED-74 AC1: Validate Expand Option - '+' icon visible on 'How To Pay Your UD Loans'",
+    "preconditions": "User navigates directly to the UD Loans Payment Guide page (https://uniondigitalbank.io/en/guides-ud-loans)",
+    "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Verify the page heading 'UD LOANS PAYMENT GUIDES' is visible\n3. Locate the accordion item 'How To Pay Your UD Loans'\n4. Verify the accordion button is in collapsed state (aria-expanded='false')\n5. Verify the '+' icon is displayed to the right of 'How To Pay Your UD Loans' text",
+    "expected": "The accordion item 'How To Pay Your UD Loans' is visible and its expand button has aria-expanded='false', confirming the '+' icon is rendered on the right side of the text",
+    "jiraRef": "ED-74"
   }
 ]
