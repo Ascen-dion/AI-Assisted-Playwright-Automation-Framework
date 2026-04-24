@@ -34,7 +34,7 @@ class BasePage {
   async dismissCookieConsent() {
     try {
       await this.page
-        .getByRole('button', { name: /got it/i })
+        .getByRole('button', { name: /got it|i understand/i })
         .first()
         .click({ timeout: 3000 });
     } catch {}

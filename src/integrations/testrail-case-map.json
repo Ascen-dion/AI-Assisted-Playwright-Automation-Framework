@@ -1,17 +1,6 @@
 {
   "sectionId": 46,
   "cases": {
-    "Test Case 1: Verify homepage loads and hero banner section is visible": 1,
-    "Test Case 2: Verify homepage page title contains UnionDigital Bank": 2,
-    "Test Case 3: Verify Download the App CTA button is visible on homepage banner": 3,
-    "Test Case 1: Navigate to UD Save page via Products dropdown": 4,
-    "Test Case 2: Navigate to UD Time Deposit page via Products dropdown": 5,
-    "Test Case 1: Verify About Us nav link is visible and navigates to about-us page": 6,
-    "Test Case 1: Verify UD Save Account page title is correct": 7,
-    "Test Case 2: Verify UD Save Account page URL is correct": 8,
-    "Test Case 3: Verify UD Save Account hero heading is visible": 9,
-    "Test Case 4: Verify savings interest rate feature text is visible": 10,
-    "Test Case 5: Verify bills payment feature text is visible": 11,
-    "Test Case 6: Verify app download section is visible on UD Save page": 12
+    "Test Case 1: Navigate to UD Loans Payment Guide page via Loan Payment Guides dropdown": 127
   }
 }
