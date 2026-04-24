@@ -54,7 +54,7 @@ module.exports = defineConfig({
 
   use: {
     // Base URL — override via BASE_URL env var for staging runs
-    baseURL: process.env.BASE_URL || 'https://www.ocbc.com',
+    baseURL: process.env.BASE_URL || 'https://uniondigitalbank.io',
 
     // Use saved cookie-consent state so no test needs to dismiss the banner itself
     storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,
@@ -108,7 +108,7 @@ module.exports = defineConfig({
     //   name: 'chromium-staging',
     //   use: {
     //     ...devices['Desktop Chrome'],
-    //     baseURL: process.env.STAGING_URL || process.env.BASE_URL || 'https://www.ocbc.com',
+    //     baseURL: process.env.STAGING_URL || process.env.BASE_URL || 'https://uniondigitalbank.io',
     //     launchOptions: {
     //       args: process.env.RAILWAY_STATIC_URL ? [
     //         '--no-sandbox',

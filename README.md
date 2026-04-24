@@ -8,17 +8,17 @@ Hosted UI:
 - https://ascen-dion.github.io/AI-Assisted-Playwright-Automation-Framework/
 
 Current brownfield target:
-- https://www.ocbc.com/group/gateway (gateway / entry point)
-- https://www.ocbc.com/personal-banking (personal banking pages)
+- https://uniondigitalbank.io/en (homepage / entry point)
+- https://uniondigitalbank.io/en/products-savings (UD Save product page)
 
-## Preferred Agent — `ocbc-automation-agent`
+## Preferred Agent — `ud-automation-agent`
 
-To generate, extend, or fix any test in this repository, use the **`ocbc-automation-agent`** defined in `.github/agents/ocbc-automation.agent.md`.
+To generate, extend, or fix any test in this repository, use the **`ud-automation-agent`** defined in `.github/agents/ud-automation.agent.md`.
 
 Invoke it in GitHub Copilot Chat by selecting the agent from the agent picker, then describe the acceptance criteria in plain English:
 
 ```
-Automate AC1: Given user is on the gateway page, When user clicks "Personal Banking", Then user is navigated to https://www.ocbc.com/personal-banking
+Automate AC1: Given user is on the homepage, When user opens Products dropdown and clicks "UD Save", Then user is navigated to https://uniondigitalbank.io/en/products-savings
 ```
 
 The agent operates in 8 phases automatically — no manual steps required:
@@ -190,23 +190,17 @@ That context is normalized and merged into prompts through `src/helpers/project-
 
 ## 7. Page Object Model and Reusable Assets
 
-The repository includes production-grade POM assets for the OCBC Bank brownfield implementation:
+The repository includes production-grade POM assets for the UnionDigital Bank Philippines brownfield implementation:
 
 **Page objects** (`src/pages/`):
-- `ocbc-accounts-nav.page.js`
-- `ocbc-cards-nav.page.js`
-- `ocbc-loans-nav.page.js`
-- `ocbc-investments-nav.page.js`
-- `ocbc-insurance-nav.page.js`
-- `ocbc-digital-nav.page.js`
+- `ud-homepage-nav.page.js`
+- `ud-products-nav.page.js`
+- `ud-save-nav.page.js`
 
 **Locator files** (`src/pages/locators/`):
-- `ocbc-accounts-nav.locators.js`
-- `ocbc-cards-nav.locators.js`
-- `ocbc-loans-nav.locators.js`
-- `ocbc-investments-nav.locators.js`
-- `ocbc-insurance-nav.locators.js`
-- `ocbc-digital-nav.locators.js`
+- `ud-homepage-nav.locators.js`
+- `ud-products-nav.locators.js`
+- `ud-save-nav.locators.js`
 
 All locators are derived from live DOM inspection. No hardcoded CSS or XPath. The framework is structured so these assets act as seeds and can be extended test-by-test without duplication.
 
@@ -234,14 +228,14 @@ This repository also includes assets for agent-based development workflows insid
 Included assets:
 
 - Custom agent definitions in `.github/agents/`
-  - `ocbc-automation-agent` (`ocbc-automation.agent.md`) — end-to-end brownfield agent covering context loading, TestRail traceability, live DOM inspection, POM code generation, and test execution
+  - `ud-automation-agent` (`ud-automation.agent.md`) — end-to-end brownfield agent covering context loading, TestRail traceability, live DOM inspection, POM code generation, and test execution
   - `playwright-test-planner`
   - `playwright-test-generator`
   - `playwright-test-healer`
 - Copilot setup workflow in `.github/workflows/copilot-setup-steps.yml`
 - Skill assets in `.claude/skills/` — `playwright-cli`, `api-testing`, `brownfield-context`
 
-The `ocbc-automation-agent` implements a full AC → TestRail → Playwright → TestRail results traceability chain automatically. Every generated test title carries a `[Cxxx]` TestRail case ID that is parsed by the reporter after each run.
+The `ud-automation-agent` implements a full AC → TestRail → Playwright → TestRail results traceability chain automatically. Every generated test title carries a `[Cxxx]` TestRail case ID that is parsed by the reporter after each run.
 
 That makes the framework usable not only as a test runtime, but also as an agent-enabled automation workspace.
 
@@ -300,16 +294,16 @@ src/core/                   AI engine, AI page layer, agents, runner
 src/helpers/                Context handling, inspection, reporting, healing helpers
 src/integrations/           Jira, TestRail integrations, logging reporter, self-healing queue
 src/mcp/                    MCP manager, clients, and server
-src/pages/                  OCBC Bank POM page objects (one per feature area)
-src/pages/locators/         OCBC Bank locator files (one per feature area)
-src/tests/nav/              Navigation smoke + regression specs (Accounts, Cards, Loans, Investments, Insurance, Digital)
-src/tests/application/      Application journey specs (card apply, loan calculator, account opening)
+src/pages/                  UnionDigital Bank POM page objects (one per feature area)
+src/pages/locators/         UnionDigital Bank locator files (one per feature area)
+src/tests/nav/              Navigation smoke + regression specs (Homepage, Products, UD Save)
+src/tests/application/      Application journey specs
 src/data/                   Centralised test data module (TD.*)
 src/fixtures/               Extended Playwright fixture with self-healing queue
 context/                    Live project context files (application, framework, domain, prompt)
 docs/                       Architecture diagrams and brownfield context documentation
 scripts/                    Local setup, startup, and email generation scripts
-.github/agents/             Custom agent definitions (ocbc-automation-agent, planner, generator, healer)
+.github/agents/             Custom agent definitions (ud-automation-agent, planner, generator, healer)
 .github/workflows/          CI/CD pipeline (Playwright smoke + regression, TestRail reporting, email notification)
 ```
 
@@ -367,18 +361,15 @@ npx playwright test src/tests/ --config=config/playwright.config.js --project=ch
 
 ## Branch Context
 
-This branch is centred on the OCBC Bank Singapore website (`www.ocbc.com`) as the brownfield target. It demonstrates deterministic POM-oriented test generation with full AC → TestRail → Playwright traceability.
+This branch is centred on the UnionDigital Bank Philippines website (`uniondigitalbank.io`) as the brownfield target. It demonstrates deterministic POM-oriented test generation with full AC → TestRail → Playwright traceability.
 
 Target coverage for this branch:
 
 | Category | Description |
 |---|---|
-| Gateway Navigation | Segment selection (Personal, Business, Premier) |
-| Accounts Nav | Savings, Current, Fixed Deposit, 360 Account navigation |
-| Cards Nav | Credit cards, Debit cards, Compare cards navigation |
-| Loans Nav | Home loans, Renovation, Car, Personal loans navigation |
-| Investments Nav | Unit trusts, RoboInvest, Bonds navigation |
-| Insurance Nav | Life, Health, Travel, Car, Home insurance navigation |
-| Digital Banking Nav | OCBC Digital, Internet Banking, PayAnyone navigation |
+| Homepage Navigation | Hero banner visibility, Download CTA, page title |
+| Products Dropdown | UD Save, UD Time Deposit navigation via dropdown |
+| UD Save Page | Hero heading, Taglish feature text, Download section |
+| About Us Nav | Footer and top nav about-us link navigation |
 
 That focus does not remove the broader framework capabilities listed above. It simply provides a concrete, fully-traced implementation and seed project for the wider platform.

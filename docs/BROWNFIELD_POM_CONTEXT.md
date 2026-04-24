@@ -1,18 +1,18 @@
-# Brownfield POM Project Context — OCBC Bank
+# Brownfield POM Project Context — UnionDigital Bank Philippines
 
-This branch is dedicated to automating the OCBC Bank Singapore website:
+This branch is dedicated to automating the UnionDigital Bank Philippines website:
 
-- Target app: https://www.ocbc.com/group/gateway
-- Personal Banking: https://www.ocbc.com/personal-banking
+- Target app: https://uniondigitalbank.io/en
+- UD Save product: https://uniondigitalbank.io/en/products-savings
 - Automation style: Playwright + Page Object Model (POM)
 - Goal: Deterministic test generation using project-specific context and reusable assets
 
 ## Knowledge Layers To Maintain
 
 1. Application knowledge
-- Main user journeys: gateway navigation, product browsing (accounts, cards, loans, investments, insurance), application flows
-- Environment assumptions: production site with dynamic rate tables and carousels (2-4s page loads)
-- Selector strategy: prefer role/text; avoid positional selectors unless required
+- Main user journeys: homepage navigation, products dropdown (UD Save, UD Time Deposit), UD Save account page content, footer navigation
+- Environment assumptions: production Next.js SPA site with dynamic content (cookie consent on first visit)
+- Selector strategy: prefer role/text; nav items are `div` elements (not `<a>`) — use `getByText()`
 
 2. Framework knowledge
 - All generated tests should use POM (`src/pages`, `src/pages/locators`, `src/tests`)
@@ -20,9 +20,10 @@ This branch is dedicated to automating the OCBC Bank Singapore website:
 - Reuse common helper methods before creating new utilities
 
 3. Domain knowledge
-- Banking product pages must validate rates, eligibility criteria, and product details
-- Internet Banking login redirects to a separate domain (internet.ocbc.com) — do not follow in nav tests
-- Test data should isolate state per test case to avoid shared-state flakiness
+- BSP-regulated Philippine digital bank (PDIC insured)
+- Page content is Taglish (mixed Tagalog/English) — assertions must match exact text
+- Products are primarily accessed via the Products dropdown nav item
+- Tests should validate page titles, headings, and visible text from TD.* test data
 
 ## Prompting Rules
 
@@ -33,8 +34,10 @@ This branch is dedicated to automating the OCBC Bank Singapore website:
 
 ## Reusable Artifacts
 
-- Seed locators: `src/pages/locators/ocbc-accounts-nav.locators.js`
-- Seed locators: `src/pages/locators/ocbc-cards-nav.locators.js`
-- Seed page object: `src/pages/ocbc-accounts-nav.page.js`
-- Seed page object: `src/pages/ocbc-cards-nav.page.js`
+- Seed locators: `src/pages/locators/ud-homepage-nav.locators.js`
+- Seed locators: `src/pages/locators/ud-products-nav.locators.js`
+- Seed locators: `src/pages/locators/ud-save-nav.locators.js`
+- Seed page object: `src/pages/ud-homepage-nav.page.js`
+- Seed page object: `src/pages/ud-products-nav.page.js`
+- Seed page object: `src/pages/ud-save-nav.page.js`
 - Seed smoke specs: `src/tests/nav/` (place all navigation specs here)

@@ -1,16 +1,16 @@
-# Project Prompt — Always-On Instructions
+﻿# Project Prompt — Always-On Instructions
 
 These instructions are injected into every AI prompt regardless of what the UI provides.
 They act as guardrails to keep all generated output aligned with this project.
 
 ## Always Do
-- Always reference the target URL explicitly: https://www.ocbc.com/group/gateway (gateway) or https://www.ocbc.com/personal-banking (personal banking)
+- Always reference the target URL explicitly: https://uniondigitalbank.io/en (homepage) or https://uniondigitalbank.io/en/products-savings (UD Save page)
 - Always generate locators in `src/pages/locators/`, page objects in `src/pages/`
 - Place specs in the correct subdirectory: `src/tests/nav/` for navigation/smoke, `src/tests/application/` for application journeys
 - Always use `waitFor` before asserting on any dynamically loaded content
 - Always wrap navigation in `goto()` methods on the page object — never call `page.goto()` directly in specs
 - Always produce deterministic assertions — use `TD.*` values from `src/data/test-data.js` for all assertion strings, URLs, and regex patterns
-- Always generate a beforeEach that navigates to the page; include a try/catch for cookies as a safety net (globalSetup handles primary dismissal)
+- Always generate a beforeEach that navigates to the page; include a try/catch for cookie consent (`I understand` button) as a safety net
 - Always embed a `[Cxxx]` TestRail case ID in every test title before writing any spec
 
 ## Always Avoid
@@ -39,3 +39,4 @@ They act as guardrails to keep all generated output aligned with this project.
 - Title format: `Test Case N: <action verb> <what is being verified>`
 - Steps should be numbered and start with an action verb (Navigate, Click, Verify, Assert)
 - Expected result should be a concrete, observable outcome — not "it works correctly"
+

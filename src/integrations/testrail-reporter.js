@@ -110,7 +110,7 @@ class TestRailReporter {
   async onEnd(result) {
     if (!this.enabled || this.results.length === 0) return;
 
-    const runName = `OCBC Bank Automation — ${new Date().toISOString().split('T')[0]}`;
+    const runName = `UnionDigital Bank Automation — ${new Date().toISOString().split('T')[0]}`;
     const caseIds = [...new Set(this.results.map(r => r.caseId))];
 
     console.log(`\n[TestRail Reporter] Creating test run "${runName}" with ${caseIds.length} case(s)...`);

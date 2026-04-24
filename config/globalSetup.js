@@ -2,7 +2,7 @@
 /**
  * Playwright globalSetup — runs once before all tests.
  *
- * Navigates to the OCBC personal banking page, dismisses the cookie consent banner,
+ * Navigates to the UnionDigital Bank homepage, dismisses the cookie/privacy consent banner,
  * and saves the resulting browser storage state (cookies + localStorage)
  * to playwright/.auth/storageState.json.
  *
@@ -19,7 +19,7 @@ const fs = require('fs');
 
 const HOMEPAGE = process.env.BASE_URL
   ? `${process.env.BASE_URL}`
-  : 'https://www.ocbc.com/personal-banking';
+  : 'https://uniondigitalbank.io/en';
 
 const STORAGE_STATE_PATH = path.resolve(__dirname, '../playwright/.auth/storageState.json');
 
@@ -34,9 +34,9 @@ module.exports = async function globalSetup() {
   try {
     await page.goto(HOMEPAGE, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
-    // Dismiss cookie consent banner ("Got it" button)
+    // Dismiss cookie/privacy consent banner ("I understand" button on UnionDigital Bank)
     try {
-      await page.getByRole('button', { name: /got it/i }).first().click({ timeout: 8000 });
+      await page.getByRole('button', { name: /i understand/i }).first().click({ timeout: 8000 });
       console.log('[globalSetup] Cookie consent dismissed');
     } catch {
       console.log('[globalSetup] No cookie consent banner found — skipping');

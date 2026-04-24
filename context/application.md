@@ -1,252 +1,137 @@
-# Application Context - OCBC Bank Singapore
+﻿# Application Context - UnionDigital Bank Philippines
 
 ## Base Configuration
 
-**Target URL**: https://www.ocbc.com/group/gateway
-**Personal Banking URL**: https://www.ocbc.com/personal-banking
-**Business Banking URL**: https://www.ocbc.com/business-banking
-**Application Type**: Banking & financial services website
+**Target URL**: https://uniondigitalbank.io/en
+**UD Save URL**: https://uniondigitalbank.io/en/products-savings
+**UD Time Deposit URL**: https://uniondigitalbank.io/en/products-time-deposit
+**Application Type**: Digital banking website (mobile-first, Next.js)
 **Environment**: Production
-**Domain**: OCBC Bank Singapore — full-service banking
+**Domain**: UnionDigital Bank Philippines — BSP-licensed digital bank
 
 ---
 
-## Gateway Page Structure
+## Homepage Structure
 
-The gateway page at `https://www.ocbc.com/group/gateway` is the entry point to OCBC's digital presence. It provides navigation to different banking segments.
+The homepage at `https://uniondigitalbank.io/en` is the main entry point. It is a
+single-page marketing site that promotes the UD mobile banking app.
 
-### Gateway Segments
+### Homepage Sections (anchor IDs)
 
-| Segment | URL |
+| Anchor ID | Heading |
 |---|---|
-| Personal Banking | https://www.ocbc.com/personal-banking |
-| Business Banking | https://www.ocbc.com/business-banking |
-| Premier Banking | https://www.ocbc.com/premier-banking |
-| FRANK by OCBC | https://www.frankbyocbc.com |
-| OCBC Securities | https://www.iocbc.com |
-| Group Corporate | https://www.ocbc.com/group/who-we-are |
+| `#homepage-banner` | "Empowering Every Filipino, EVERYWHERE!" |
+| `#homepage-awards` | "Magtiwala sa Pinalaki nang Tama!" |
+| `#homepage-products` | "High Earnings sa Aming High-Interest Accounts" |
+| `#homepage-download` | "Mag-bank na with the UBEH bank" |
 
 ---
 
-## Top-Level Navigation — Personal Banking
+## Top-Level Navigation
 
-The personal banking section at `https://www.ocbc.com/personal-banking` has navigation tabs/mega menus for banking product categories.
+### Products Dropdown
 
----
-
-### Tab 1: Accounts
-
-**Page Object**: `src/pages/ocbc-accounts-nav.page.js`
-**Locators**: `src/pages/locators/ocbc-accounts-nav.locators.js`
+**Page Object**: `src/pages/ud-products-nav.page.js`
+**Locators**: `src/pages/locators/ud-products-nav.locators.js`
 
 | Link Text | URL |
 |---|---|
-| Savings Accounts | https://www.ocbc.com/personal-banking/deposits/savings-accounts |
-| Current Accounts | https://www.ocbc.com/personal-banking/deposits/current-accounts |
-| Fixed Deposits | https://www.ocbc.com/personal-banking/deposits/fixed-deposits |
-| 360 Account | https://www.ocbc.com/personal-banking/deposits/360-account |
-| Statement Savings Account | https://www.ocbc.com/personal-banking/deposits/statement-savings-account |
-| Compare Accounts | https://www.ocbc.com/personal-banking/deposits/compare-accounts |
+| UD Save | https://uniondigitalbank.io/en/products-savings |
+| UD Time Deposit | https://uniondigitalbank.io/en/products-time-deposit |
+| UD Loan Protect Insurance | https://uniondigitalbank.io/en/products-ud-loan-protect-insurance |
+| In App Helpdesk | https://uniondigitalbank.io/en/products-inapp-ticket |
+| Rates & Fees | https://uniondigitalbank.io/en/product-rates-fees |
 
 ---
 
-### Tab 2: Cards
-
-**Page Object**: `src/pages/ocbc-cards-nav.page.js`
-**Locators**: `src/pages/locators/ocbc-cards-nav.locators.js`
+### Loan Payment Guides Dropdown
 
 | Link Text | URL |
 |---|---|
-| Credit Cards | https://www.ocbc.com/personal-banking/cards/credit-cards |
-| Debit Cards | https://www.ocbc.com/personal-banking/cards/debit-cards |
-| 365 Credit Card | https://www.ocbc.com/personal-banking/cards/credit-cards/365-credit-card |
-| Titanium Rewards Card | https://www.ocbc.com/personal-banking/cards/credit-cards/titanium-rewards |
-| 90°N Card | https://www.ocbc.com/personal-banking/cards/credit-cards/90n-card |
-| Compare Cards | https://www.ocbc.com/personal-banking/cards/compare-cards |
+| UD Cash Loans | https://uniondigitalbank.io/en/guides-ud-cash-loans |
+| UD Loans | https://uniondigitalbank.io/en/guides-ud-loans |
 
 ---
 
-### Tab 3: Loans
-
-**Page Object**: `src/pages/ocbc-loans-nav.page.js`
-**Locators**: `src/pages/locators/ocbc-loans-nav.locators.js`
+### Promos Dropdown
 
 | Link Text | URL |
 |---|---|
-| Home Loans | https://www.ocbc.com/personal-banking/loans/home-loans |
-| Renovation Loans | https://www.ocbc.com/personal-banking/loans/renovation-loans |
-| Car Loans | https://www.ocbc.com/personal-banking/loans/car-loans |
-| Personal Loans | https://www.ocbc.com/personal-banking/loans/personal-loans |
-| Education Loans | https://www.ocbc.com/personal-banking/loans/education-loans |
-| Refinancing | https://www.ocbc.com/personal-banking/loans/refinancing |
+| Kaya Mo Jingle Contest | https://uniondigitalbank.io/en/promo-kaya-mo-jingle-ugc |
+| QRPH Cashback | https://uniondigitalbank.io/en/promo-qrph-cashback |
+| Cashback Kada Bayad | https://uniondigitalbank.io/en/promo-cashback-kada-bayad |
+| Doble Ka-UD | https://uniondigitalbank.io/en/promo-doble-ka-ud |
+| Ipon Mode Challenge On | https://uniondigitalbank.io/en/promo-ipon-mode-challenge-on |
+| Free InstaPay Transfers | https://uniondigitalbank.io/en/uniondigital-free-instapay-promo |
 
 ---
 
-### Tab 4: Investments
-
-**Page Object**: `src/pages/ocbc-investments-nav.page.js`
-**Locators**: `src/pages/locators/ocbc-investments-nav.locators.js`
+### Top-Level Links
 
 | Link Text | URL |
 |---|---|
-| Unit Trusts | https://www.ocbc.com/personal-banking/investments/unit-trusts |
-| Stocks & Shares | https://www.ocbc.com/personal-banking/investments/stocks-shares |
-| Bonds | https://www.ocbc.com/personal-banking/investments/bonds |
-| RoboInvest | https://www.ocbc.com/personal-banking/investments/roboinvest |
-| Structured Deposits | https://www.ocbc.com/personal-banking/investments/structured-deposits |
-| SRS Investments | https://www.ocbc.com/personal-banking/investments/srs |
+| About Us | https://uniondigitalbank.io/en/about-us |
+| Usapang Diskarte | https://uniondigitalbank.io/en/learn |
+| Help Center | https://uniondigitalbank.io/en/faqs |
 
 ---
 
-### Tab 5: Insurance
+## Product Pages
 
-**Page Object**: `src/pages/ocbc-insurance-nav.page.js`
-**Locators**: `src/pages/locators/ocbc-insurance-nav.locators.js`
+### UD Save Account (`/en/products-savings`)
+
+**Page Object**: `src/pages/ud-save-nav.page.js`
+**Locators**: `src/pages/locators/ud-save-nav.locators.js`
+**Page Title**: "UnionDigital Bank | Savings"
+
+| Element | Value |
+|---|---|
+| Hero heading | "UD Save Account" |
+| Sub-heading | "Your all-in-one account para sa 'yong savings and payment" |
+| Feature 1 | "Mag-ipon lang sa account mo and enjoy high interest rates" |
+| Feature 2 | "Goodbye na sa mahabang pila! Pay your bills quickly and conveniently from your phone" |
+
+---
+
+### UD Time Deposit (`/en/products-time-deposit`)
+
+**Page Title**: "Time Deposit | UnionDigital Bank"
+**Description**: "Palaguin ang pera with our competitive time deposit rates!"
+
+---
+
+## Footer Links
 
 | Link Text | URL |
 |---|---|
-| Life Insurance | https://www.ocbc.com/personal-banking/insurance/life-insurance |
-| Health Insurance | https://www.ocbc.com/personal-banking/insurance/health-insurance |
-| Travel Insurance | https://www.ocbc.com/personal-banking/insurance/travel-insurance |
-| Car Insurance | https://www.ocbc.com/personal-banking/insurance/car-insurance |
-| Home Insurance | https://www.ocbc.com/personal-banking/insurance/home-insurance |
-| Great Eastern | https://www.greateasternlife.com |
+| About Us | https://uniondigitalbank.io/about-us |
+| Help Center | https://uniondigitalbank.io/faqs |
+| Terms & Conditions | https://uniondigitalbank.io/terms-and-conditions |
+| Privacy Statement | https://uniondigitalbank.io/privacy-statement |
+| Privacy Notice | https://uniondigitalbank.io/privacy-policy |
+| Disclosures | https://uniondigitalbank.io/disclosures |
+| Customer Feedback Mechanism | https://uniondigitalbank.io/customer-feedback-mechanism |
 
 ---
 
-### Tab 6: Digital Banking
+## Navigation Locator Notes
 
-**Page Object**: `src/pages/ocbc-digital-nav.page.js`
-**Locators**: `src/pages/locators/ocbc-digital-nav.locators.js`
-
-| Link Text | URL |
-|---|---|
-| OCBC Digital App | https://www.ocbc.com/personal-banking/digital-banking/ocbc-digital |
-| Internet Banking | https://www.ocbc.com/personal-banking/digital-banking/internet-banking |
-| PayAnyone | https://www.ocbc.com/personal-banking/digital-banking/payanyone |
-| OCBC OneAdvisor | https://www.ocbc.com/personal-banking/digital-banking/oneadvisor |
-| e-Statements | https://www.ocbc.com/personal-banking/digital-banking/e-statements |
+- The **navbar logo** uses `<a href="/en">` with `img alt="Navbar logo"`
+- The **Products** nav item is a `div` with class `styles_menu_item_anchor__f62GR` (not an `<a>` tag) — interact via `page.getByText('Products').first()`
+- The **Loan Payment Guides** nav item is also a `div` — interact via `page.getByText('Loan Payment Guides').first()`
+- The **Promos** nav item is also a `div` — interact via `page.getByText('Promos').first()`
+- Dropdown links become visible after clicking the parent nav item (they are `<a>` tags once open)
+- Language toggle button text: `ENG` or `FIL`
+- Cookie/privacy consent: `button` with text "I understand" — appears on first visit
 
 ---
-
-## Key Application Pages
-
-| Page | URL |
-|---|---|
-| Gateway (entry) | https://www.ocbc.com/group/gateway |
-| Personal Banking Home | https://www.ocbc.com/personal-banking |
-| Credit Cards Listing | https://www.ocbc.com/personal-banking/cards/credit-cards |
-| Home Loans | https://www.ocbc.com/personal-banking/loans/home-loans |
-| Savings Accounts | https://www.ocbc.com/personal-banking/deposits/savings-accounts |
-| Rates & Charges | https://www.ocbc.com/personal-banking/rates |
-| Promotions | https://www.ocbc.com/personal-banking/promotions |
-| Internet Banking Login | https://internet.ocbc.com/internet-banking/ |
-
----
-
-## Application Routes & Navigation
-
-### Key Navigation Paths
-1. **Savings Account Flow**:
-   - Gateway → Personal Banking → Accounts → Savings Accounts → Account Details → Apply
-2. **Credit Card Flow**:
-   - Gateway → Personal Banking → Cards → Credit Cards → Card Details → Apply
-3. **Home Loan Flow**:
-   - Gateway → Personal Banking → Loans → Home Loans → Calculator → Apply
-4. **Investment Flow**:
-   - Gateway → Personal Banking → Investments → Unit Trusts / RoboInvest → Details
-5. **Insurance Flow**:
-   - Gateway → Personal Banking → Insurance → Life/Health/Travel → Quote → Apply
-6. **Digital Banking Flow**:
-   - Gateway → Personal Banking → Digital Banking → OCBC Digital / Internet Banking
-6. **Membership Flow**:
-   - Home → Membership (dropdown) → Membership Tiers
-
-### Page Loading Characteristics
-- **Initial load time**: 3-5 seconds for product pages
-- **JavaScript heavy**: SPA-style navigation with dynamic content loading
-- **Cookie consent**: Dismissed once by `globalSetup` before any test runs; storage state saved to `playwright/.auth/storageState.json`
-- **Network requests**: Heavy API usage for product data
-
-## Key UI Elements & Selectors
-
-### Navigation
-- **Mobile dropdown button**: `button[text="Mobile"]`
-- **All Phones link**: `link[text="All Phones"]`
-- **Breadcrumb navigation**: Present on all product pages
-- **Cookie consent button**: `button[text="Got it"]` (handled by globalSetup; page objects retain try/catch as safety net)
-
-### Product Listing Page
-- **Device cards**: Grid layout with product images, names, pricing
-- **Filters sidebar**: Brand, features, price range controls
-- **Sort dropdown**: Various sorting options (newest, price, popularity)
-- **Total items display**: Shows count of available devices
-- **Samsung Galaxy A57 5G**: First product in "New" section
-
-### Product Detail Page
-- **Color selector**: Defaults to "Awesome Navy"
-- **Storage selector**: Multiple options with 256GB default
-- **Payment options**: 24-month (default), 12-month, Pay today
-- **Next button**: Primary CTA for purchase flow
-- **Add-ons**: SmartSupport optional service
-- **Price display**: Format `$XX.XX/mthx24 mths`
-
-### Authentication Elements (Expected)
-- **Login popup/modal**: Triggered after "Next" button click
-- **Hub ID login button**: Primary authentication method
-- **Sign up link**: Account creation option
-- **Login message**: "Please log in or create an account to continue with your purchase"
-
-## Application-Specific Rules
-
-### Element Stability
-- Product cards use dynamic ref IDs but stable text selectors
-- Navigation uses consistent button/link text
-- Price formatting: `from $XX.XX/mth or $XXX.XX` pattern
-- Color/storage options use clickable text selectors
-
-### Data Validation Points
-- **Product pricing**: Format `from $29.08/mth or $698.00`
-- **Color options**: Text-based selection (e.g., "Awesome Navy")
-- **Storage options**: GB-based values (256GB default)
-- **Payment terms**: Monthly installment calculations
-
-### Error Handling
-- **Slow loading**: Pages may take 3-5 seconds to fully render
-- **Cookie consent**: Dismissed by globalSetup before test run; page objects retain fallback dismissal for stale storage
-- **Dynamic content**: Wait for product data to load before assertions
-
-## Environment Configuration
-
-### Timeouts
-- **Page load**: 60 seconds (heavy JS/API loading)
-- **Element wait**: 15 seconds (dynamic content)
-- **Network wait**: 30 seconds (API-heavy application)
-
-### Browser Configuration
-- **Viewport**: 1920x1080 (desktop-optimized)
-- **User agent**: Default Chromium
-- **JavaScript**: Required (SPA application)
-- **Cookies**: Required for session management
-
-## Selector Priority Strategy
-1. **Text-based selectors**: `getByRole('button', { name: 'Mobile' })`
-2. **Link selectors**: `getByRole('link', { name: 'All Phones' })`
-3. **Exact text matching**: For device names and pricing
-4. **Ref-based selectors**: As fallback for dynamic elements
-4. Stable CSS: class names like `.hero-title`, `.hero-subtitle`, `.product-card`
-5. Avoid: XPath, index-based selectors, brittle positional selectors
 
 ## Environment Notes
-- This is a lower/unstable Azure-hosted environment
-- Cold start delays possible — always use `waitFor` with 15000ms timeout
-- Use `waitUntil: 'domcontentloaded'` for navigation (not `load`)
-- Products page uses async data fetch — wait for product cards to appear before asserting
-- Run `goto()` with `timeout: 60000` to handle cold starts
 
-## Known User Journeys
-1. **Welcome / Homepage verification** — Load homepage, verify hero title, subtitle, feature cards visible above fold
-2. **Product discovery** — Navigate to /products, wait for products to load, verify product cards appear
-3. **Add to cart** — On products page, click "Add to Cart" on a product, verify cart count increments
-4. **Cart review** — Navigate to /cart, verify cart contents or empty state
-5. **Navigation smoke** — Verify all nav links (Home, Products, Cart) are visible and functional
+- **Timeout recommendation**: `waitUntil: 'domcontentloaded', timeout: 60000`
+- **Cookie consent**: appears on first visit — handle in `beforeEach` try/catch with `getByRole('button', { name: /i understand/i })`
+- **Cold-start**: allow up to 15s for elements to appear after navigation
+- **Language**: default is English (ENG) — tests should run in English locale
+- **Mobile-first**: site has responsive layout; desktop viewport (1280×720) recommended for tests
+- **SPA**: Next.js app; navigation may not trigger full page reload
+
