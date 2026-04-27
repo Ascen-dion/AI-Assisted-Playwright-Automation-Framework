@@ -91,13 +91,16 @@ module.exports = defineConfig({
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        // Add container-safe flags for Railway/cloud environments
+        // Anti-bot detection bypass + container-safe flags for Railway/cloud environments
         launchOptions: {
           args: process.env.RAILWAY_STATIC_URL ? [
             '--no-sandbox',
             '--disable-setuid-sandbox', 
-            '--disable-dev-shm-usage'
-          ] : []
+            '--disable-dev-shm-usage',
+            '--disable-blink-features=AutomationControlled'
+          ] : [
+            '--disable-blink-features=AutomationControlled'
+          ]
         }
       },
     },

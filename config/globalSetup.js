@@ -27,12 +27,20 @@ module.exports = async function globalSetup() {
   // Ensure the .auth directory exists
   fs.mkdirSync(path.dirname(STORAGE_STATE_PATH), { recursive: true });
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    headless: true,
+    args: ['--disable-blink-features=AutomationControlled']
+  });
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
   const page = await context.newPage();
 
+  // Mask automation fingerprint so the site serves real content
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+  });
+
   try {
-    await page.goto(HOMEPAGE, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await page.goto(HOMEPAGE, { waitUntil: 'networkidle', timeout: 60000 });
 
     // Dismiss cookie/privacy consent banner ("I understand" button on UnionDigital Bank)
     try {

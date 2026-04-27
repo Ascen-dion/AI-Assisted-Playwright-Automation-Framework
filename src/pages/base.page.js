@@ -24,7 +24,7 @@ class BasePage {
    * @param {string} url
    */
   async goto(url) {
-    await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
+    await this.page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
   }
 
   /**

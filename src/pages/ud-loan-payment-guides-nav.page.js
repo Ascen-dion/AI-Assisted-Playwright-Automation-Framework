@@ -21,11 +21,12 @@ class UdLoanPaymentGuidesNavPage extends BasePage {
   }
 
   /**
-   * Click the "Loan Payment Guides" nav trigger to reveal the dropdown.
+   * Hover over the "Loan Payment Guides" nav trigger to reveal the dropdown.
+   * The trigger is a CSS-hover div, so hover() is required to open the dropdown.
    */
   async clickLoanPaymentGuidesNav() {
     await loc.loanPaymentGuidesNavTrigger(this.page).waitFor({ state: 'visible', timeout: 15000 });
-    await loc.loanPaymentGuidesNavTrigger(this.page).click();
+    await loc.loanPaymentGuidesNavTrigger(this.page).hover();
   }
 
   /**

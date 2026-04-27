@@ -62,10 +62,15 @@ function enqueueForHealing(testTitle, testFile, errors) {
 exports.test = base.extend({
   /**
    * Overrides the built-in `page` fixture.
+   * Injects an init script to mask Playwright's automation fingerprint,
+   * preventing sites from detecting navigator.webdriver.
    * After the test completes, if the test failed, its error context is
    * appended to the healing queue for offline AI batch repair.
    */
   page: async ({ page }, use, testInfo) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+    });
     await use(page);
 
     if (testInfo.status === 'failed' && testInfo.errors?.length > 0) {
