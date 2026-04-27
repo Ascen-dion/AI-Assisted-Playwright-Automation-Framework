@@ -14,11 +14,14 @@ module.exports = defineConfig({
 
   testDir: path.resolve(__dirname, '../src/tests'),  // Absolute path from config location
   
-  // Maximum time one test can run
-  timeout: 60 * 1000,
+  // Maximum time one test can run.
+  // CI runners (ubuntu-latest) connect to uniondigitalbank.io from US East;
+  // navigation alone can take 40-50s. Give CI double the local budget.
+  timeout: process.env.CI ? 120 * 1000 : 60 * 1000,
   
   expect: {
-    timeout: 10000
+    // CI gets more time for assertions too (slow DOM rendering on slow network)
+    timeout: process.env.CI ? 20000 : 10000
   },
 
   // Run tests in files in parallel
@@ -70,8 +73,8 @@ module.exports = defineConfig({
     // Videos saved to test-results/<test-name>-<browser>/video.webm
     video: 'on',
     
-    // Timeout for each action
-    actionTimeout: 15000,
+    // Timeout for each action — CI gets more budget for the same reason
+    actionTimeout: process.env.CI ? 30000 : 15000,
     
     // Browser options
     // On cloud/Railway or CI (GitHub Actions): Always run headless for stability

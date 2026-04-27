@@ -24,10 +24,11 @@ class BasePage {
    * @param {string} url
    */
   async goto(url) {
-    // 'load' waits for the load event — reliably works in both headed and headless.
-    // 'networkidle' fails in headless on sites with analytics/chat/polling that
-    // never reach zero in-flight connections, causing intermittent 60s timeouts.
-    await this.page.goto(url, { waitUntil: 'load', timeout: 60000 });
+    // 'load' waits for the standard window.load event — reliable in both headed and headless.
+    // Navigation timeout is doubled on CI (120s) because ubuntu-latest runners
+    // connect to uniondigitalbank.io (Philippines) from US East — typically 40-50s.
+    const navTimeout = process.env.CI ? 120000 : 60000;
+    await this.page.goto(url, { waitUntil: 'load', timeout: navTimeout });
   }
 
   /**
