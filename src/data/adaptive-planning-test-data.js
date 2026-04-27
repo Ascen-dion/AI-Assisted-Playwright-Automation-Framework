@@ -1,102 +1,84 @@
-// === FILE: src/data/adaptive-planning-test-data.js ===
-/**
- * Centralised test data for Workday Adaptive Planning automation suite.
- *
- * Single source of truth for all assertion strings, URLs, and expected values.
- * When the application changes a label or value, update here — not in each spec.
- *
- * Set ADAPTIVE_BASE_URL in .env — e.g. https://login.adaptiveplanning.com/app
- */
-
-const BASE = process.env.ADAPTIVE_BASE_URL || 'https://login.adaptiveplanning.com/app';
+// Test Data Module for Adaptive Planning Budget Entry Tests
 
 module.exports = {
-
-  // ── URLs ─────────────────────────────────────────────────────────────────
+  // URLs
   urls: {
-    login:            BASE,
-    base:             BASE,
-    budgetEntrySales: 'https://livec50a01.adaptiveplanning.com/dashboards/perspective/13697/dashboard/13719',
+    loginPage: process.env.ADAPTIVE_PLANNING_URL || 'https://adaptive-planning-url.com',
+    budgetEntrySales: process.env.BUDGET_ENTRY_SALES_URL || 'https://adaptive-planning-url.com/budget-entry-sales'
   },
 
-  // ── URL patterns (regex for toHaveURL assertions) ─────────────────────────
-  urlPatterns: {
-    login:            /login\.adaptiveplanning\.com\/app/,
-    dashboard:        /adaptiveplanning\.com/,
-    budgetEntrySales: /adaptiveplanning\.com\/dashboards\/perspective/,
-  },
-
-  // ── Credentials (read from env — never hardcode) ──────────────────────────
+  // User Credentials
   credentials: {
-    username: process.env.ADAPTIVE_USERNAME || '',
-    password: process.env.ADAPTIVE_PASSWORD || '',
+    validUser: {
+      username: process.env.VALID_USERNAME || 'valid.user@example.com',
+      password: process.env.VALID_PASSWORD || 'ValidPassword123'
+    }
   },
 
-  // ── Page Titles ───────────────────────────────────────────────────────────
-  pageTitles: {
-    login:     /Adaptive Planning|Workday/i,
-    dashboard: /Adaptive Planning|Dashboard|Home/i,
+  // Department Context
+  departments: {
+    sales: 'Sales'
   },
 
-  // ── Login Page Expected Text ──────────────────────────────────────────────
-  loginPage: {
-    heading:           'Login',
-    usernameLabel:     'Username or Email',
-    passwordLabel:     'Password',
-    signInButtonText:  'Sign In',
-    forgotPasswordText: 'Forgot Password',
-    rememberMeText:    'Remember Username',
-    copyrightText:     'Workday, Inc. All rights reserved.',
+  // Time Periods
+  timePeriods: {
+    q1_2024: 'Q1 2024',
+    q2_2024: 'Q2 2024'
   },
 
-  // ── Budget Entry — Sales ──────────────────────────────────────────────────
-  budgetEntry: {
-    pageTitle:       'Budget Entry - Sales',
-    versionName:     'Working Budget',
-    defaultTab:      'Instructions',
-    tabCount:        12,
-    tabLabels: [
-      'Instructions',
-      'Target Revenue',
-      'Target Expense',
-      'Workforce',
-      'Product Revenue',
-      'Sensitivity Analysis',
-      'Pipeline',
-      'Travel',
-      'Capital',
-      'Expenses',
-      'Variances',
-      'Review',
-    ],
-    budgetInputTabs: ['Target Revenue', 'Target Expense', 'Workforce', 'Product Revenue'],
-    planningViewTabs: ['Sensitivity Analysis', 'Pipeline'],
-    costPlanningTabs: ['Travel', 'Capital', 'Expenses'],
-    summaryTabs:      ['Variances', 'Review'],
-    scrollLeftLabel:  'Scroll left',
-    scrollRightLabel: 'Scroll right',
+  // Currencies
+  currencies: {
+    usd: 'USD',
+    eur: 'EUR'
   },
 
-  // ── Error Messages ────────────────────────────────────────────────────────
-  errors: {
-    invalidCredentials: /invalid|incorrect|authentication failed/i,
-    sessionExpired:     /session.*expired|timed out/i,
-    requiredField:      /required/i,
+  // Plan Versions
+  planVersions: {
+    v1: 'V1',
+    v2: 'V2'
   },
 
-  // ── Planning Dimensions (typical Adaptive Planning setup) ─────────────────
-  dimensions: {
-    accounts:    ['Revenue', 'COGS', 'SGA', 'EBITDA'],
-    departments: ['Sales', 'Marketing', 'Engineering', 'Finance'],
-    versions:    ['Budget 2026', 'Forecast Q2', 'Actuals'],
+  // Tab Names
+  tabs: {
+    instructions: 'Instructions',
+    targetRevenue: 'Target Revenue',
+    targetExpense: 'Target Expense',
+    workforce: 'Workforce',
+    productRevenue: 'Product Revenue',
+    sensitivityAnalysis: 'Sensitivity Analysis',
+    pipeline: 'Pipeline',
+    travel: 'Travel',
+    capital: 'Capital',
+    expenses: 'Expenses',
+    variances: 'Variances',
+    review: 'Review'
   },
 
-  // ── Statuses ──────────────────────────────────────────────────────────────
-  statuses: {
-    working:   'Working',
-    submitted: 'Submitted',
-    approved:  'Approved',
-    locked:    'Locked',
-    rejected:  'Rejected',
+  // Expected Tab Order
+  expectedTabOrder: [
+    'Instructions',
+    'Target Revenue',
+    'Target Expense',
+    'Workforce',
+    'Product Revenue',
+    'Sensitivity Analysis',
+    'Pipeline',
+    'Travel',
+    'Capital',
+    'Expenses',
+    'Variances',
+    'Review'
+  ],
+
+  // Browser Dimensions
+  browserDimensions: {
+    reduced: { width: 800, height: 600 },
+    standard: { width: 1920, height: 1080 }
   },
+
+  // Expected Content
+  expectedContent: {
+    instructionsGuidelines: 'budget guidelines',
+    instructionsDueDates: 'due dates'
+  }
 };
