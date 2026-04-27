@@ -24,7 +24,10 @@ class BasePage {
    * @param {string} url
    */
   async goto(url) {
-    await this.page.goto(url, { waitUntil: 'networkidle', timeout: 60000 });
+    // 'load' waits for the load event — reliably works in both headed and headless.
+    // 'networkidle' fails in headless on sites with analytics/chat/polling that
+    // never reach zero in-flight connections, causing intermittent 60s timeouts.
+    await this.page.goto(url, { waitUntil: 'load', timeout: 60000 });
   }
 
   /**

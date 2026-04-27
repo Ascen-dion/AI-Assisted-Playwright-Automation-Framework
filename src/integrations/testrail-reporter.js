@@ -98,12 +98,20 @@ class TestRailReporter {
         ? '⏭️  Skipped in Playwright run.'
         : '✅ Passed in Playwright run.';
 
-    this.results.push({
+    // Upsert by caseId — for flaky tests Playwright calls onTestEnd for every
+    // attempt; we only want to post the final outcome (last call wins).
+    const existing = this.results.findIndex(r => r.caseId === caseId);
+    const entry = {
       caseId,
       status:  result.status,         // passed | failed | skipped | timedOut
       comment: comment.trim(),
       elapsed
-    });
+    };
+    if (existing !== -1) {
+      this.results[existing] = entry;
+    } else {
+      this.results.push(entry);
+    }
   }
 
   // Called once all tests have finished — create the run and post all results

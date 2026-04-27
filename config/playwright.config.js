@@ -92,14 +92,15 @@ module.exports = defineConfig({
       name: 'chromium',
       use: { 
         ...devices['Desktop Chrome'],
-        // Anti-bot detection bypass + container-safe flags for Railway/cloud environments
+        // Anti-bot detection bypass + container-safe flags.
+        // --no-sandbox / --disable-dev-shm-usage are required in any headless
+        // environment (CI, Docker, Railway) — not just Railway.
         launchOptions: {
-          args: process.env.RAILWAY_STATIC_URL ? [
+          args: [
             '--no-sandbox',
-            '--disable-setuid-sandbox', 
+            '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--disable-blink-features=AutomationControlled'
-          ] : [
+            '--disable-gpu',
             '--disable-blink-features=AutomationControlled'
           ]
         }

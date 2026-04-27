@@ -27,6 +27,10 @@ class UdLoanPaymentGuidesNavPage extends BasePage {
   async clickLoanPaymentGuidesNav() {
     await loc.loanPaymentGuidesNavTrigger(this.page).waitFor({ state: 'visible', timeout: 15000 });
     await loc.loanPaymentGuidesNavTrigger(this.page).hover();
+    // In headless mode the CSS transition needs a moment to complete before the
+    // dropdown link becomes interactable. An explicit wait for the link to be
+    // visible is more reliable than a fixed sleep.
+    await loc.udLoansLink(this.page).waitFor({ state: 'visible', timeout: 10000 });
   }
 
   /**
