@@ -22,5 +22,21 @@
     "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Click the 'How To Pay Your UD Loans' accordion button to expand payment options\n3. Scroll to the 'Pay through your other bank accounts or e-wallets via UPAY.' section\n4. Observe the 'Click here to pay via UPAY' link below the UPAY section heading",
     "expected": "'Click here to pay via UPAY' link is displayed and visible under the 'Pay through your other bank accounts or e-wallets via UPAY.' section",
     "jiraRef": "ED-76"
+  },
+  {
+    "specTitle": "Test Case 1: Verify Free UnionBank payment options section is visible",
+    "title": "ED-77 AC1: Verify 'Free UnionBank payment options' section is displayed on Loan Payment page",
+    "preconditions": "User is on the UD Loans Payment Guide page (https://uniondigitalbank.io/en/guides-ud-loans) with the 'How To Pay Your UD Loans' accordion expanded",
+    "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Click the 'How To Pay Your UD Loans' accordion button to expand payment options\n3. Observe the '1. Free UnionBank payment options' section heading in the accordion panel",
+    "expected": "'1. Free UnionBank payment options' section text is visible in the expanded accordion panel",
+    "jiraRef": "ED-77"
+  },
+  {
+    "specTitle": "Test Case 2: Verify UPAY payment section is visible on Loan Payment page",
+    "title": "ED-77 AC2: Verify 'Pay through your other bank accounts or e-wallets via UPAY' section is displayed on Loan Payment page",
+    "preconditions": "User is on the UD Loans Payment Guide page (https://uniondigitalbank.io/en/guides-ud-loans) with the 'How To Pay Your UD Loans' accordion expanded",
+    "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Click the 'How To Pay Your UD Loans' accordion button to expand payment options\n3. Observe the '2. Pay through your other bank accounts or e-wallets via UPAY.' section heading in the accordion panel",
+    "expected": "'2. Pay through your other bank accounts or e-wallets via UPAY.' section text is visible in the expanded accordion panel",
+    "jiraRef": "ED-77"
   }
 ]

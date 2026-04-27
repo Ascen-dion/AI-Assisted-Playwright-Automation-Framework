@@ -60,6 +60,16 @@ class UdLoansGuidePage extends BasePage {
   }
 
   /**
+   * ED-77: Returns the "Free UnionBank payment options" section text element.
+   * "1. Free UnionBank payment options"
+   * Only visible after the accordion is expanded.
+   */
+  async getFreeUnionBankOptionText() {
+    await loc.freeUnionBankOptionText(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return loc.freeUnionBankOptionText(this.page);
+  }
+
+  /**
    * ED-76: Returns the UPAY section text element.
    * "2. Pay through your other bank accounts or e-wallets via UPAY."
    * Only visible after the accordion is expanded.

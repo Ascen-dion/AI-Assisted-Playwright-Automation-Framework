@@ -26,6 +26,14 @@ const locators = {
       .first(),
 
   /**
+   * ED-77: Section heading strong text for the Free UnionBank payment option.
+   * Appears inside a <strong> inside a <p> after the accordion is expanded.
+   * Text: "1. Free UnionBank payment options"
+   */
+  freeUnionBankOptionText: (page) =>
+    page.getByText('Free UnionBank payment options', { exact: false }).first(),
+
+  /**
    * ED-76: Section heading strong text for the UPAY payment option.
    * Appears inside a paragraph after the accordion is expanded.
    * Text: "2. Pay through your other bank accounts or e-wallets via UPAY."
