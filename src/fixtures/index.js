@@ -69,7 +69,18 @@ exports.test = base.extend({
    */
   page: async ({ page }, use, testInfo) => {
     await page.addInitScript(() => {
+      // Hide webdriver flag
       Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
+      // Spoof plugins array (real browsers have plugins, headless has none)
+      Object.defineProperty(navigator, 'plugins', { get: () => [1, 2, 3] });
+      // Spoof language to match a real PH/EN browser
+      Object.defineProperty(navigator, 'languages', { get: () => ['en-US', 'en'] });
+      // Remove the HeadlessChrome property from User-Agent data if present
+      if (navigator.userAgentData) {
+        Object.defineProperty(navigator, 'userAgentData', {
+          get: () => ({ brands: [{ brand: 'Google Chrome', version: '124' }], mobile: false })
+        });
+      }
     });
     await use(page);
 
