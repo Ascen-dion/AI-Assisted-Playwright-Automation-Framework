@@ -15,7 +15,7 @@ jobs:
   smoke:
     name: Smoke Tests (@smoke)
     timeout-minutes: 15
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
@@ -58,7 +58,7 @@ jobs:
   test:
     name: Regression Tests (@regression)
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code

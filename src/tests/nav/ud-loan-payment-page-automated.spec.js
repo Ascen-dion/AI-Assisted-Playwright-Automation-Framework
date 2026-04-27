@@ -18,7 +18,7 @@ const { test, expect } = require('../../fixtures');
 const UdLoansGuidePage = require('../../pages/ud-loans-guide.page');
 const TD = require('../../data/test-data');
 
-test.describe('[UI] ED-77: Navigate to Loan Payment Page', { tag: ['@smoke', '@regression'] }, () => {
+test.describe('[UI] ED-77: Navigate to Loan Payment Page', { tag: [ '@regression'] }, () => {
   let guidePage;
 
   test.beforeEach(async ({ page }) => {
