@@ -11,6 +11,8 @@
  * ED-79: Validate Payment Page Fields
  *   AC1: Given user is on "UD Loans by UnionDigital Bank Payment Page",
  *        Then "Loan Number" and "Payment Amount" text boxes are displayed.
+ *   AC2: Given user is on "UD Loans by UnionDigital Bank Payment Page",
+ *        Then "UD Loans by UnionDigital Bank Payment Page" text is displayed.
  */
 
 const BasePage = require('./base.page');

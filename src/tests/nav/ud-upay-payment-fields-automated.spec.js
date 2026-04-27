@@ -7,7 +7,11 @@
  *   (https://loans.uniondigitalbank.io/LoanPayment/UPay)
  *   Then "Loan Number" and "Payment Amount" text boxes are displayed
  *
- * TestRail: C286
+ * AC2 (parsed from description):
+ *   Given user is on "UD Loans by UnionDigital Bank Payment Page"
+ *   Then "UD Loans by UnionDigital Bank Payment Page" text should be displayed
+ *
+ * TestRail: C286, C331
  */
 
 const { test, expect } = require('../../fixtures');
@@ -26,11 +30,6 @@ test.describe('[UI] ED-79: Validate Payment Page Fields', { tag: ['@smoke', '@re
     // Assert — on the correct UPay form URL
     await expect(page).toHaveURL(TD.urlPatterns.loanPaymentUPay, { timeout: 15000 });
 
-    // Assert — page heading is visible
-    const heading = await paymentPage.getUdLoansPaymentPageHeading();
-    await expect(heading).toBeVisible();
-    await expect(heading).toHaveText(TD.upayPaymentPage.pageHeading);
-
     // Assert — "Loan Number" text box is visible
     const loanNumberInput = await paymentPage.getLoanNumberInput();
     await expect(loanNumberInput).toBeVisible();
@@ -39,4 +38,15 @@ test.describe('[UI] ED-79: Validate Payment Page Fields', { tag: ['@smoke', '@re
     const paymentAmountInput = await paymentPage.getPaymentAmountInput();
     await expect(paymentAmountInput).toBeVisible();
   });
+
+  test('[C331] Test Case 2: Verify UD Loans by UnionDigital Bank Payment Page heading text is displayed', async ({ page }) => {
+    // Assert — on the correct UPay form URL
+    await expect(page).toHaveURL(TD.urlPatterns.loanPaymentUPay, { timeout: 15000 });
+
+    // Assert — page heading text is visible
+    const heading = await paymentPage.getUdLoansPaymentPageHeading();
+    await expect(heading).toBeVisible();
+    await expect(heading).toHaveText(TD.upayPaymentPage.pageHeading);
+  });
 });
+

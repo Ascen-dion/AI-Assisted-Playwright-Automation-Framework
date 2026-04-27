@@ -25,7 +25,7 @@ module.exports = defineConfig({
   },
 
   // Run tests in files in parallel
-  fullyParallel: false,  // Set to true to enable parallel execution of test files
+  fullyParallel: true,  // Set to true to enable parallel execution of test files
   
   // Fail the build on CI if you accidentally left test.only in the source code
   forbidOnly: !!process.env.CI,
@@ -35,7 +35,7 @@ module.exports = defineConfig({
   
 
 // use process.env.CI ? 1 : undefined to opt in
-  workers: 1,
+  workers: 4,
   
   // Playwright artifacts output directory (videos, traces, screenshots)
   // Must NOT be the same folder as the HTML reporter output

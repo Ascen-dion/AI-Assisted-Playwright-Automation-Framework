@@ -50,9 +50,17 @@
   {
     "specTitle": "Test Case 1: Verify Loan Number and Payment Amount text boxes are displayed on UD Loans Payment Page",
     "title": "ED-79 AC1: Validate Payment Page Fields - Loan Number and Payment Amount text boxes are displayed",
-    "preconditions": "User has navigated to the UD Loans by UnionDigital Bank Payment Page (https://loans.uniondigitalbank.io/LoanPayment/UPay) by clicking 'PAY VIA UPAY NOW' on the Loan Payment landing page",
-    "steps": "1. Navigate to https://loans.uniondigitalbank.io/LoanPayment\n2. Click the 'PAY VIA UPAY NOW' button\n3. Verify the URL changes to https://loans.uniondigitalbank.io/LoanPayment/UPay\n4. Verify the 'Loan Number' text box is visible\n5. Verify the 'Payment Amount' text box is visible",
+    "preconditions": "User is on the UD Loans by UnionDigital Bank Payment Page (https://loans.uniondigitalbank.io/LoanPayment/UPay)",
+    "steps": "1. Navigate directly to https://loans.uniondigitalbank.io/LoanPayment/UPay\n2. Verify the URL is https://loans.uniondigitalbank.io/LoanPayment/UPay\n3. Verify the 'Loan Number' text box is visible\n4. Verify the 'Payment Amount' text box is visible",
     "expected": "Both 'Loan Number' and 'Payment Amount' text boxes are visible and editable on the 'UD Loans by UnionDigital Bank Payment Page'",
+    "jiraRef": "ED-79"
+  },
+  {
+    "specTitle": "Test Case 2: Verify UD Loans by UnionDigital Bank Payment Page heading text is displayed",
+    "title": "ED-79 AC2: Validate Payment Page Heading - 'UD Loans by UnionDigital Bank Payment Page' text is displayed",
+    "preconditions": "User is on the UD Loans by UnionDigital Bank Payment Page (https://loans.uniondigitalbank.io/LoanPayment/UPay)",
+    "steps": "1. Navigate directly to https://loans.uniondigitalbank.io/LoanPayment/UPay\n2. Verify the text 'UD Loans by UnionDigital Bank Payment Page' is visible on the page",
+    "expected": "The heading text 'UD Loans by UnionDigital Bank Payment Page' is displayed and visible on the payment page",
     "jiraRef": "ED-79"
   }
 ]
