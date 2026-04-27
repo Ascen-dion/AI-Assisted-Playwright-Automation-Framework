@@ -331,9 +331,9 @@ class Ud<Feature>Page extends BasePage {
 module.exports = Ud<Feature>Page;
 ```
 
-**Spec file** (`src/tests/nav/ud-<feature>-automated.spec.js`):
+**Spec file** (`src/tests/nav/ud-<feature>.spec.js`):
 ```js
-// === FILE: src/tests/nav/ud-<feature>-automated.spec.js ===
+// === FILE: src/tests/nav/ud-<feature>.spec.js ===
 const { test, expect } = require('../../fixtures');
 const Ud<Feature>Page = require('../../pages/ud-<feature>.page');
 const TD = require('../../data/test-data');
@@ -371,7 +371,7 @@ Before writing any file, verify:
 - [ ] `goto()` uses `waitUntil: 'domcontentloaded'` with `timeout: 60000`
 - [ ] beforeEach try/catch for `I understand` cookie consent button
 - [ ] Tests are independent — no shared mutable state
-- [ ] File names follow convention: `ud-<feature>-automated.spec.js` under `src/tests/nav/` or `src/tests/application/`
+- [ ] File names follow convention: `ud-<feature>.spec.js` under `src/tests/nav/` or `src/tests/application/`
 - [ ] Three separate file blocks each starting with `// === FILE: <relative-path> ===`
 - [ ] Every test title carries a `[Cxxx]` TestRail case ID
 
@@ -381,7 +381,7 @@ Before writing any file, verify:
 
 After generating and saving files:
 
-1. Run the new spec file: `npx playwright test src/tests/nav/ud-<feature>-automated.spec.js --config=config/playwright.config.js`
+1. Run the new spec file: `npx playwright test src/tests/nav/ud-<feature>.spec.js --config=config/playwright.config.js`
 2. If tests fail, use `browser_snapshot` and `browser_evaluate` to diagnose
 3. Fix failures using targeted file edits — never rewrite the whole file
 4. Re-run until all tests pass

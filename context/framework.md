@@ -5,15 +5,15 @@
 - Locators live in: `src/pages/locators/<name>.locators.js`
 - Page objects live in: `src/pages/<name>.page.js`
 - Test specs live in subdirectories of `src/tests/`:
-  - Navigation/smoke specs → `src/tests/nav/<name>-automated.spec.js`
-  - Application/journey specs → `src/tests/application/<name>-automated.spec.js`
+  - Navigation/smoke specs → `src/tests/nav/<name>.spec.js`
+  - Application/journey specs → `src/tests/application/<name>.spec.js`
 - Never put raw selectors directly inside spec files — always use the page object
 - Never duplicate a selector string across files
 
 ## File Naming Convention
 - Locator file: `<feature-name>.locators.js` (e.g. `ud-products-nav.locators.js`)
 - Page file: `<feature-name>.page.js` (e.g. `ud-products-nav.page.js`)
-- Spec file: `<feature-name>-automated.spec.js` (e.g. `ud-products-nav-automated.spec.js`)
+- Spec file: `<feature-name>.spec.js` (e.g. `ud-products-nav.spec.js`)
 - Spec subdirectory: `nav/` for navigation specs; `application/` for application journey specs
 
 ## Require Paths (from spec subdirectory)
@@ -109,7 +109,7 @@ test.describe('[UI] <Story Title>', { tag: ['@smoke', '@regression'] }, () => {
 - Run smoke only: `npx playwright test --config=config/playwright.config.js --grep "@smoke"`
 - Run regression only: `npx playwright test --config=config/playwright.config.js --grep "@regression"`
 - Run against staging: `npx playwright test --project=chromium-staging --config=config/playwright.config.js`
-- Run single spec: `npx playwright test src/tests/nav/ud-homepage-nav-automated.spec.js --config=config/playwright.config.js`
+- Run single spec: `npx playwright test src/tests/nav/ud-homepage-nav.spec.js --config=config/playwright.config.js`
 - HTML report: written to `playwright-report/` (Playwright default); open with `npx playwright show-report`
 - Blob report: written to `test-results/blob-report/`; merge shards with `npx playwright merge-reports --reporter=html test-results/blob-report`
 - Videos and traces are recorded by default for CI debugging

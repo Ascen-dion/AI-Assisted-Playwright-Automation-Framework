@@ -313,9 +313,9 @@ class <Name>Page extends BasePage {
 module.exports = <Name>Page;
 ```
 
-**Spec file** (`src/tests/nav/<name>-automated.spec.js` or `src/tests/purchase/<name>-automated.spec.js`):
+**Spec file** (`src/tests/nav/<name>.spec.js` or `src/tests/purchase/<name>.spec.js`):
 ```js
-// === FILE: src/tests/nav/<name>-automated.spec.js ===
+// === FILE: src/tests/nav/<name>.spec.js ===
 const { test, expect } = require('../../fixtures');
 const <Name>Page = require('../../pages/<name>.page');
 const TD = require('../../data/test-data');
@@ -402,7 +402,7 @@ Before writing any file, verify:
 - [ ] beforeEach only instantiates the page object — cookie consent is handled by globalSetup, NOT in specs
 - [ ] Tests are independent — no shared mutable state between test cases
 - [ ] API tests dispose of `apiContext` in `afterAll`
-- [ ] File names follow convention: `starhub-<feature-area>-automated.spec.js` or `starhub-<feature-area>-api.spec.js` placed under `src/tests/nav/` or `src/tests/purchase/` as appropriate
+- [ ] File names follow convention: `starhub-<feature-area>.spec.js` or `starhub-<feature-area>-api.spec.js` placed under `src/tests/nav/` or `src/tests/purchase/` as appropriate
 - [ ] Three separate file blocks each starting with `// === FILE: <relative-path> ===`
 - [ ] Every test title carries a `[Cxxx]` TestRail case ID (Phase 3.3)
 - [ ] `src/integrations/testrail-case-map.json` exists and contains all case IDs for this story
