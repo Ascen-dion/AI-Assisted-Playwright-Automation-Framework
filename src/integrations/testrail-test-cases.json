@@ -38,5 +38,13 @@
     "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Click the 'How To Pay Your UD Loans' accordion button to expand payment options\n3. Observe the '2. Pay through your other bank accounts or e-wallets via UPAY.' section heading in the accordion panel",
     "expected": "'2. Pay through your other bank accounts or e-wallets via UPAY.' section text is visible in the expanded accordion panel",
     "jiraRef": "ED-77"
+  },
+  {
+    "specTitle": "Test Case 1: Click PAY VIA UPAY NOW and verify UD Loans payment page is displayed",
+    "title": "ED-78 AC1: Initiate UPAY Payment - clicking PAY VIA UPAY NOW displays UD Loans by UnionDigital Bank Payment Page",
+    "preconditions": "User is on the Loan Payment page (https://loans.uniondigitalbank.io/LoanPayment)",
+    "steps": "1. Navigate to https://loans.uniondigitalbank.io/LoanPayment\n2. Locate the 'PAY VIA UPAY NOW' button under the 'Pay through your other bank accounts or e-wallets via UPAY.' section\n3. Click the 'PAY VIA UPAY NOW' button\n4. Observe the resulting page",
+    "expected": "The URL changes to https://loans.uniondigitalbank.io/LoanPayment/UPay and the heading 'UD Loans by UnionDigital Bank Payment Page' is displayed on the page",
+    "jiraRef": "ED-78"
   }
 ]

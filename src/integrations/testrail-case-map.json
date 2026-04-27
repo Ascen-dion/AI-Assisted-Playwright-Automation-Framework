@@ -5,6 +5,7 @@
     "Test Case 1: Verify '+' expand icon is visible on UD Loans Payment Guide accordion": 128,
     "Test Case 1: Verify 'Click here to pay via UPAY' link is visible under the UPAY payment section": 129,
     "Test Case 1: Verify Free UnionBank payment options section is visible": 211,
-    "Test Case 2: Verify UPAY payment section is visible on Loan Payment page": 212
+    "Test Case 2: Verify UPAY payment section is visible on Loan Payment page": 212,
+    "Test Case 1: Click PAY VIA UPAY NOW and verify UD Loans payment page is displayed": 254
   }
 }

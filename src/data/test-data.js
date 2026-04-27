@@ -41,6 +41,8 @@ module.exports = {
     aboutUs:              /about-us/,
     helpCenter:           /faqs/,
     promos:               /promo-/,
+    loanPayment:          /loans\.uniondigitalbank\.io\/LoanPayment$/,
+    loanPaymentUPay:      /loans\.uniondigitalbank\.io\/LoanPayment\/UPay/,
   },
 
   // ── Product names ─────────────────────────────────────────────────────────
@@ -66,6 +68,14 @@ module.exports = {
     subHeading:           "Your all-in-one account para sa 'yong savings and payment",
     feature1:             'Mag-ipon lang sa account mo and enjoy high interest rates',
     feature2:             'Goodbye na sa mahabang pila! Pay your bills quickly and conveniently from your phone',
+  },
+
+  // ── UPAY Loan Payment page content ───────────────────────────────────────
+  upayPaymentPage: {
+    loanPaymentUrl:  'https://loans.uniondigitalbank.io/LoanPayment',
+    upayFormUrl:     'https://loans.uniondigitalbank.io/LoanPayment/UPay',
+    payButtonText:   'PAY VIA UPAY NOW',
+    pageHeading:     'UD Loans by UnionDigital Bank Payment Page',
   },
 
   // ── UD Loans Guide page content ───────────────────────────────────────────
