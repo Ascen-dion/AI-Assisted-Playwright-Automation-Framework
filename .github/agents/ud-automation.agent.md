@@ -68,38 +68,11 @@ When the user provides a Jira story key (e.g. `ED-74`, `UD-12`), **always** use 
 fetcher script before doing anything else. It resolves the correct module export and prints
 a clean, structured summary in one command — no manual API calls, no export-name guessing.
 
-### Command
-
 ```bash
 node src/integrations/fetch-jira-story.js <ISSUE-KEY>
 ```
 
-### What it prints
-
-- **Summary** — the story title
-- **Type / Status / Priority / Assignee**
-- **Description** — full plain-text description (includes inline ACs for stories like ED-74
-  that embed acceptance criteria directly in the description rather than a dedicated ADF section)
-- **Acceptance Criteria** — structured ACs when the story uses a labelled "Acceptance Criteria"
-  section (may be empty for simpler task-type issues)
-- **Test Scenarios** — any labelled test scenario blocks
-- **Extracted URLs** — any deep-link URLs found in the description
-
-### Decision after fetching
-
-```
-ACs returned in acceptanceCriteria[]?
-  ├── YES → use them as-is for Phase 3 test case objects
-  └── NO  → ACs are embedded in the description — parse them manually from the printed
-             description text before continuing to Phase 1
-```
-
-### Error handling built-in
-
-| Exit message | Cause | Fix |
-|---|---|---|
-| `Issue not found` | Wrong key or no project access | Verify key spelling |
-| `Authentication failed` | Bad credentials | Check `JIRA_EMAIL` / `JIRA_API_TOKEN` in `.env` |
+Read stdout. If `acceptanceCriteria[]` is empty, parse ACs from the description text. If the script fails, check the key spelling or `.env` credentials (`JIRA_EMAIL` / `JIRA_API_TOKEN`).
 
 ---
 
@@ -114,14 +87,7 @@ context/domain.md        → business rules, acceptance criteria patterns, edge 
 context/project-prompt.md → always-on guardrails injected into every output
 ```
 
-Read each file completely. Extract and hold in working memory:
-- Target URL: https://uniondigitalbank.io/en
-- Known routes and page structure
-- Selector strategy priority order
-- File naming conventions
-- Any business rules relevant to the requested test
-
-If any context file is missing, note it and proceed with what is available.
+Read each file completely. If any file is missing, note it and proceed with what is available.
 
 ---
 
@@ -223,19 +189,7 @@ Append only the new/changed entries to `src/integrations/testrail-test-cases.jso
 node src/integrations/push-to-testrail.js
 ```
 
-**Required `.env` variables** — already configured at the project root `.env`:
-```
-TESTRAIL_HOST=https://ascendionqesmoke.testrail.io
-TESTRAIL_USER=sowmya.sridhar@ascendion.com
-TESTRAIL_API_KEY=<key>
-TESTRAIL_PROJECT_ID=7
-TESTRAIL_SUITE_ID=11
-TESTRAIL_SECTION_ID=50
-JIRA_REF=<story-key>   # set per story — add/update in .env before running
-```
-
-All credentials are present. **Do not ask the user for TestRail credentials** — read them from `.env`.
-The only value that changes per story is `JIRA_REF`.
+All credentials are in `.env`. Only update `JIRA_REF=<story-key>` before running. Do not ask the user for credentials.
 
 ### 3.3 — Embed TestRail IDs in spec titles (traceability)
 
@@ -256,13 +210,7 @@ test('[C004] Test Case 1: Navigate to UD Save page via Products dropdown', ...)
 
 ## PHASE 4 — LIVE INSPECTION (ground truth from the browser)
 
-For UI tests, always inspect the live application before writing selectors:
-
-1. Navigate to the target URL using `browser_navigate`
-2. Take a snapshot using `browser_snapshot` to see the real DOM
-3. Identify elements using role/text/testid selectors
-4. Use `browser_evaluate` to check attributes not visible in the snapshot
-5. Use `browser_network_requests` to capture API calls (for API test generation)
+For UI tests, always inspect before writing selectors: `browser_navigate` → `browser_snapshot` → identify selectors. Use `browser_evaluate` for hidden attributes; `browser_network_requests` for API calls.
 
 **Selector priority from live inspection:**
 1. `data-testid` — most stable, use if present
@@ -280,19 +228,9 @@ For UI tests, always inspect the live application before writing selectors:
 
 ---
 
-## PHASE 5 — DECIDE: UI TEST, API TEST, OR BOTH
+## PHASE 5 — GENERATE CODE
 
-### UI Test triggers
-- Story involves visible user interaction (click, navigate, verify text/visibility)
-- AC references page elements, screen states, or user journeys
-
-### API Test triggers
-- Story involves data creation, retrieval, or validation
-- Network requests captured during Phase 4 reveal underlying API calls
-
----
-
-## PHASE 6 — GENERATE CODE
+Generate UI tests for interaction/visibility ACs. Generate API tests when network calls are the system under test (use `browser_network_requests` from Phase 4 to confirm).
 
 ### UI Test — always POM structure
 
@@ -348,10 +286,7 @@ test.describe('[UI] ACN: <short description>', { tag: ['@smoke', '@regression'] 
   });
 
   test('[Cxxx] Test Case N: <action verb> <what is verified>', async ({ page }) => {
-    // Act
     await pageObj.clickSomething();
-
-    // Assert — always use TD constants
     await expect(page).toHaveURL(TD.urlPatterns.somePattern, { timeout: 15000 });
   });
 });
@@ -390,15 +325,10 @@ After generating and saving files:
 
 ## UNIONDIGITAL BANK — SITE-SPECIFIC NOTES
 
-- **Domain**: `uniondigitalbank.io` hosts all pages; language prefix `/en/` for English
-- **Homepage**: `https://uniondigitalbank.io/en` — single-page marketing site, Next.js app
 - **Products dropdown**: Trigger is a `div` (not `<a>`) — use `getByText('Products').first().click()`
 - **Products**: UD Save (`/en/products-savings`), UD Time Deposit (`/en/products-time-deposit`), UD Loan Protect Insurance (`/en/products-ud-loan-protect-insurance`)
 - **Cookie consent**: `button` with text "I understand" — appears on first visit; handle in beforeEach try/catch
-- **Language**: Default English (ENG); toggle available for Filipino (FIL) — tests run in ENG
 - **Page content**: Taglish (mixed Tagalog/English) — assertion text must match exactly
-- **BSP regulated**: PDIC insured up to PHP 1 million
-- **App-first**: Primary product is the UD mobile app; website primarily for discovery/marketing
 
 ---
 
