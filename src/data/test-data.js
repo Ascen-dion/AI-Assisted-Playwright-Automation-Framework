@@ -72,10 +72,12 @@ module.exports = {
 
   // ── UPAY Loan Payment page content ───────────────────────────────────────
   upayPaymentPage: {
-    loanPaymentUrl:  'https://loans.uniondigitalbank.io/LoanPayment',
-    upayFormUrl:     'https://loans.uniondigitalbank.io/LoanPayment/UPay',
-    payButtonText:   'PAY VIA UPAY NOW',
-    pageHeading:     'UD Loans by UnionDigital Bank Payment Page',
+    loanPaymentUrl:    'https://loans.uniondigitalbank.io/LoanPayment',
+    upayFormUrl:       'https://loans.uniondigitalbank.io/LoanPayment/UPay',
+    payButtonText:     'PAY VIA UPAY NOW',
+    pageHeading:       'UD Loans by UnionDigital Bank Payment Page',
+    loanNumberLabel:   'Loan Number*',
+    paymentAmountLabel: 'Payment Amount*',
   },
 
   // ── UD Loans Guide page content ───────────────────────────────────────────

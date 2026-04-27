@@ -74,10 +74,10 @@ module.exports = defineConfig({
     actionTimeout: 15000,
     
     // Browser options
-    // On cloud/Railway: Always run headless for stability
+    // On cloud/Railway or CI (GitHub Actions): Always run headless for stability
     // On local development: Run headed by default (visible browser) for debugging
     // Override with HEADLESS=true env variable if needed
-    headless: process.env.RAILWAY_STATIC_URL ? true : (process.env.HEADLESS === 'true' ? true : false),
+    headless: !!(process.env.RAILWAY_STATIC_URL || process.env.CI || process.env.HEADLESS === 'true'),
     
     // Viewport
     viewport: { width: 1280, height: 720 },

@@ -7,12 +7,17 @@
  *   AC1: Given user is on Loan Payment page,
  *        When user clicks on "PAY VIA UPAY NOW" button,
  *        Then "UD Loans by UnionDigital Bank Payment Page" is displayed.
+ *
+ * ED-79: Validate Payment Page Fields
+ *   AC1: Given user is on "UD Loans by UnionDigital Bank Payment Page",
+ *        Then "Loan Number" and "Payment Amount" text boxes are displayed.
  */
 
 const BasePage = require('./base.page');
 const loc = require('./locators/ud-upay-payment.locators');
 
 const PAGE_URL = 'https://loans.uniondigitalbank.io/LoanPayment';
+const UPAY_FORM_URL = 'https://loans.uniondigitalbank.io/LoanPayment/UPay';
 
 class UdUpayPaymentPage extends BasePage {
   /**
@@ -41,6 +46,38 @@ class UdUpayPaymentPage extends BasePage {
   async getUdLoansPaymentPageHeading() {
     await loc.udLoansPaymentPageHeading(this.page).waitFor({ state: 'visible', timeout: 15000 });
     return loc.udLoansPaymentPageHeading(this.page);
+  }
+
+  /**
+   * Navigates directly to the UPay form page (/LoanPayment/UPay).
+   * Used when the test precondition is already being on the payment form.
+   *
+   * ED-79: Validate Payment Page Fields
+   */
+  async gotoUpayForm() {
+    await super.goto(UPAY_FORM_URL);
+  }
+
+  /**
+   * Waits for the "Loan Number" text box and returns it.
+   *
+   * ED-79: Validate Payment Page Fields
+   * @returns {Promise<import('@playwright/test').Locator>}
+   */
+  async getLoanNumberInput() {
+    await loc.loanNumberInput(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return loc.loanNumberInput(this.page);
+  }
+
+  /**
+   * Waits for the "Payment Amount" text box and returns it.
+   *
+   * ED-79: Validate Payment Page Fields
+   * @returns {Promise<import('@playwright/test').Locator>}
+   */
+  async getPaymentAmountInput() {
+    await loc.paymentAmountInput(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return loc.paymentAmountInput(this.page);
   }
 }
 

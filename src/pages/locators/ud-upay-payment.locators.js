@@ -27,6 +27,24 @@ const locators = {
    */
   udLoansPaymentPageHeading: (page) =>
     page.getByText('UD Loans by UnionDigital Bank Payment Page', { exact: true }).first(),
+
+  /**
+   * "Loan Number" text box on the UPay form page.
+   * ID ends with "Input_LoanNumber" — OutSystems-generated prefix may vary.
+   *
+   * ED-79: Validate Payment Page Fields
+   */
+  loanNumberInput: (page) =>
+    page.locator('[id$="Input_LoanNumber"]').first(),
+
+  /**
+   * "Payment Amount" text box on the UPay form page.
+   * ID ends with "Input_PaymentAmount" — OutSystems-generated prefix may vary.
+   *
+   * ED-79: Validate Payment Page Fields
+   */
+  paymentAmountInput: (page) =>
+    page.locator('[id$="Input_PaymentAmount"]').first(),
 };
 
 module.exports = locators;

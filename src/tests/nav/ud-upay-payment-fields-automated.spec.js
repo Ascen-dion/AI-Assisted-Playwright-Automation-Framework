@@ -1,0 +1,42 @@
+// === FILE: src/tests/nav/ud-upay-payment-fields-automated.spec.js ===
+/**
+ * Automated spec for ED-79: Validate Payment Page Fields
+ *
+ * AC1 (parsed from description):
+ *   Given user is on "UD Loans by UnionDigital Bank Payment Page"
+ *   (https://loans.uniondigitalbank.io/LoanPayment/UPay)
+ *   Then "Loan Number" and "Payment Amount" text boxes are displayed
+ *
+ * TestRail: C286
+ */
+
+const { test, expect } = require('../../fixtures');
+const UdUpayPaymentPage = require('../../pages/ud-upay-payment.page');
+const TD = require('../../data/test-data');
+
+test.describe('[UI] ED-79: Validate Payment Page Fields', { tag: ['@smoke', '@regression'] }, () => {
+  let paymentPage;
+
+  test.beforeEach(async ({ page }) => {
+    paymentPage = new UdUpayPaymentPage(page);
+    await paymentPage.gotoUpayForm();
+  });
+
+  test('[C286] Test Case 1: Verify Loan Number and Payment Amount text boxes are displayed on UD Loans Payment Page', async ({ page }) => {
+    // Assert — on the correct UPay form URL
+    await expect(page).toHaveURL(TD.urlPatterns.loanPaymentUPay, { timeout: 15000 });
+
+    // Assert — page heading is visible
+    const heading = await paymentPage.getUdLoansPaymentPageHeading();
+    await expect(heading).toBeVisible();
+    await expect(heading).toHaveText(TD.upayPaymentPage.pageHeading);
+
+    // Assert — "Loan Number" text box is visible
+    const loanNumberInput = await paymentPage.getLoanNumberInput();
+    await expect(loanNumberInput).toBeVisible();
+
+    // Assert — "Payment Amount" text box is visible
+    const paymentAmountInput = await paymentPage.getPaymentAmountInput();
+    await expect(paymentAmountInput).toBeVisible();
+  });
+});
