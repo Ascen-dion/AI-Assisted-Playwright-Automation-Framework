@@ -62,5 +62,21 @@
     "steps": "1. Navigate directly to https://loans.uniondigitalbank.io/LoanPayment/UPay\n2. Verify the text 'UD Loans by UnionDigital Bank Payment Page' is visible on the page",
     "expected": "The heading text 'UD Loans by UnionDigital Bank Payment Page' is displayed and visible on the payment page",
     "jiraRef": "ED-79"
+  },
+  {
+    "specTitle": "Test Case 1: Navigate to About Us page via top navigation bar",
+    "title": "ED-80 AC1: Navigate to About Us page by clicking About Us tab on top bar",
+    "preconditions": "User is on the UnionDigital Bank homepage (https://uniondigitalbank.io/en)",
+    "steps": "1. Navigate to https://uniondigitalbank.io/en\n2. Click on 'About Us' tab on the top navigation bar\n3. Observe the resulting page URL",
+    "expected": "User is navigated to https://uniondigitalbank.io/en/about-us and the page title contains 'About Us'",
+    "jiraRef": "ED-80"
+  },
+  {
+    "specTitle": "Test Case 2: Verify About Us page displays hero heading",
+    "title": "ED-80 AC2: Verify About Us page displays 'BANKING FOR THE BETTER' hero heading",
+    "preconditions": "User is on the About Us page (https://uniondigitalbank.io/en/about-us)",
+    "steps": "1. Navigate to https://uniondigitalbank.io/en/about-us\n2. Observe the hero heading on the page",
+    "expected": "The heading 'BANKING FOR THE BETTER' is visible on the About Us page",
+    "jiraRef": "ED-80"
   }
 ]

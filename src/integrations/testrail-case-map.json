@@ -8,6 +8,8 @@
     "Test Case 2: Verify UPAY payment section is visible on Loan Payment page": 212,
     "Test Case 1: Click PAY VIA UPAY NOW and verify UD Loans payment page is displayed": 254,
     "Test Case 1: Verify Loan Number and Payment Amount text boxes are displayed on UD Loans Payment Page": 286,
-    "Test Case 2: Verify UD Loans by UnionDigital Bank Payment Page heading text is displayed": 331
+    "Test Case 2: Verify UD Loans by UnionDigital Bank Payment Page heading text is displayed": 331,
+    "Test Case 1: Navigate to About Us page via top navigation bar": 361,
+    "Test Case 2: Verify About Us page displays hero heading": 362
   }
 }

@@ -90,12 +90,20 @@ module.exports = {
     upayLinkHref:             'https://loans.uniondigitalbank.io/LoanPayment',
   },
 
+  // ── About Us page content ──────────────────────────────────────────────
+  aboutUsPage: {
+    heroHeading:              'BANKING FOR THE BETTER',
+    valuesHeading:            'OUR VALUES',
+    visionText:               'Isang maliwanag na kinabukasan para sa lahat ng Pilipino, nasaan man sila!',
+  },
+
   // ── Page titles ───────────────────────────────────────────────────────────
   pageTitles: {
     homepage:             /UnionDigital Bank/,
     productsSavings:      /UnionDigital Bank \| Savings/,
     productsTimeDeposit:  /Time Deposit \| UnionDigital Bank/,
     udLoansGuide:         /UD Loans Payment Guides \| UnionDigital Bank/,
+    aboutUs:              /About Us.*UnionDigital Bank/,
   },
 
 };
