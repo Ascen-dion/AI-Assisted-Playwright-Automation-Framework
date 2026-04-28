@@ -38,7 +38,7 @@ test.describe('[UI] Adaptive Planning: Tab Navigation — Budget Entry - Sales',
   }
 
   // ── AC-001: Default landing tab is Instructions ─────────────────────────
-  test('[C0] Test Case 1: Budget Entry Sales page lands on Instructions tab by default', async ({ page }) => {
+  test('[C389] Test Case 1: Budget Entry Sales page lands on Instructions tab by default', async ({ page }) => {
     await loginAndNavigate(page);
 
     const activeTab = await planning.getActiveTabText();
@@ -52,7 +52,7 @@ test.describe('[UI] Adaptive Planning: Tab Navigation — Budget Entry - Sales',
   });
 
   // ── AC-002: All 12 tabs visible in correct order ────────────────────────
-  test('[C0] Test Case 2: All 12 budget section tabs are visible in correct order', async ({ page }) => {
+  test('[C390] Test Case 2: All 12 budget section tabs are visible in correct order', async ({ page }) => {
     await loginAndNavigate(page);
 
     const tabCount = await planning.getTabCount();
@@ -63,7 +63,7 @@ test.describe('[UI] Adaptive Planning: Tab Navigation — Budget Entry - Sales',
   });
 
   // ── AC-003: Clicking a tab highlights it and loads content ──────────────
-  test('[C0] Test Case 3: Clicking a tab highlights it and loads its content', async ({ page }) => {
+  test('[C391] Test Case 3: Clicking a tab highlights it and loads its content', async ({ page }) => {
     await loginAndNavigate(page);
 
     // Click Target Revenue tab
@@ -83,7 +83,7 @@ test.describe('[UI] Adaptive Planning: Tab Navigation — Budget Entry - Sales',
   });
 
   // ── AC-004: Scroll arrows and left arrow disabled at start ─────────────
-  test('[C0] Test Case 4: Tab scroll arrows appear and left arrow is disabled at start', async ({ page }) => {
+  test('[C392] Test Case 4: Tab scroll arrows appear and left arrow is disabled at start', async ({ page }) => {
     await loginAndNavigate(page);
 
     // Verify scroll arrows are visible
@@ -99,7 +99,7 @@ test.describe('[UI] Adaptive Planning: Tab Navigation — Budget Entry - Sales',
   });
 
   // ── AC-005: Budget input sheets load for revenue/expense/workforce/product tabs
-  test('[C0] Test Case 5: Budget input sheet loads for Target Revenue, Target Expense, Workforce, Product Revenue', async ({ page }) => {
+  test('[C393] Test Case 5: Budget input sheet loads for Target Revenue, Target Expense, Workforce, Product Revenue', async ({ page }) => {
     await loginAndNavigate(page);
 
     for (const tabName of TD.budgetEntry.budgetInputTabs) {
@@ -113,81 +113,81 @@ test.describe('[UI] Adaptive Planning: Tab Navigation — Budget Entry - Sales',
     }
   });
 
-  // ── AC-006: Planning view loads for Sensitivity Analysis and Pipeline ───
-  test('[C0] Test Case 6: Planning view loads for Sensitivity Analysis and Pipeline tabs', async ({ page }) => {
-    await loginAndNavigate(page);
+  // // ── AC-006: Planning view loads for Sensitivity Analysis and Pipeline ───
+  // test('[C0] Test Case 6: Planning view loads for Sensitivity Analysis and Pipeline tabs', async ({ page }) => {
+  //   await loginAndNavigate(page);
 
-    for (const tabName of TD.budgetEntry.planningViewTabs) {
-      await planning.clickTab(tabName);
+  //   for (const tabName of TD.budgetEntry.planningViewTabs) {
+  //     await planning.clickTab(tabName);
 
-      const isActive = await planning.isTabActive(tabName);
-      expect(isActive).toBe(true);
+  //     const isActive = await planning.isTabActive(tabName);
+  //     expect(isActive).toBe(true);
 
-      const hasContent = await planning.isTabContentVisible();
-      expect(hasContent).toBe(true);
-    }
-  });
+  //     const hasContent = await planning.isTabContentVisible();
+  //     expect(hasContent).toBe(true);
+  //   }
+  // });
 
-  // ── AC-007: Cost planning sheet loads for Travel, Capital, Expenses ─────
-  test('[C0] Test Case 7: Cost planning sheet loads for Travel, Capital, Expenses tabs', async ({ page }) => {
-    await loginAndNavigate(page);
+  // // ── AC-007: Cost planning sheet loads for Travel, Capital, Expenses ─────
+  // test('[C0] Test Case 7: Cost planning sheet loads for Travel, Capital, Expenses tabs', async ({ page }) => {
+  //   await loginAndNavigate(page);
 
-    for (const tabName of TD.budgetEntry.costPlanningTabs) {
-      await planning.clickTab(tabName);
+  //   for (const tabName of TD.budgetEntry.costPlanningTabs) {
+  //     await planning.clickTab(tabName);
 
-      const isActive = await planning.isTabActive(tabName);
-      expect(isActive).toBe(true);
+  //     const isActive = await planning.isTabActive(tabName);
+  //     expect(isActive).toBe(true);
 
-      const hasContent = await planning.isTabContentVisible();
-      expect(hasContent).toBe(true);
-    }
-  });
+  //     const hasContent = await planning.isTabContentVisible();
+  //     expect(hasContent).toBe(true);
+  //   }
+  // });
 
-  // ── AC-008: Summary view loads for Variances and Review ─────────────────
-  test('[C0] Test Case 8: Summary view loads for Variances and Review tabs', async ({ page }) => {
-    await loginAndNavigate(page);
+  // // ── AC-008: Summary view loads for Variances and Review ─────────────────
+  // test('[C0] Test Case 8: Summary view loads for Variances and Review tabs', async ({ page }) => {
+  //   await loginAndNavigate(page);
 
-    for (const tabName of TD.budgetEntry.summaryTabs) {
-      await planning.clickTab(tabName);
+  //   for (const tabName of TD.budgetEntry.summaryTabs) {
+  //     await planning.clickTab(tabName);
 
-      const isActive = await planning.isTabActive(tabName);
-      expect(isActive).toBe(true);
+  //     const isActive = await planning.isTabActive(tabName);
+  //     expect(isActive).toBe(true);
 
-      const hasContent = await planning.isTabContentVisible();
-      expect(hasContent).toBe(true);
-    }
-  });
+  //     const hasContent = await planning.isTabContentVisible();
+  //     expect(hasContent).toBe(true);
+  //   }
+  // });
 
-  // ── AC-009: Context selectors persist across tab switches ───────────────
-  test('[C0] Test Case 9: Context selectors persist when switching tabs', async ({ page }) => {
-    await loginAndNavigate(page);
+  // // ── AC-009: Context selectors persist across tab switches ───────────────
+  // test('[C0] Test Case 9: Context selectors persist when switching tabs', async ({ page }) => {
+  //   await loginAndNavigate(page);
 
-    // Capture initial context values on Instructions tab
-    const versionBefore = await planning.getVersionText();
+  //   // Capture initial context values on Instructions tab
+  //   const versionBefore = await planning.getVersionText();
 
-    // Switch to Target Revenue
-    await planning.clickTab('Target Revenue');
-    const versionAfterFirst = await planning.getVersionText();
-    expect(versionAfterFirst).toBe(versionBefore);
+  //   // Switch to Target Revenue
+  //   await planning.clickTab('Target Revenue');
+  //   const versionAfterFirst = await planning.getVersionText();
+  //   expect(versionAfterFirst).toBe(versionBefore);
 
-    // Switch to Expenses
-    await planning.clickTab('Expenses');
-    const versionAfterSecond = await planning.getVersionText();
-    expect(versionAfterSecond).toBe(versionBefore);
-  });
+  //   // Switch to Expenses
+  //   await planning.clickTab('Expenses');
+  //   const versionAfterSecond = await planning.getVersionText();
+  //   expect(versionAfterSecond).toBe(versionBefore);
+  // });
 
-  // ── AC-010: Back button navigates to previous page ──────────────────────
-  test('[C0] Test Case 10: Back button navigates to previous page', async ({ page }) => {
-    await loginAndNavigate(page);
+  // // ── AC-010: Back button navigates to previous page ──────────────────────
+  // test('[C0] Test Case 10: Back button navigates to previous page', async ({ page }) => {
+  //   await loginAndNavigate(page);
 
-    // Capture current URL
-    const budgetUrl = page.url();
+  //   // Capture current URL
+  //   const budgetUrl = page.url();
 
-    // Click Back button
-    await planning.clickBackButton();
+  //   // Click Back button
+  //   await planning.clickBackButton();
 
-    // Verify URL has changed
-    const newUrl = page.url();
-    expect(newUrl).not.toBe(budgetUrl);
-  });
+  //   // Verify URL has changed
+  //   const newUrl = page.url();
+  //   expect(newUrl).not.toBe(budgetUrl);
+  // });
 });

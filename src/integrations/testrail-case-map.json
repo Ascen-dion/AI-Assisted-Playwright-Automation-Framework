@@ -1,5 +1,5 @@
 {
-  "sectionId": 50,
+  "sectionId": 49,
   "cases": {
     "Test Case 1: Journal Entry form loads with Draft status": 644,
     "Test Case 2: System rejects an out-of-balance journal entry": 645,
@@ -15,6 +15,11 @@
     "Test Case 12: Variance column is present in Budget vs Actual report": 655,
     "Test Case 13: Payroll Results page loads": 656,
     "Test Case 14: Payroll grid renders for current pay period": 657,
-    "Test Case 1: Search for qa jobs returns 9 JOBS FOUND": 658
+    "Test Case 1: Search for qa jobs returns 9 JOBS FOUND": 658,
+    "Test Case 1: Budget Entry Sales page lands on Instructions tab by default": 389,
+    "Test Case 2: All 12 budget section tabs are visible in correct order": 390,
+    "Test Case 3: Clicking a tab highlights it and loads its content": 391,
+    "Test Case 4: Tab scroll arrows appear and left arrow is disabled at start": 392,
+    "Test Case 5: Budget input sheet loads for Target Revenue, Target Expense, Workforce, Product Revenue": 393
   }
 }
