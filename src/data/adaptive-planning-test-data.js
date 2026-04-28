@@ -1,61 +1,29 @@
-// === FILE: src/data/adaptive-planning-test-data.js ===
 /**
- * Centralised test data for Workday Adaptive Planning automation suite.
- *
- * Single source of truth for all assertion strings, URLs, and expected values.
- * When the application changes a label or value, update here — not in each spec.
- *
- * Set ADAPTIVE_BASE_URL in .env — e.g. https://login.adaptiveplanning.com/app
+ * Test Data Module for Adaptive Planning Tests
+ * Framework Rule: All hardcoded assertion values and URLs must come from test data module
  */
 
-const BASE = process.env.ADAPTIVE_BASE_URL || 'https://login.adaptiveplanning.com/app';
-
-module.exports = {
-
-  // ── URLs ─────────────────────────────────────────────────────────────────
+const adaptivePlanningTestData = {
   urls: {
-    login:            BASE,
-    base:             BASE,
-    budgetEntrySales: 'https://livec50a01.adaptiveplanning.com/dashboards/perspective/13697/dashboard/13719',
+    login: 'https://login.adaptiveplanning.com/app',
+    home: 'https://login.adaptiveplanning.com/app',
+    budgetEntrySales: 'https://login.adaptiveplanning.com/app/budget-entry-sales'
   },
 
-  // ── URL patterns (regex for toHaveURL assertions) ─────────────────────────
   urlPatterns: {
-    login:            /login\.adaptiveplanning\.com\/app/,
-    dashboard:        /adaptiveplanning\.com/,
-    budgetEntrySales: /adaptiveplanning\.com\/dashboards\/perspective/,
+    dashboard: /dashboard|home/i,
+    budgetEntry: /budget-entry/i
   },
 
-  // ── Credentials (read from env — never hardcode) ──────────────────────────
   credentials: {
-    username: process.env.ADAPTIVE_USERNAME || '',
-    password: process.env.ADAPTIVE_PASSWORD || '',
+    salesBudgetOwner: {
+      username: process.env.ADAPTIVE_USERNAME || 'sales.budget.owner@test.com',
+      password: process.env.ADAPTIVE_PASSWORD || 'TestPassword123!'
+    }
   },
 
-  // ── Page Titles ───────────────────────────────────────────────────────────
-  pageTitles: {
-    login:     /Adaptive Planning|Workday/i,
-    dashboard: /Adaptive Planning|Dashboard|Home/i,
-  },
-
-  // ── Login Page Expected Text ──────────────────────────────────────────────
-  loginPage: {
-    heading:           'Login',
-    usernameLabel:     'Username or Email',
-    passwordLabel:     'Password',
-    signInButtonText:  'Sign In',
-    forgotPasswordText: 'Forgot Password',
-    rememberMeText:    'Remember Username',
-    copyrightText:     'Workday, Inc. All rights reserved.',
-  },
-
-  // ── Budget Entry — Sales ──────────────────────────────────────────────────
-  budgetEntry: {
-    pageTitle:       'Budget Entry - Sales',
-    versionName:     'Working Budget',
-    defaultTab:      'Instructions',
-    tabCount:        12,
-    tabLabels: [
+  tabs: {
+    expectedOrder: [
       'Instructions',
       'Target Revenue',
       'Target Expense',
@@ -67,36 +35,35 @@ module.exports = {
       'Capital',
       'Expenses',
       'Variances',
-      'Review',
+      'Review'
     ],
-    budgetInputTabs: ['Target Revenue', 'Target Expense', 'Workforce', 'Product Revenue'],
-    planningViewTabs: ['Sensitivity Analysis', 'Pipeline'],
-    costPlanningTabs: ['Travel', 'Capital', 'Expenses'],
-    summaryTabs:      ['Variances', 'Review'],
-    scrollLeftLabel:  'Scroll left',
-    scrollRightLabel: 'Scroll right',
+    defaultTab: 'Instructions',
+    totalCount: 12
   },
 
-  // ── Error Messages ────────────────────────────────────────────────────────
-  errors: {
-    invalidCredentials: /invalid|incorrect|authentication failed/i,
-    sessionExpired:     /session.*expired|timed out/i,
-    requiredField:      /required/i,
+  context: {
+    department: 'Sales',
+    timePeriod: 'Q1',
+    currency: 'USD',
+    planVersion: 'Initial'
   },
 
-  // ── Planning Dimensions (typical Adaptive Planning setup) ─────────────────
-  dimensions: {
-    accounts:    ['Revenue', 'COGS', 'SGA', 'EBITDA'],
-    departments: ['Sales', 'Marketing', 'Engineering', 'Finance'],
-    versions:    ['Budget 2026', 'Forecast Q2', 'Actuals'],
+  pageTitles: {
+    budgetEntrySales: /Budget Entry.*Sales/i,
+    dashboard: /Dashboard|Home/i
   },
 
-  // ── Statuses ──────────────────────────────────────────────────────────────
-  statuses: {
-    working:   'Working',
-    submitted: 'Submitted',
-    approved:  'Approved',
-    locked:    'Locked',
-    rejected:  'Rejected',
+  content: {
+    instructionsContent: 'budget guidelines and due dates',
+    targetRevenueFields: 'department\'s revenue figures'
   },
+
+  viewport: {
+    fullWidth: 1920,
+    fullHeight: 1080,
+    reducedWidth: 800,
+    reducedHeight: 600
+  }
 };
+
+module.exports = adaptivePlanningTestData;
