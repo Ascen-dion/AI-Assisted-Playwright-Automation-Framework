@@ -1,102 +1,65 @@
-// === FILE: src/data/adaptive-planning-test-data.js ===
-/**
- * Centralised test data for Workday Adaptive Planning automation suite.
- *
- * Single source of truth for all assertion strings, URLs, and expected values.
- * When the application changes a label or value, update here — not in each spec.
- *
- * Set ADAPTIVE_BASE_URL in .env — e.g. https://login.adaptiveplanning.com/app
- */
-
-const BASE = process.env.ADAPTIVE_BASE_URL || 'https://login.adaptiveplanning.com/app';
-
-module.exports = {
-
-  // ── URLs ─────────────────────────────────────────────────────────────────
-  urls: {
-    login:            BASE,
-    base:             BASE,
-    budgetEntrySales: 'https://livec50a01.adaptiveplanning.com/dashboards/perspective/13697/dashboard/13719',
-  },
-
-  // ── URL patterns (regex for toHaveURL assertions) ─────────────────────────
-  urlPatterns: {
-    login:            /login\.adaptiveplanning\.com\/app/,
-    dashboard:        /adaptiveplanning\.com/,
-    budgetEntrySales: /adaptiveplanning\.com\/dashboards\/perspective/,
-  },
-
-  // ── Credentials (read from env — never hardcode) ──────────────────────────
-  credentials: {
-    username: process.env.ADAPTIVE_USERNAME || '',
-    password: process.env.ADAPTIVE_PASSWORD || '',
-  },
-
-  // ── Page Titles ───────────────────────────────────────────────────────────
-  pageTitles: {
-    login:     /Adaptive Planning|Workday/i,
-    dashboard: /Adaptive Planning|Dashboard|Home/i,
-  },
-
-  // ── Login Page Expected Text ──────────────────────────────────────────────
-  loginPage: {
-    heading:           'Login',
-    usernameLabel:     'Username or Email',
-    passwordLabel:     'Password',
-    signInButtonText:  'Sign In',
-    forgotPasswordText: 'Forgot Password',
-    rememberMeText:    'Remember Username',
-    copyrightText:     'Workday, Inc. All rights reserved.',
-  },
-
-  // ── Budget Entry — Sales ──────────────────────────────────────────────────
-  budgetEntry: {
-    pageTitle:       'Budget Entry - Sales',
-    versionName:     'Working Budget',
-    defaultTab:      'Instructions',
-    tabCount:        12,
-    tabLabels: [
-      'Instructions',
-      'Target Revenue',
-      'Target Expense',
-      'Workforce',
-      'Product Revenue',
-      'Sensitivity Analysis',
-      'Pipeline',
-      'Travel',
-      'Capital',
-      'Expenses',
-      'Variances',
-      'Review',
-    ],
-    budgetInputTabs: ['Target Revenue', 'Target Expense', 'Workforce', 'Product Revenue'],
-    planningViewTabs: ['Sensitivity Analysis', 'Pipeline'],
-    costPlanningTabs: ['Travel', 'Capital', 'Expenses'],
-    summaryTabs:      ['Variances', 'Review'],
-    scrollLeftLabel:  'Scroll left',
-    scrollRightLabel: 'Scroll right',
-  },
-
-  // ── Error Messages ────────────────────────────────────────────────────────
-  errors: {
-    invalidCredentials: /invalid|incorrect|authentication failed/i,
-    sessionExpired:     /session.*expired|timed out/i,
-    requiredField:      /required/i,
-  },
-
-  // ── Planning Dimensions (typical Adaptive Planning setup) ─────────────────
-  dimensions: {
-    accounts:    ['Revenue', 'COGS', 'SGA', 'EBITDA'],
-    departments: ['Sales', 'Marketing', 'Engineering', 'Finance'],
-    versions:    ['Budget 2026', 'Forecast Q2', 'Actuals'],
-  },
-
-  // ── Statuses ──────────────────────────────────────────────────────────────
-  statuses: {
-    working:   'Working',
-    submitted: 'Submitted',
-    approved:  'Approved',
-    locked:    'Locked',
-    rejected:  'Rejected',
-  },
+const TD = {
+  // URLs
+  BASE_URL: 'https://login.adaptiveplanning.com/app',
+  LOGIN_URL: 'https://login.adaptiveplanning.com/app',
+  
+  // Credentials
+  VALID_USERNAME: process.env.ADAPTIVE_USERNAME || 'valid.user@example.com',
+  VALID_PASSWORD: process.env.ADAPTIVE_PASSWORD || 'ValidPassword123',
+  SALES_BUDGET_OWNER_USERNAME: process.env.ADAPTIVE_USERNAME || 'sales.budget.owner@example.com',
+  SALES_BUDGET_OWNER_PASSWORD: process.env.ADAPTIVE_PASSWORD || 'ValidPassword123',
+  
+  // Tab Names
+  TAB_INSTRUCTIONS: 'Instructions',
+  TAB_TARGET_REVENUE: 'Target Revenue',
+  TAB_TARGET_EXPENSE: 'Target Expense',
+  TAB_WORKFORCE: 'Workforce',
+  TAB_PRODUCT_REVENUE: 'Product Revenue',
+  TAB_SENSITIVITY_ANALYSIS: 'Sensitivity Analysis',
+  TAB_PIPELINE: 'Pipeline',
+  TAB_TRAVEL: 'Travel',
+  TAB_CAPITAL: 'Capital',
+  TAB_EXPENSES: 'Expenses',
+  TAB_VARIANCES: 'Variances',
+  TAB_REVIEW: 'Review',
+  
+  // Expected Tab Order
+  EXPECTED_TAB_ORDER: [
+    'Instructions',
+    'Target Revenue',
+    'Target Expense',
+    'Workforce',
+    'Product Revenue',
+    'Sensitivity Analysis',
+    'Pipeline',
+    'Travel',
+    'Capital',
+    'Expenses',
+    'Variances',
+    'Review'
+  ],
+  
+  EXPECTED_TAB_COUNT: 12,
+  
+  // Context Values
+  DEPARTMENT_SALES: 'Sales',
+  TIME_PERIOD_Q1: 'Q1',
+  CURRENCY_USD: 'USD',
+  PLAN_VERSION_DRAFT: 'Draft',
+  PLAN_VERSION_INITIAL: 'Initial',
+  
+  // Browser Sizes
+  SMALL_WINDOW_WIDTH: 800,
+  SMALL_WINDOW_HEIGHT: 600,
+  NORMAL_WINDOW_WIDTH: 1920,
+  NORMAL_WINDOW_HEIGHT: 1080,
+  
+  // Expected Content
+  INSTRUCTIONS_CONTENT_KEYWORDS: ['budget', 'guidelines', 'due dates'],
+  
+  // Timeouts
+  DEFAULT_TIMEOUT: 30000,
+  NAVIGATION_TIMEOUT: 60000
 };
+
+module.exports = TD;
