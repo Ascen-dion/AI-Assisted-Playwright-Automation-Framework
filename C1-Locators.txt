@@ -1,0 +1,134 @@
+{
+  "LoginPage": {
+    "UsernameField": {
+      "type": "css",
+      "value": "#inputEmail"
+    },
+    "PasswordField": {
+      "type": "css",
+      "value": "#inputPassword"
+    },
+    "SignInButton": {
+      "type": "css",
+      "value": "#submit"
+    },
+    "RememberCheckbox": {
+      "type": "css",
+      "value": "#rememberUsername"
+    },
+    "ForgotPasswordLink": {
+      "type": "text",
+      "value": "Forgot Password"
+    },
+    "ErrorMessage": {
+      "type": "css",
+      "value": ".error-message, .login-error, [role="alert"]"
+    }
+  },
+  "NavPage": {
+    "Sidebar": {
+      "type": "css",
+      "value": "nav"
+    },
+    "MenuItem": {
+      "type": "playwright",
+      "value": "role=link[name='{text}']"
+    },
+    "ActiveMenuItem": {
+      "type": "css",
+      "value": ".active, [aria-current="page"]"
+    },
+    "BackButton": {
+      "type": "css",
+      "value": "button:has-text("Back"), [aria-label="Back"], .back-button"
+    }
+  },
+  "BudgetTabsPage": {
+    "TabStrip": {
+      "type": "css",
+      "value": ".tab-strip-wrap"
+    },
+    "TabContainer": {
+      "type": "css",
+      "value": ".tab-container"
+    },
+    "TabList": {
+      "type": "css",
+      "value": "[role="tablist"]"
+    },
+    "AllTabs": {
+      "type": "css",
+      "value": "[role="tab"]"
+    },
+    "Tab": {
+      "type": "playwright",
+      "value": "role=tab[name='{name}'][exact=true]"
+    },
+    "ActiveTab": {
+      "type": "css",
+      "value": "[role="tab"][aria-selected="true"]"
+    },
+    "ScrollLeft": {
+      "type": "css",
+      "value": "button[aria-label="Scroll left"]"
+    },
+    "ScrollRight": {
+      "type": "css",
+      "value": "button[aria-label="Scroll right"]"
+    },
+    "TabContent": {
+      "type": "css",
+      "value": ".tab-content"
+    }
+  },
+  "BudgetHeaderPage": {
+    "PageTitle": {
+      "type": "css",
+      "value": ".perspective-title"
+    },
+    "VersionButton": {
+      "type": "css",
+      "value": "button:has-text("Working Budget")"
+    },
+    "TimeSelector": {
+      "type": "playwright",
+      "value": "text=Time >> .. >> button, select, input"
+    },
+    "LevelSelector": {
+      "type": "playwright",
+      "value": "text=Level >> .. >> button, select, input"
+    },
+    "CurrencySelector": {
+      "type": "playwright",
+      "value": "text=Currency >> .. >> button, select, input"
+    }
+  },
+  "DashboardPage": {
+    "Container": {
+      "type": "css",
+      "value": "main, .dashboard, [role="main"]"
+    },
+    "WelcomeMsg": {
+      "type": "css",
+      "value": "h1, h2, .welcome-message"
+    }
+  },
+  "SharedPage": {
+    "LoadingSpinner": {
+      "type": "css",
+      "value": ".loading, .spinner, [role="progressbar"]"
+    },
+    "Toast": {
+      "type": "css",
+      "value": ".toast, [role="status"], [role="alert"]"
+    },
+    "Modal": {
+      "type": "css",
+      "value": "[role="dialog"], .modal"
+    },
+    "ModalClose": {
+      "type": "css",
+      "value": "[role="dialog"] button[aria-label="Close"], .modal .close"
+    }
+  }
+}
