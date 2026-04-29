@@ -1,61 +1,26 @@
-// === FILE: src/data/adaptive-planning-test-data.js ===
 /**
- * Centralised test data for Workday Adaptive Planning automation suite.
- *
- * Single source of truth for all assertion strings, URLs, and expected values.
- * When the application changes a label or value, update here — not in each spec.
- *
- * Set ADAPTIVE_BASE_URL in .env — e.g. https://login.adaptiveplanning.com/app
+ * Test Data for Adaptive Planning Budget Entry - Sales Tests
+ * Centralized test data following framework pattern
  */
 
-const BASE = process.env.ADAPTIVE_BASE_URL || 'https://login.adaptiveplanning.com/app';
-
 module.exports = {
-
-  // ── URLs ─────────────────────────────────────────────────────────────────
+  // Application URLs
   urls: {
-    login:            BASE,
-    base:             BASE,
-    budgetEntrySales: 'https://livec50a01.adaptiveplanning.com/dashboards/perspective/13697/dashboard/13719',
+    login: 'https://login.adaptiveplanning.com/app',
+    home: 'https://login.adaptiveplanning.com/app'
   },
 
-  // ── URL patterns (regex for toHaveURL assertions) ─────────────────────────
-  urlPatterns: {
-    login:            /login\.adaptiveplanning\.com\/app/,
-    dashboard:        /adaptiveplanning\.com/,
-    budgetEntrySales: /adaptiveplanning\.com\/dashboards\/perspective/,
+  // User Credentials (should be loaded from environment variables in actual implementation)
+  users: {
+    salesBudgetOwner: {
+      username: process.env.ADAPTIVE_USERNAME || 'sales.budget.owner@example.com',
+      password: process.env.ADAPTIVE_PASSWORD || 'SecurePassword123!'
+    }
   },
 
-  // ── Credentials (read from env — never hardcode) ──────────────────────────
-  credentials: {
-    username: process.env.ADAPTIVE_USERNAME || '',
-    password: process.env.ADAPTIVE_PASSWORD || '',
-  },
-
-  // ── Page Titles ───────────────────────────────────────────────────────────
-  pageTitles: {
-    login:     /Adaptive Planning|Workday/i,
-    dashboard: /Adaptive Planning|Dashboard|Home/i,
-  },
-
-  // ── Login Page Expected Text ──────────────────────────────────────────────
-  loginPage: {
-    heading:           'Login',
-    usernameLabel:     'Username or Email',
-    passwordLabel:     'Password',
-    signInButtonText:  'Sign In',
-    forgotPasswordText: 'Forgot Password',
-    rememberMeText:    'Remember Username',
-    copyrightText:     'Workday, Inc. All rights reserved.',
-  },
-
-  // ── Budget Entry — Sales ──────────────────────────────────────────────────
-  budgetEntry: {
-    pageTitle:       'Budget Entry - Sales',
-    versionName:     'Working Budget',
-    defaultTab:      'Instructions',
-    tabCount:        12,
-    tabLabels: [
+  // Expected Tab Names and Order
+  tabs: {
+    expectedOrder: [
       'Instructions',
       'Target Revenue',
       'Target Expense',
@@ -67,36 +32,46 @@ module.exports = {
       'Capital',
       'Expenses',
       'Variances',
-      'Review',
+      'Review'
     ],
-    budgetInputTabs: ['Target Revenue', 'Target Expense', 'Workforce', 'Product Revenue'],
-    planningViewTabs: ['Sensitivity Analysis', 'Pipeline'],
-    costPlanningTabs: ['Travel', 'Capital', 'Expenses'],
-    summaryTabs:      ['Variances', 'Review'],
-    scrollLeftLabel:  'Scroll left',
-    scrollRightLabel: 'Scroll right',
+    defaultTab: 'Instructions'
   },
 
-  // ── Error Messages ────────────────────────────────────────────────────────
-  errors: {
-    invalidCredentials: /invalid|incorrect|authentication failed/i,
-    sessionExpired:     /session.*expired|timed out/i,
-    requiredField:      /required/i,
+  // Context Values
+  context: {
+    department: 'Sales',
+    timePeriod: 'Q1',
+    currency: 'USD',
+    planVersion: 'Initial'
   },
 
-  // ── Planning Dimensions (typical Adaptive Planning setup) ─────────────────
-  dimensions: {
-    accounts:    ['Revenue', 'COGS', 'SGA', 'EBITDA'],
-    departments: ['Sales', 'Marketing', 'Engineering', 'Finance'],
-    versions:    ['Budget 2026', 'Forecast Q2', 'Actuals'],
+  // Browser Window Sizes
+  windowSizes: {
+    restricted: {
+      width: 800,
+      height: 600
+    },
+    standard: {
+      width: 1366,
+      height: 768
+    },
+    large: {
+      width: 1920,
+      height: 1080
+    }
   },
 
-  // ── Statuses ──────────────────────────────────────────────────────────────
-  statuses: {
-    working:   'Working',
-    submitted: 'Submitted',
-    approved:  'Approved',
-    locked:    'Locked',
-    rejected:  'Rejected',
+  // Expected Content Strings
+  expectedContent: {
+    instructionsTitle: 'Instructions',
+    budgetGuidelinesText: 'budget guidelines',
+    dueDatesText: 'due dates'
   },
+
+  // Timeouts
+  timeouts: {
+    elementWait: 15000,
+    pageLoad: 60000,
+    shortWait: 1000
+  }
 };
