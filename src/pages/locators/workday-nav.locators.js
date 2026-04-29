@@ -1,0 +1,13 @@
+/**
+ * Locators for Workday Adaptive Planning Navigation
+ * @module workday-nav.locators
+ */
+
+const locators = {
+  sidebar: (page) => page.locator('nav').first(),
+  menuItem: (page, text) => page.getByRole('link', { name: text, exact: true }),
+  activeMenuItem: (page) => page.locator('.active, [aria-current="page"]').first(),
+  backButton: (page) => page.locator('button:has-text("Back"), [aria-label="Back"], .back-button').first()
+};
+
+module.exports = locators;
