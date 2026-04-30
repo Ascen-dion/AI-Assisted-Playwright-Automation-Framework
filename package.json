@@ -26,11 +26,13 @@
     "@playwright/mcp": "^0.0.70",
     "axios": "^1.6.2",
     "dotenv": "^16.3.1",
+    "mobilewright": "^0.0.29",
     "openai": "^6.22.0",
     "sharp": "^0.33.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {
+    "@mobilewright/test": "^0.0.29",
     "@playwright/experimental-ct-react": "^1.58.2",
     "@playwright/test": "^1.58.2",
     "eslint": "^8.55.0",
