@@ -1,0 +1,14 @@
+/**
+ * Workday Budget Header Page Locators
+ * Auto-generated from Workday-Locators.txt
+ */
+
+const budgetHeaderLocators = {
+  pageTitle: (page) => page.locator('.perspective-title').first(),
+  versionButton: (page) => page.locator('button:has-text("Working Budget")').first(),
+  timeSelector: (page) => page.locator('text=Time').locator('..').locator('button, select, input').first(),
+  levelSelector: (page) => page.locator('text=Level').locator('..').locator('button, select, input').first(),
+  currencySelector: (page) => page.locator('text=Currency').locator('..').locator('button, select, input').first()
+};
+
+module.exports = budgetHeaderLocators;
