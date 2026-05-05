@@ -1,0 +1,72 @@
+// Generated from: ..\src\bdd\features\homepage\homepage.feature
+import { test } from "../../../src/bdd/support/fixtures.js";
+
+test.describe('StarHub Personal Home Page', () => {
+
+  test.beforeEach('Background', async ({ Given, And, starhubPage }, testInfo) => { if (testInfo.error) return;
+    await Given('the user navigates to the StarHub home page', null, { starhubPage }); 
+    await And('the cookie consent is dismissed', null, { starhubPage }); 
+  });
+  
+  test('Home page loads with correct title', { tag: ['@homepage', '@smoke', '@regression', '@C0'] }, async ({ Then, page }) => { 
+    await Then('the page title should contain "StarHub"', null, { page }); 
+  });
+
+  test('Top navigation bar displays all segment links', { tag: ['@homepage', '@smoke', '@regression', '@C0'] }, async ({ Then, And, page }) => { 
+    await Then('the "Personal" top nav link should be visible', null, { page }); 
+    await And('the "SME" top nav link should be visible', null, { page }); 
+    await And('the "Enterprise" top nav link should be visible', null, { page }); 
+    await And('the "About Us" top nav link should be visible', null, { page }); 
+  });
+
+  test('Main navigation menu displays all product categories', { tag: ['@homepage', '@smoke', '@regression', '@C0'] }, async ({ Then, And, page }) => { 
+    await Then('the "Mobile" menu button should be visible', null, { page }); 
+    await And('the "Broadband" menu button should be visible', null, { page }); 
+    await And('the "Entertainment" menu button should be visible', null, { page }); 
+    await And('the "Perks & Promos" menu button should be visible', null, { page }); 
+  });
+
+  test('Hero banner is displayed with a heading', { tag: ['@homepage', '@smoke', '@regression', '@C0'] }, async ({ Then, starhubPage }) => { 
+    await Then('the hero banner heading should be visible', null, { starhubPage }); 
+  });
+
+  test('Value propositions strip is displayed', { tag: ['@homepage', '@smoke', '@regression', '@C0'] }, async ({ Then, And, page }) => { 
+    await Then('the "Peace of mind" value proposition should be visible', null, { page }); 
+    await And('the "Full flexibility" value proposition should be visible', null, { page }); 
+    await And('the "Multi-service savings" value proposition should be visible', null, { page }); 
+    await And('the "24/7 HubCare" value proposition should be visible', null, { page }); 
+  });
+
+  test('Key content sections are displayed on the page', { tag: ['@homepage', '@smoke', '@regression', '@C0'] }, async ({ Then, And, page }) => { 
+    await Then('the "A better way to connect" section heading should be visible', null, { page }); 
+    await And('the "Curated offers" section heading should be visible', null, { page }); 
+    await And('the "Trending Devices" section heading should be visible', null, { page }); 
+    await And('the "Gear up with StarHub" section heading should be visible', null, { page }); 
+  });
+
+  test('Footer displays copyright and essential links', { tag: ['@homepage', '@smoke', '@regression', '@C0'] }, async ({ Then, And, page, starhubPage }) => { 
+    await Then('the footer copyright should contain "StarHub 2026"', null, { starhubPage }); 
+    await And('the "Contact Us" footer link should be visible', null, { page }); 
+    await And('the "FAQ" footer link should be visible', null, { page }); 
+    await And('the "Legal Notices" footer link should be visible', null, { page }); 
+  });
+
+});
+
+// == technical section ==
+
+test.use({
+  $test: [({}, use) => use(test), { scope: 'test', box: true }],
+  $uri: [({}, use) => use('..\\src\\bdd\\features\\homepage\\homepage.feature'), { scope: 'test', box: true }],
+  $bddFileData: [({}, use) => use(bddFileData), { scope: "test", box: true }],
+});
+
+const bddFileData = [ // bdd-data-start
+  {"pwTestLine":11,"pickleLine":13,"tags":["@homepage","@smoke","@regression","@C0"],"steps":[{"pwStepLine":7,"gherkinStepLine":9,"keywordType":"Context","textWithKeyword":"Given the user navigates to the StarHub home page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":8,"gherkinStepLine":10,"keywordType":"Context","textWithKeyword":"And the cookie consent is dismissed","isBg":true,"stepMatchArguments":[]},{"pwStepLine":12,"gherkinStepLine":14,"keywordType":"Outcome","textWithKeyword":"Then the page title should contain \"StarHub\"","stepMatchArguments":[{"group":{"start":30,"value":"\"StarHub\"","children":[{"start":31,"value":"StarHub","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]}]},
+  {"pwTestLine":15,"pickleLine":17,"tags":["@homepage","@smoke","@regression","@C0"],"steps":[{"pwStepLine":7,"gherkinStepLine":9,"keywordType":"Context","textWithKeyword":"Given the user navigates to the StarHub home page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":8,"gherkinStepLine":10,"keywordType":"Context","textWithKeyword":"And the cookie consent is dismissed","isBg":true,"stepMatchArguments":[]},{"pwStepLine":16,"gherkinStepLine":18,"keywordType":"Outcome","textWithKeyword":"Then the \"Personal\" top nav link should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Personal\"","children":[{"start":5,"value":"Personal","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":17,"gherkinStepLine":19,"keywordType":"Outcome","textWithKeyword":"And the \"SME\" top nav link should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"SME\"","children":[{"start":5,"value":"SME","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":18,"gherkinStepLine":20,"keywordType":"Outcome","textWithKeyword":"And the \"Enterprise\" top nav link should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Enterprise\"","children":[{"start":5,"value":"Enterprise","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":19,"gherkinStepLine":21,"keywordType":"Outcome","textWithKeyword":"And the \"About Us\" top nav link should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"About Us\"","children":[{"start":5,"value":"About Us","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]}]},
+  {"pwTestLine":22,"pickleLine":24,"tags":["@homepage","@smoke","@regression","@C0"],"steps":[{"pwStepLine":7,"gherkinStepLine":9,"keywordType":"Context","textWithKeyword":"Given the user navigates to the StarHub home page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":8,"gherkinStepLine":10,"keywordType":"Context","textWithKeyword":"And the cookie consent is dismissed","isBg":true,"stepMatchArguments":[]},{"pwStepLine":23,"gherkinStepLine":25,"keywordType":"Outcome","textWithKeyword":"Then the \"Mobile\" menu button should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Mobile\"","children":[{"start":5,"value":"Mobile","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":24,"gherkinStepLine":26,"keywordType":"Outcome","textWithKeyword":"And the \"Broadband\" menu button should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Broadband\"","children":[{"start":5,"value":"Broadband","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":25,"gherkinStepLine":27,"keywordType":"Outcome","textWithKeyword":"And the \"Entertainment\" menu button should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Entertainment\"","children":[{"start":5,"value":"Entertainment","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":26,"gherkinStepLine":28,"keywordType":"Outcome","textWithKeyword":"And the \"Perks & Promos\" menu button should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Perks & Promos\"","children":[{"start":5,"value":"Perks & Promos","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]}]},
+  {"pwTestLine":29,"pickleLine":31,"tags":["@homepage","@smoke","@regression","@C0"],"steps":[{"pwStepLine":7,"gherkinStepLine":9,"keywordType":"Context","textWithKeyword":"Given the user navigates to the StarHub home page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":8,"gherkinStepLine":10,"keywordType":"Context","textWithKeyword":"And the cookie consent is dismissed","isBg":true,"stepMatchArguments":[]},{"pwStepLine":30,"gherkinStepLine":32,"keywordType":"Outcome","textWithKeyword":"Then the hero banner heading should be visible","stepMatchArguments":[]}]},
+  {"pwTestLine":33,"pickleLine":35,"tags":["@homepage","@smoke","@regression","@C0"],"steps":[{"pwStepLine":7,"gherkinStepLine":9,"keywordType":"Context","textWithKeyword":"Given the user navigates to the StarHub home page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":8,"gherkinStepLine":10,"keywordType":"Context","textWithKeyword":"And the cookie consent is dismissed","isBg":true,"stepMatchArguments":[]},{"pwStepLine":34,"gherkinStepLine":36,"keywordType":"Outcome","textWithKeyword":"Then the \"Peace of mind\" value proposition should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Peace of mind\"","children":[{"start":5,"value":"Peace of mind","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":35,"gherkinStepLine":37,"keywordType":"Outcome","textWithKeyword":"And the \"Full flexibility\" value proposition should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Full flexibility\"","children":[{"start":5,"value":"Full flexibility","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":36,"gherkinStepLine":38,"keywordType":"Outcome","textWithKeyword":"And the \"Multi-service savings\" value proposition should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Multi-service savings\"","children":[{"start":5,"value":"Multi-service savings","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":37,"gherkinStepLine":39,"keywordType":"Outcome","textWithKeyword":"And the \"24/7 HubCare\" value proposition should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"24/7 HubCare\"","children":[{"start":5,"value":"24/7 HubCare","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]}]},
+  {"pwTestLine":40,"pickleLine":42,"tags":["@homepage","@smoke","@regression","@C0"],"steps":[{"pwStepLine":7,"gherkinStepLine":9,"keywordType":"Context","textWithKeyword":"Given the user navigates to the StarHub home page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":8,"gherkinStepLine":10,"keywordType":"Context","textWithKeyword":"And the cookie consent is dismissed","isBg":true,"stepMatchArguments":[]},{"pwStepLine":41,"gherkinStepLine":43,"keywordType":"Outcome","textWithKeyword":"Then the \"A better way to connect\" section heading should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"A better way to connect\"","children":[{"start":5,"value":"A better way to connect","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":42,"gherkinStepLine":44,"keywordType":"Outcome","textWithKeyword":"And the \"Curated offers\" section heading should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Curated offers\"","children":[{"start":5,"value":"Curated offers","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":43,"gherkinStepLine":45,"keywordType":"Outcome","textWithKeyword":"And the \"Trending Devices\" section heading should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Trending Devices\"","children":[{"start":5,"value":"Trending Devices","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":44,"gherkinStepLine":46,"keywordType":"Outcome","textWithKeyword":"And the \"Gear up with StarHub\" section heading should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Gear up with StarHub\"","children":[{"start":5,"value":"Gear up with StarHub","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]}]},
+  {"pwTestLine":47,"pickleLine":49,"tags":["@homepage","@smoke","@regression","@C0"],"steps":[{"pwStepLine":7,"gherkinStepLine":9,"keywordType":"Context","textWithKeyword":"Given the user navigates to the StarHub home page","isBg":true,"stepMatchArguments":[]},{"pwStepLine":8,"gherkinStepLine":10,"keywordType":"Context","textWithKeyword":"And the cookie consent is dismissed","isBg":true,"stepMatchArguments":[]},{"pwStepLine":48,"gherkinStepLine":50,"keywordType":"Outcome","textWithKeyword":"Then the footer copyright should contain \"StarHub 2026\"","stepMatchArguments":[{"group":{"start":36,"value":"\"StarHub 2026\"","children":[{"start":37,"value":"StarHub 2026","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":49,"gherkinStepLine":51,"keywordType":"Outcome","textWithKeyword":"And the \"Contact Us\" footer link should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Contact Us\"","children":[{"start":5,"value":"Contact Us","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":50,"gherkinStepLine":52,"keywordType":"Outcome","textWithKeyword":"And the \"FAQ\" footer link should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"FAQ\"","children":[{"start":5,"value":"FAQ","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]},{"pwStepLine":51,"gherkinStepLine":53,"keywordType":"Outcome","textWithKeyword":"And the \"Legal Notices\" footer link should be visible","stepMatchArguments":[{"group":{"start":4,"value":"\"Legal Notices\"","children":[{"start":5,"value":"Legal Notices","children":[{"children":[]}]},{"children":[{"children":[]}]}]},"parameterTypeName":"string"}]}]},
+]; // bdd-data-end

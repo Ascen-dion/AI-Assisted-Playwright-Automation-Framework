@@ -11,7 +11,13 @@
     "test:ci": "CI=true playwright test --config=config/playwright.config.js --workers=1",
     "report": "playwright show-report",
     "report:evidence": "node -e \"const p=require('path').resolve('test-results/reports/evidence-report-latest.html');require('child_process').exec(process.platform==='win32'?'start \\\"\\\" \\\"'+p+'\\\"':'open \\\"'+p+'\\\"')\"",
-    "install:browsers": "playwright install"
+    "install:browsers": "playwright install",
+    "bdd:generate": "npx bddgen --config config/playwright-bdd.config.js",
+    "bdd:test": "npx playwright test --config=config/playwright-bdd.config.js",
+    "bdd:test:smoke": "npx playwright test --config=config/playwright-bdd.config.js --grep @smoke",
+    "bdd:test:regression": "npx playwright test --config=config/playwright-bdd.config.js --grep @regression",
+    "bdd:test:headed": "npx playwright test --config=config/playwright-bdd.config.js --headed",
+    "bdd:test:debug": "npx playwright test --config=config/playwright-bdd.config.js --debug"
   },
   "keywords": [
     "playwright",
@@ -32,9 +38,11 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^11.0.0",
     "@playwright/experimental-ct-react": "^1.58.2",
     "@playwright/test": "^1.58.2",
     "eslint": "^8.55.0",
+    "playwright-bdd": "^8.0.0",
     "pptxgenjs": "^4.0.1",
     "prettier": "^3.1.0"
   }

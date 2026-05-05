@@ -2,10 +2,9 @@
 
 ## Base Configuration
 
-**Target Application URL**: `https://login.adaptiveplanning.com/app`
+**Target Application URL**: `https://www.starhub.com/personal.html`
 
-**Login URL**: `https://login.adaptiveplanning.com/app`
-**Home URL**: `https://login.adaptiveplanning.com/app` (redirects to dashboard post-login)
+**Home URL**: `https://www.starhub.com/personal.html`
 **Application Type**: Enterprise Cloud Planning — Workday Adaptive Planning (FP&A)
 **Environment**: Trial tenant (ptrial-ascendion)
 

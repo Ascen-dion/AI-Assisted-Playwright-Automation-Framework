@@ -5,25 +5,23 @@
  * Single source of truth for all assertion strings, URLs, and expected values.
  * When the application changes a label or value, update here — not in each spec.
  *
- * Set ADAPTIVE_BASE_URL in .env — e.g. https://login.adaptiveplanning.com/app
+ * Set BASE_URL in .env — e.g. https://www.starhub.com/personal.html
  */
 
-const BASE = process.env.ADAPTIVE_BASE_URL || 'https://login.adaptiveplanning.com/app';
+const BASE = process.env.BASE_URL || 'https://www.starhub.com/personal.html';
 
 module.exports = {
 
   // ── URLs ─────────────────────────────────────────────────────────────────
   urls: {
-    login:            BASE,
+    home:             BASE,
     base:             BASE,
-    budgetEntrySales: 'https://livec50a01.adaptiveplanning.com/dashboards/perspective/13697/dashboard/13719',
   },
 
   // ── URL patterns (regex for toHaveURL assertions) ─────────────────────────
   urlPatterns: {
-    login:            /login\.adaptiveplanning\.com\/app/,
-    dashboard:        /adaptiveplanning\.com/,
-    budgetEntrySales: /adaptiveplanning\.com\/dashboards\/perspective/,
+    home:             /starhub\.com\/personal/,
+    dashboard:        /starhub\.com/,
   },
 
   // ── Credentials (read from env — never hardcode) ──────────────────────────
