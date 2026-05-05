@@ -1,7 +1,7 @@
-// === FILE: mobilewright.config.js ===
-const { defineConfig } = require('mobilewright');
+// === FILE: mobilewright.config.mjs ===
+import { defineConfig } from 'mobilewright';
 
-module.exports = defineConfig({
+export default defineConfig({
   platform: 'android',
   bundleId: 'com.google.android.youtube',
   timeout: 30000,
