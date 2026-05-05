@@ -77,12 +77,19 @@ jobs:
             bash scripts/start-mobilecli.sh
             npx mobilewright test mobile/tests/golfgalaxy-smoke.spec.mjs --reporter=list
 
+      - name: Verify report output path
+        if: always()
+        run: |
+          echo "Checking mobile/reports/html"
+          ls -la mobile/reports || true
+          ls -la mobile/reports/html || true
+
       - name: Upload Mobile HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mobilewright-report-${{ github.run_number }}
-          path: mobile/reports/html/
+          path: mobile/reports/html
           retention-days: 30
 
       - name: Upload test-results artifacts
@@ -94,7 +101,7 @@ jobs:
           retention-days: 30
 
       - name: Send Email Notification
-        if: success()
+        if: always()
         continue-on-error: true
         uses: dawidd6/action-send-mail@v3
         with:
