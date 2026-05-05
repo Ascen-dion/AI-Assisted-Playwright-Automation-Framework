@@ -78,5 +78,29 @@
     "steps": "1. Navigate to https://uniondigitalbank.io/en/about-us\n2. Observe the hero heading on the page",
     "expected": "The heading 'BANKING FOR THE BETTER' is visible on the About Us page",
     "jiraRef": "ED-80"
+  },
+  {
+    "specTitle": "Test Case 1: App launches and Welcome text is visible on top left",
+    "title": "ED-82 AC1: Verify Welcome text is displayed at the top left after app launch",
+    "preconditions": "Android emulator is booted and com.dcsg.golfgalaxy.qa is installed",
+    "steps": "1. Terminate any existing Golf Galaxy session\n2. Launch com.dcsg.golfgalaxy.qa\n3. Wait for the home screen to fully render\n4. Observe the top-left area of the screen",
+    "expected": "'Welcome' text is visible at the top left of the Golf Galaxy home screen (resource-id: app_user_name_text)",
+    "jiraRef": "ED-82"
+  },
+  {
+    "specTitle": "Test Case 2: Shop tab is visible below Welcome text",
+    "title": "ED-82 AC2: Verify Shop tab is displayed below the Welcome text",
+    "preconditions": "Golf Galaxy app is launched and home screen is visible with Welcome text",
+    "steps": "1. Launch com.dcsg.golfgalaxy.qa\n2. Wait for the home screen to render\n3. Observe the tab bar area directly below the toolbar",
+    "expected": "'Shop' tab (RadioButton) is visible in the tab bar below the Welcome heading",
+    "jiraRef": "ED-82"
+  },
+  {
+    "specTitle": "Test Case 3: Hot Deals tab is visible below Welcome text",
+    "title": "ED-82 AC3: Verify Hot Deals tab is displayed below the Welcome text",
+    "preconditions": "Golf Galaxy app is launched and home screen is visible with Welcome text",
+    "steps": "1. Launch com.dcsg.golfgalaxy.qa\n2. Wait for the home screen to render\n3. Observe the tab bar area directly below the toolbar",
+    "expected": "'Hot Deals' tab (RadioButton) is visible in the tab bar below the Welcome heading",
+    "jiraRef": "ED-82"
   }
 ]

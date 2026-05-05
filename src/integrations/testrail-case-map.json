@@ -10,6 +10,9 @@
     "Test Case 1: Verify Loan Number and Payment Amount text boxes are displayed on UD Loans Payment Page": 286,
     "Test Case 2: Verify UD Loans by UnionDigital Bank Payment Page heading text is displayed": 331,
     "Test Case 1: Navigate to About Us page via top navigation bar": 361,
-    "Test Case 2: Verify About Us page displays hero heading": 362
+    "Test Case 2: Verify About Us page displays hero heading": 362,
+    "Test Case 1: App launches and Welcome text is visible on top left": 993,
+    "Test Case 2: Shop tab is visible below Welcome text": 994,
+    "Test Case 3: Hot Deals tab is visible below Welcome text": 995
   }
 }

@@ -22,7 +22,7 @@ test.describe('[Mobile][Smoke] Golf Galaxy Android App', () => {
   // ─────────────────────────────────────────────────────────────────
   test.describe('Home Screen', () => {
 
-    test('[GG-01] @smoke App launches and Welcome text is displayed at the top', async ({ device, screen }) => {
+    test('[C993] @smoke Test Case 1: App launches and Welcome text is visible on top left', async ({ device, screen }) => {
       const homePage = new GolfGalaxyHomePage(device, screen);
       await homePage.goto();
 
@@ -31,6 +31,22 @@ test.describe('[Mobile][Smoke] Golf Galaxy Android App', () => {
 
       await expect(homePage.welcomeText())
         .toHaveText(TD.home.welcomeText);
+    });
+
+    test('[C994] @smoke Test Case 2: Shop tab is visible below Welcome text', async ({ device, screen }) => {
+      const homePage = new GolfGalaxyHomePage(device, screen);
+      await homePage.goto();
+
+      await expect(screen.getByText(TD.home.shopTab))
+        .toBeVisible({ timeout: TD.timeouts.screenTransition });
+    });
+
+    test('[C995] @smoke Test Case 3: Hot Deals tab is visible below Welcome text', async ({ device, screen }) => {
+      const homePage = new GolfGalaxyHomePage(device, screen);
+      await homePage.goto();
+
+      await expect(screen.getByText(TD.home.hotDealsTab))
+        .toBeVisible({ timeout: TD.timeouts.screenTransition });
     });
 
   });

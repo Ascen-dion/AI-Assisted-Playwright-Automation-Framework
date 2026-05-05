@@ -19,6 +19,7 @@ class GolfGalaxyHomePage extends GolfGalaxyBasePage {
   /** Launch the app and wait for the home screen Welcome text to appear. */
   async goto() {
     await this.launch();
+    await this.waitForAppReady();
     await locators.welcomeText(this.screen)
       .waitFor({ state: 'visible', timeout: TD.timeouts.appLaunch });
   }
