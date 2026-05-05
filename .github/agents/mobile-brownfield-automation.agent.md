@@ -44,6 +44,25 @@ tools: vscode, execute, read, agent, edit, search, web, todo, [
   mobile-mcp/mobile_get_crash,
   mobile-mcp/mobile_list_crashes,
   mobile-mcp/mobile_uninstall_app,
+  jira/get_issue,
+  jira/create_issue,
+  jira/update_issue,
+  jira/add_comment,
+  jira/search_issues,
+  jira/get_project,
+  jira/get_fields,
+  testrail/get_case,
+  testrail/add_case,
+  testrail/update_case,
+  testrail/get_cases,
+  testrail/get_section,
+  testrail/get_sections,
+  testrail/add_section,
+  testrail/get_run,
+  testrail/add_run,
+  testrail/add_result_for_case,
+  testrail/get_results_for_case,
+  testrail/close_run,
   todo
 ]
 model: Claude Sonnet 4.6
@@ -53,6 +72,31 @@ mcp-servers:
     command: npx
     args:
       - "@mobilenext/mobile-mcp@latest"
+    tools:
+      - "*"
+  jira:
+    type: stdio
+    command: npx
+    args:
+      - "-y"
+      - "@zereight/mcp-jira"
+    env:
+      JIRA_URL: "https://ascendionconfluence.atlassian.net"
+      JIRA_EMAIL: "viplove.bisen@ascendion.com"
+      JIRA_API_TOKEN: "${JIRA_API_TOKEN}"
+      JIRA_USE_V3_API: "true"
+    tools:
+      - "*"
+  testrail:
+    type: stdio
+    command: npx
+    args:
+      - "-y"
+      - "@zereight/mcp-testrail"
+    env:
+      TESTRAIL_URL: "https://ascendionqesmoketest.testrail.io/"
+      TESTRAIL_EMAIL: "navneet.bhargavan@ascendion.com"
+      TESTRAIL_API_KEY: "${TESTRAIL_API_KEY}"
     tools:
       - "*"
 ---
@@ -171,6 +215,22 @@ Before writing any automation code, create the manual test cases in TestRail der
 acceptance criteria. This establishes upstream traceability between ACs → TestRail cases → automated
 spec titles **before a single line of code is written**.
 
+> **MCP-first rule:** Always use the `testrail` MCP server tools directly for all TestRail operations
+> and the `jira` MCP server tools for all Jira operations. Fall back to the Node scripts
+> (`push-to-testrail.js`, `fetch-jira-story.js`) only if the MCP server is unavailable.
+
+### 3.0 — Fetch the Jira story via Jira MCP
+
+Before parsing ACs, retrieve the full story using the Jira MCP server:
+
+```
+jira/get_issue(issueKey: '<STORY-KEY>')
+  → returns: summary, description, acceptance criteria, status, assignee, labels
+```
+
+Parse the ACs from the returned `description` or `customfield_*` acceptance criteria field.
+If no structured ACs are found, derive them from the description text.
+
 ### 3.1 — Parse acceptance criteria into test cases
 
 For each AC in the story, produce a structured test case object in this exact shape:
@@ -182,50 +242,56 @@ For each AC in the story, produce a structured test case object in this exact sh
   preconditions: '<Given state — device booted, app installed, screen state>',
   steps:     '1. <action>\n2. <action>\n...',                 // numbered, action-verb sentences
   expected:  '<observable, concrete outcome — visible element, text value, screen state>',
-  refs:      '<Jira story key, e.g. AU-1>'                    // from JIRA_REF env var or story metadata
+  refs:      '<Jira story key, e.g. ED-82>'                   // from the fetched Jira issue key
 }
 ```
 
 Do this for **every** AC in the story — one test case object per AC.
 
-### 3.2 — Push to TestRail via push-to-testrail.js
+### 3.2 — Push to TestRail via TestRail MCP
 
 **Only run this step for ACs that Phase 2.2 determined are NEW or need updating.**
-For ACs that are already fully covered (existing ID + existing spec title), skip this step entirely.
 
-Append only the new/changed entries to `src/integrations/testrail-test-cases.json`, then run:
+Use the TestRail MCP tools directly — no file writing or Node script execution needed:
 
-```bash
-node src/integrations/push-to-testrail.js
+```
+# Check if the section exists
+testrail/get_sections(projectId: <TESTRAIL_PROJECT_ID>, suiteId: <TESTRAIL_SUITE_ID>)
+
+# Create or update each test case
+testrail/add_case(
+  sectionId: <TESTRAIL_SECTION_ID>,
+  title:     '<AC title>',
+  customPreconditions: '<preconditions>',
+  customStepsSeparated: [{ content: '<step>', expected: '<expected>' }],
+  refs:      '<Jira key>'
+)
+
+# If a case already exists (from testrail-case-map.json lookup), update it instead:
+testrail/update_case(caseId: <id>, title: '...', ...)
 ```
 
-The script upserts each case (updates if title already exists in TestRail, creates otherwise),
-prints the assigned case IDs, and writes `src/integrations/testrail-case-map.json`.
+After each `add_case` or `update_case` call, record the returned `case.id` — this is the `Cxxx` to embed in the spec title.
 
-**Required `.env` variables** — already configured at the project root `.env`:
-```
-TESTRAIL_HOST=https://ascendionqesmoke.testrail.io
-TESTRAIL_USER=sowmya.sridhar@ascendion.com
-TESTRAIL_API_KEY=<key>
-TESTRAIL_PROJECT_ID=7
-TESTRAIL_SUITE_ID=11
-TESTRAIL_SECTION_ID=50
-JIRA_REF=<story-key>   # set per story — add/update in .env before running
-```
+Also update `src/integrations/testrail-case-map.json` and `src/integrations/testrail-test-cases.json`
+with the new entries so the `testrail-reporter.js` can post results after test runs.
 
-All credentials are present. **Do not ask the user for TestRail credentials** — read them from `.env`
-at the project root. The only value that changes per story is `JIRA_REF`; update that in `.env` or
-pass it as `JIRA_REF=AU-2 node src/integrations/push-to-testrail.js` before running the script.
+**TestRail project config** (read from `.env` at the project root — do not ask the user):
+```
+TESTRAIL_PROJECT_ID=6
+TESTRAIL_SUITE_ID=10
+TESTRAIL_SECTION_ID=46
+```
 
 ### 3.3 — Embed TestRail IDs in spec titles (traceability)
 
-Once the script completes, embed each printed case ID directly into the corresponding Mobilewright
+Once each case ID is returned by the MCP tool, embed it directly into the corresponding Mobilewright
 test title using the `[Cxxx]` prefix format:
 
 ```js
 // Format: '[C<id>] Test Case N: <description>'
-test('[C501] Test Case 1: App launches and home screen is visible', ...)
-test('[C502] Test Case 2: Bottom navigation tabs are rendered correctly', ...)
+test('[C993] Test Case 1: App launches and Welcome text is visible on top left', ...)
+test('[C994] Test Case 2: Shop tab is visible below Welcome text', ...)
 ```
 
 **Rules:**
@@ -235,16 +301,29 @@ test('[C502] Test Case 2: Bottom navigation tabs are rendered correctly', ...)
 - The `testrail-reporter.js` (wired into `config/playwright.config.js`) parses this prefix
   automatically after every test run and posts results back to TestRail
 
-### 3.4 — Traceability chain produced by this phase
+### 3.4 — Update Jira story status via Jira MCP
+
+After tests pass (Phase 7), update the Jira story to reflect automation coverage:
 
 ```
-Jira story (AC1…ACN)
+jira/add_comment(
+  issueKey: '<STORY-KEY>',
+  body: 'Automated test cases created: [C993], [C994], [C995] — spec: mobile/tests/<appName>-<feature>.spec.js. All tests passing.'
+)
+```
+
+### 3.5 — Traceability chain produced by this phase
+
+```
+Jira story (AC1…ACN)  ← fetched via jira/get_issue MCP
     ↓  Phase 3.1: parse ACs
-TestRail Cases C501…C5xx  (refs: "<Jira key>" stamped on each)
+TestRail Cases C993…C9xx  ← created via testrail/add_case MCP (refs: "<Jira key>" stamped)
     ↓  Phase 3.3: embed IDs in titles
-Mobilewright spec: '[C501] Test Case 1: ...'
+Mobilewright spec: '[C993] Test Case 1: ...'
     ↓  testrail-reporter.js after Phase 7 test run
 TestRail Run — pass/fail posted per case automatically
+    ↓  Phase 3.4
+Jira story comment updated with case IDs and pass status
 ```
 
 ---
@@ -505,6 +584,59 @@ After generating and saving files:
 5. Check for crashes: `mobile_list_crashes(device)` after any unexpected failure
 6. After all tests pass, the `testrail-reporter.js` automatically creates a dated TestRail run and
    posts pass/fail for every `[Cxxx]` case
+
+---
+
+## JIRA MCP TOOL REFERENCE
+
+All Jira operations use the `jira` MCP server (`@zereight/mcp-jira`).
+**Credentials are pre-configured** — do not ask the user for them.
+
+| Tool | Purpose | Key params |
+|---|---|---|
+| `jira/get_issue` | Fetch a story, task, or bug by key | `issueKey: 'ED-82'` |
+| `jira/search_issues` | JQL search across issues | `jql: 'project=ED AND status="To Do"'` |
+| `jira/create_issue` | Create a new story or task | `projectKey, summary, description, issuetype` |
+| `jira/update_issue` | Update fields on an existing issue | `issueKey, fields: { ... }` |
+| `jira/add_comment` | Post a comment to an issue | `issueKey, body` |
+| `jira/get_project` | Get project metadata | `projectKey` |
+| `jira/get_fields` | List all available custom fields | — |
+
+**Config** (from `.vscode/mcp.json` / `.env` — pre-configured, never prompt the user):
+```
+JIRA_URL   = https://ascendionconfluence.atlassian.net
+JIRA_EMAIL = viplove.bisen@ascendion.com
+```
+
+---
+
+## TESTRAIL MCP TOOL REFERENCE
+
+All TestRail operations use the `testrail` MCP server (`@zereight/mcp-testrail`).
+**Credentials are pre-configured** — do not ask the user for them.
+
+| Tool | Purpose | Key params |
+|---|---|---|
+| `testrail/get_cases` | List cases in a section | `projectId, suiteId, sectionId` |
+| `testrail/get_case` | Fetch a single case by ID | `caseId` |
+| `testrail/add_case` | Create a new test case | `sectionId, title, customPreconditions, customStepsSeparated, refs` |
+| `testrail/update_case` | Update an existing case | `caseId, title, ...` |
+| `testrail/get_sections` | List sections in a suite | `projectId, suiteId` |
+| `testrail/add_section` | Create a new section | `projectId, suiteId, name` |
+| `testrail/add_run` | Create a new test run | `projectId, suiteId, name, caseIds` |
+| `testrail/get_run` | Fetch a run by ID | `runId` |
+| `testrail/add_result_for_case` | Post a pass/fail result | `runId, caseId, statusId` (1=pass, 5=fail) |
+| `testrail/get_results_for_case` | Get historical results for a case | `runId, caseId` |
+| `testrail/close_run` | Close/lock a completed run | `runId` |
+
+**Config** (from `.vscode/mcp.json` / `.env` — pre-configured, never prompt the user):
+```
+TESTRAIL_URL        = https://ascendionqesmoketest.testrail.io/
+TESTRAIL_EMAIL      = navneet.bhargavan@ascendion.com
+TESTRAIL_PROJECT_ID = 6
+TESTRAIL_SUITE_ID   = 10
+TESTRAIL_SECTION_ID = 46
+```
 
 ---
 
