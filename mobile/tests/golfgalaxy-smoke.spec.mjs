@@ -8,9 +8,9 @@
  * Requires: Android emulator booted with com.dcsg.golfgalaxy.qa installed.
  * Run:  npx mobilewright test mobile/tests/golfgalaxy-smoke.spec.js
  */
-const { test, expect } = require('@mobilewright/test');
-const GolfGalaxyHomePage = require('../pages/golfgalaxy-home.page');
-const TD = require('../data/golfgalaxy-test-data');
+import { test, expect } from '@mobilewright/test';
+import GolfGalaxyHomePage from '../pages/golfgalaxy-home.page.js';
+import TD from '../data/golfgalaxy-test-data.js';
 
 test.use({ platform: 'android', bundleId: TD.app.bundleId });
 

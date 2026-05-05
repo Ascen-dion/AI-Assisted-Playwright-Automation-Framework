@@ -8,7 +8,7 @@ export default defineConfig({
   bundleId: 'com.google.android.youtube',
   timeout: 30000,
   testDir: './mobile/tests',
-  testMatch: '**/*.spec.js',
+  testMatch: '**/*.spec.{js,mjs}',
   reporter: [['list'], ['html', { outputFolder: 'mobile/reports/html', open: 'never' }]],
   retries: 0,
 });

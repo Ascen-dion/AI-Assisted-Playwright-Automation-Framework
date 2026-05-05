@@ -20,8 +20,20 @@ class GolfGalaxyHomePage extends GolfGalaxyBasePage {
   async goto() {
     await this.launch();
     await this.waitForAppReady();
-    await locators.welcomeText(this.screen)
-      .waitFor({ state: 'visible', timeout: TD.timeouts.appLaunch });
+    const deadline = Date.now() + TD.timeouts.appLaunch;
+    while (true) {
+      try {
+        await locators.welcomeText(this.screen)
+          .waitFor({ state: 'visible', timeout: 3000 });
+        return;
+      } catch (err) {
+        if (Date.now() >= deadline) {
+          throw err;
+        }
+        // Mobile hierarchy can be unavailable briefly right after cold launch.
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+    }
   }
 
   /** Returns the Welcome text element. */
