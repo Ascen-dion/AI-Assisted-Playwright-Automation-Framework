@@ -63,6 +63,7 @@ jobs:
           TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
           TESTRAIL_SECTION_ID: ${{ secrets.TESTRAIL_SECTION_ID }}
           TESTRAIL_RUN_NAME_PREFIX: DSG Mobile Automation
+          RESET_GOLF_APP: "false"
         with:
           api-level: 30
           target: google_apis
@@ -75,6 +76,10 @@ jobs:
             adb wait-for-device
             adb install -r mobile/apk/GolfGalaxy.apk
             adb install -r mobile/apk/DSG.apk
+            if [ "${RESET_GOLF_APP}" = "true" ]; then
+              echo "Resetting Golf Galaxy app data"
+              adb shell pm clear com.dcsg.golfgalaxy.qa || true
+            fi
             bash scripts/start-mobilecli.sh
             npx mobilewright test mobile/tests/golfgalaxy-smoke.spec.mjs
 

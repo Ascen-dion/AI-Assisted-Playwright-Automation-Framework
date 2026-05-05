@@ -21,6 +21,12 @@ const TD = {
     myFavoritesText: 'My Favorites',
   },
 
+  onboarding: {
+    getStartedText: 'GET STARTED',
+    skipText: 'Skip',
+    continueAsGuestText: 'Continue As Guest',
+  },
+
   bottomNav: {
     shop: 'Shop',
     cart: 'Cart',
@@ -31,6 +37,7 @@ const TD = {
   timeouts: {
     appLaunch: 40000,
     screenTransition: 15000,
+    onboardingStep: 8000,
   },
 };
 
