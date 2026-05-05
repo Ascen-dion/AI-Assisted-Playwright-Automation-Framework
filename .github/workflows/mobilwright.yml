@@ -6,12 +6,18 @@ on:
 jobs:
   mobile:
     name: Mobile Tests (Android API 30)
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 60
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Enable KVM for hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -36,14 +42,14 @@ jobs:
 
       - name: Install Android components
         run: |
-          sdkmanager "platform-tools" "platforms;android-30" "emulator" "system-images;android-30;google_apis;arm64-v8a"
+          sdkmanager "platform-tools" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
 
       - name: Create AVD (Pixel 5 API 30)
         run: |
           echo "no" | avdmanager create avd \
             --name "Pixel_5_API_30" \
-            --abi "google_apis/arm64-v8a" \
-            --package "system-images;android-30;google_apis;arm64-v8a" \
+            --abi "google_apis/x86_64" \
+            --package "system-images;android-30;google_apis;x86_64" \
             --device "pixel_5" \
             --force
 
@@ -59,7 +65,7 @@ jobs:
         with:
           api-level: 30
           target: google_apis
-          arch: arm64-v8a
+          arch: x86_64
           profile: pixel_5
           avd-name: Pixel_5_API_30
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
@@ -142,9 +148,9 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Environment" >> $GITHUB_STEP_SUMMARY
           echo "- Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- Runner: macos-latest" >> $GITHUB_STEP_SUMMARY
+          echo "- Runner: ubuntu-latest (KVM)" >> $GITHUB_STEP_SUMMARY
           echo "- Emulator: Pixel 5 API 30" >> $GITHUB_STEP_SUMMARY
-          echo "- Architecture: arm64-v8a" >> $GITHUB_STEP_SUMMARY
+          echo "- Architecture: x86_64" >> $GITHUB_STEP_SUMMARY
           echo "- APKs: GolfGalaxy.apk, DSG.apk" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
