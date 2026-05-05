@@ -62,6 +62,7 @@ jobs:
           TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
           TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
           TESTRAIL_SECTION_ID: ${{ secrets.TESTRAIL_SECTION_ID }}
+          TESTRAIL_RUN_NAME_PREFIX: DSG Mobile Automation
         with:
           api-level: 30
           target: google_apis
@@ -75,7 +76,7 @@ jobs:
             adb install -r mobile/apk/GolfGalaxy.apk
             adb install -r mobile/apk/DSG.apk
             bash scripts/start-mobilecli.sh
-            npx mobilewright test mobile/tests/golfgalaxy-smoke.spec.mjs --reporter=list
+            npx mobilewright test mobile/tests/golfgalaxy-smoke.spec.mjs
 
       - name: Verify report output path
         if: always()
