@@ -8,5 +8,5 @@ module.exports = defineConfig({
   testDir: './mobile/tests',
   testMatch: '**/*.spec.js',
   reporter: [['list'], ['html', { outputFolder: 'mobile/reports/html', open: 'never' }]],
-  retries: 1,
+  retries: 0,
 });

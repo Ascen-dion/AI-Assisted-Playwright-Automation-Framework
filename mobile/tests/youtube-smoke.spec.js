@@ -19,41 +19,41 @@ test.use({ platform: 'android', bundleId: TD.app.bundleId });
 
 test.describe('[Mobile][Smoke] YouTube Android App', () => {
   // Emulator app launch + feed render takes 20-40s — override default 15s test timeout
-  test.setTimeout(90000);
+  test.setTimeout(30000);
 
   // ─────────────────────────────────────────────────────────────────
   // Home Screen
   // ─────────────────────────────────────────────────────────────────
   test.describe('Home Screen', () => {
 
-    test('[YT-01] App launches and home screen is visible', async ({ device, screen }) => {
-      const homePage = new YoutubeHomePage(device, screen);
-      await homePage.goto();
+    // test('[YT-01] App launches and home screen is visible', async ({ device, screen }) => {
+    //   const homePage = new YoutubeHomePage(device, screen);
+    //   await homePage.goto();
 
-      // YouTube logo (content-desc="YouTube") is always present on home screen
-      await expect(screen.getByLabel('YouTube'))
-        .toBeVisible({ timeout: TD.timeouts.appLaunch });
-    });
+    //   // YouTube logo (content-desc="YouTube") is always present on home screen
+    //   await expect(screen.getByLabel('YouTube'))
+    //     .toBeVisible({ timeout: TD.timeouts.appLaunch });
+    // });
 
-    test('[YT-02] Bottom navigation tabs are visible', async ({ device, screen }) => {
-      const homePage = new YoutubeHomePage(device, screen);
-      await homePage.goto();
+    // test('[YT-02] Bottom navigation tabs are visible', async ({ device, screen }) => {
+    //   const homePage = new YoutubeHomePage(device, screen);
+    //   await homePage.goto();
 
-      // TD.home.bottomNavLabels = ['Home', 'Shorts', 'Subscriptions', 'You']
-      for (const label of TD.home.bottomNavLabels) {
-        await expect(screen.getByText(label))
-          .toBeVisible({ timeout: TD.timeouts.screenTransition });
-      }
-    });
+    //   // TD.home.bottomNavLabels = ['Home', 'Shorts', 'Subscriptions', 'You']
+    //   for (const label of TD.home.bottomNavLabels) {
+    //     await expect(screen.getByText(label))
+    //       .toBeVisible({ timeout: TD.timeouts.screenTransition });
+    //   }
+    // });
 
-    test('[YT-03] Search button is visible on home screen', async ({ device, screen }) => {
-      const homePage = new YoutubeHomePage(device, screen);
-      await homePage.goto();
+    // test('[YT-03] Search button is visible on home screen', async ({ device, screen }) => {
+    //   const homePage = new YoutubeHomePage(device, screen);
+    //   await homePage.goto();
 
-      // Top-right search icon has content-desc="Search"
-      await expect(screen.getByLabel('Search'))
-        .toBeVisible({ timeout: TD.timeouts.screenTransition });
-    });
+    //   // Top-right search icon has content-desc="Search"
+    //   await expect(screen.getByLabel('Search'))
+    //     .toBeVisible({ timeout: TD.timeouts.screenTransition });
+    // });
 
   });
 

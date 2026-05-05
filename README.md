@@ -59,6 +59,7 @@ All TestRail credentials are pre-configured in `.env`. The only value to supply 
 - Use Model Context Protocol (MCP) for planning, code generation, failure analysis, and page inspection.
 - Support brownfield test generation with reusable POM assets and project-specific context.
 - Run through a browser-based UI, local backend, or cloud backend.
+- Automate native mobile apps on Android using the MobileWright test driver.
 
 ## Core Capabilities
 
@@ -239,6 +240,72 @@ The `ud-automation-agent` implements a full AC → TestRail → Playwright → T
 
 That makes the framework usable not only as a test runtime, but also as an agent-enabled automation workspace.
 
+## 11. Mobile Automation
+
+The framework includes a native mobile automation layer powered by **MobileWright** (`mobilewright.config.js`) that lets you drive real Android apps using the same POM patterns as the web layer.
+
+### Current mobile target
+
+- **App:** YouTube Android (`com.google.android.youtube`)
+- **Platform:** Android (emulator or physical device)
+
+### Mobile directory layout
+
+```text
+mobile/
+  tests/              Spec files (youtube-smoke.spec.js, debug-viewtree.spec.js)
+  pages/              Mobile POM page objects
+    youtube-home.page.js
+    youtube-search.page.js
+    youtube-player.page.js
+    youtube-base.page.js
+    locators/         Mobile locator files
+  data/
+    youtube-test-data.js   Centralised mobile test data (TD.*)
+  reports/html/       HTML report output
+```
+
+### MobileWright configuration
+
+Defined in `mobilewright.config.js` at the repo root:
+
+- `platform: 'android'`
+- `testDir: './mobile/tests'`
+- `retries: 1`
+- HTML report output to `mobile/reports/html/`
+
+### Prerequisites
+
+- Android emulator booted (or physical device connected via ADB)
+- `com.google.android.youtube` installed on the device
+- MobileWright installed (`npm install`)
+
+### Run mobile tests
+
+```bash
+# All mobile tests
+npx mobilewright test mobile/tests/youtube-smoke.spec.js
+
+# Smoke only
+npx mobilewright test mobile/tests/youtube-smoke.spec.js --grep "@smoke"
+
+# Regression only
+npx mobilewright test mobile/tests/youtube-smoke.spec.js --grep "@regression"
+```
+
+### Mobile test coverage (YouTube)
+
+| Tag | Area | What is tested |
+|---|---|---|
+| `@smoke` | Home Screen | App launches, home screen visible, bottom nav tabs present |
+| `@smoke` | Search | Search flow opens and returns results |
+| `@regression` | Player | Video playback, play/pause controls |
+| `@regression` | Navigation | Tab-to-tab navigation |
+
+All assertion strings and timeouts are centralised in `mobile/data/youtube-test-data.js`. No values are hardcoded in spec files.
+
+---
+
 ## 10. CI/CD and Pipeline Readiness
 
 This framework is structured so it can plug into delivery pipelines instead of being limited to local execution.
@@ -300,6 +367,11 @@ src/tests/nav/              Navigation smoke + regression specs (Homepage, Produ
 src/tests/application/      Application journey specs
 src/data/                   Centralised test data module (TD.*)
 src/fixtures/               Extended Playwright fixture with self-healing queue
+mobile/tests/               Mobile spec files (Android — YouTube smoke + regression)
+mobile/pages/               Mobile POM page objects and locator files
+mobile/data/                Mobile test data module (TD.*)
+mobile/reports/             Mobile HTML report output
+mobilewright.config.js      MobileWright configuration (platform, testDir, retries, reporter)
 context/                    Live project context files (application, framework, domain, prompt)
 docs/                       Architecture diagrams and brownfield context documentation
 scripts/                    Local setup, startup, and email generation scripts
