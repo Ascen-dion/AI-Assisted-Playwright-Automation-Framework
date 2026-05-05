@@ -36,23 +36,30 @@ jobs:
 
       - name: Install Android components
         run: |
-          sdkmanager "platform-tools" "platforms;android-30" "emulator" "system-images;android-30;google_apis;x86_64"
+          sdkmanager "platform-tools" "platforms;android-30" "emulator" "system-images;android-30;google_apis;arm64-v8a"
 
       - name: Create AVD (Pixel 5 API 30)
         run: |
           echo "no" | avdmanager create avd \
             --name "Pixel_5_API_30" \
-            --abi "google_apis/x86_64" \
-            --package "system-images;android-30;google_apis;x86_64" \
+            --abi "google_apis/arm64-v8a" \
+            --package "system-images;android-30;google_apis;arm64-v8a" \
             --device "pixel_5" \
             --force
 
       - name: Start emulator and run MobileWright tests
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
+          TESTRAIL_USER: ${{ secrets.TESTRAIL_USER }}
+          TESTRAIL_API_KEY: ${{ secrets.TESTRAIL_API_KEY }}
+          TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+          TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
+          TESTRAIL_SECTION_ID: ${{ secrets.TESTRAIL_SECTION_ID }}
         with:
           api-level: 30
           target: google_apis
-          arch: x86_64
+          arch: arm64-v8a
           profile: pixel_5
           avd-name: Pixel_5_API_30
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
@@ -82,12 +89,66 @@ jobs:
           path: test-results/
           retention-days: 30
 
+      - name: Send Email Notification
+        if: always()
+        continue-on-error: true
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: |
+            [Mobile Tests] ${{ job.status == 'success' && '✅ PASSED' || '❌ FAILED' }} - Run #${{ github.run_number }}
+          to: ${{ secrets.EMAIL_TO }}
+          from: MobileWright AI Framework <${{ secrets.EMAIL_USERNAME }}>
+          html_body: file://email-body.html
+
+      - name: Comment PR with Mobile Test Results
+        if: github.event_name == 'pull_request' && always()
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ job.status }}';
+            const runUrl = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+
+            const comment = `## 📱 Mobile Test Results
+
+            **Status:** ${status === 'success' ? '✅ Passed' : '❌ Failed'}
+            **Run:** [#${{ github.run_number }}](${runUrl})
+
+            ### 📊 Reports Available
+            - [View MobileWright Report](${runUrl})
+            - [Download Test Results](${runUrl})
+
+            ---
+            *Automated by MobileWright AI Framework*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
       - name: Publish job summary
         if: always()
         run: |
-          echo "## MobileWright Run" >> $GITHUB_STEP_SUMMARY
+          echo "## 📱 MobileWright Test Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Run:** #${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Environment" >> $GITHUB_STEP_SUMMARY
           echo "- Branch: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- Runner: macos-latest" >> $GITHUB_STEP_SUMMARY
           echo "- Emulator: Pixel 5 API 30" >> $GITHUB_STEP_SUMMARY
+          echo "- Architecture: arm64-v8a" >> $GITHUB_STEP_SUMMARY
           echo "- APKs: GolfGalaxy.apk, DSG.apk" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "- MobileWright Report: mobilewright-report-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Test Results: mobilewright-test-results-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "[View Full Results](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
