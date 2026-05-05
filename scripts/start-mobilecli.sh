@@ -1,10 +1,9 @@
 #!/bin/bash
-# Starts the mobilecli server and waits for the WebSocket at ws://localhost:12000/ws
-# mobilewright checks this exact endpoint — TCP port open is NOT sufficient.
+# Starts the mobilecli server and waits for HTTP port 12000 to respond.
+# mobilecli runs HTTP on port 12000; WebSocket is an upgrade of the same port.
 
 BINARY="node_modules/mobilecli/bin/mobilecli-linux-amd64"
 LOG="/tmp/mobilecli.log"
-WS_CHECK="node_modules/ws/index.js"
 
 echo "[mobilecli] Starting server..."
 chmod +x "$BINARY"
@@ -12,7 +11,7 @@ nohup "$BINARY" server start --listen "localhost:12000" > "$LOG" 2>&1 &
 MOBILECLI_PID=$!
 echo "[mobilecli] pid=$MOBILECLI_PID"
 
-echo "[mobilecli] Polling ws://localhost:12000/ws (up to 60s)..."
+echo "[mobilecli] Polling http://localhost:12000 (up to 60s)..."
 for i in $(seq 1 60); do
   sleep 1
   if ! kill -0 $MOBILECLI_PID 2>/dev/null; then
@@ -20,10 +19,9 @@ for i in $(seq 1 60); do
     cat "$LOG"
     exit 1
   fi
-  # Check the actual WebSocket endpoint (same check mobilewright uses)
-  RESULT=$(node -e "const W=require('./node_modules/ws/index.js');const w=new W('ws://localhost:12000/ws');const t=setTimeout(()=>{w.terminate();process.stdout.write('0')},1500);w.on('open',()=>{clearTimeout(t);w.close();process.stdout.write('1')});w.on('error',()=>{clearTimeout(t);process.stdout.write('0')})" 2>/dev/null)
-  if [ "$RESULT" = "1" ]; then
-    echo "[mobilecli] WebSocket ready after ${i}s"
+  HTTP_CODE=$(curl -s --max-time 2 -o /dev/null -w "%{http_code}" http://localhost:12000/ 2>/dev/null)
+  if [ "$HTTP_CODE" != "000" ]; then
+    echo "[mobilecli] HTTP server ready after ${i}s (status=$HTTP_CODE)"
     cat "$LOG"
     exit 0
   fi
@@ -33,3 +31,4 @@ done
 echo "[mobilecli] Timed out after 60s"
 cat "$LOG"
 exit 1
+
