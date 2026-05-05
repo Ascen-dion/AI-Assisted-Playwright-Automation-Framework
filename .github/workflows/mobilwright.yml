@@ -71,15 +71,36 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
           script: |
-            echo "Starting mobilecli server"
+            echo "=== mobilecli binary check ==="
+            ls -la node_modules/mobilecli/bin/
+            file node_modules/mobilecli/bin/mobilecli-linux-amd64 || true
+            ldd node_modules/mobilecli/bin/mobilecli-linux-amd64 || true
+
+            echo "=== Starting mobilecli server ==="
             chmod +x node_modules/mobilecli/bin/mobilecli-linux-amd64
-            node_modules/mobilecli/bin/mobilecli-linux-amd64 server start &
-            sleep 10
-            echo "Installing APKs"
+            node_modules/mobilecli/bin/mobilecli-linux-amd64 server start > /tmp/mobilecli.log 2>&1 &
+            MOBILECLI_PID=$!
+            echo "mobilecli pid: $MOBILECLI_PID"
+
+            echo "=== Waiting up to 30s for mobilecli to be ready ==="
+            for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30; do
+              sleep 1
+              if ! kill -0 $MOBILECLI_PID 2>/dev/null; then
+                echo "mobilecli exited early at ${i}s — log:"
+                cat /tmp/mobilecli.log
+                exit 1
+              fi
+              echo "  ${i}s — mobilecli still running"
+            done
+            echo "=== mobilecli log after 30s ==="
+            cat /tmp/mobilecli.log
+
+            echo "=== Installing APKs ==="
             adb wait-for-device
             adb install -r mobile/apk/GolfGalaxy.apk
             adb install -r mobile/apk/DSG.apk
-            echo "Running Golf Galaxy mobile tests"
+
+            echo "=== Running Golf Galaxy mobile tests ==="
             npx mobilewright test mobile/tests/golfgalaxy-smoke.spec.js --reporter=list
 
       - name: Upload Mobile HTML report
