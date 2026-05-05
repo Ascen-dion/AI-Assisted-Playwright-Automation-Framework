@@ -71,6 +71,18 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
           script: |
+            echo "Starting mobilecli server"
+            MOBILECLI_BIN=$(find node_modules/mobilecli/bin -name "mobilecli-linux-amd64" | head -1)
+            if [ -z "$MOBILECLI_BIN" ]; then
+              echo "ERROR: mobilecli binary not found"
+              exit 1
+            fi
+            chmod +x "$MOBILECLI_BIN"
+            "$MOBILECLI_BIN" server start &
+            MOBILECLI_PID=$!
+            echo "mobilecli server started (pid $MOBILECLI_PID), waiting for ready..."
+            sleep 10
+
             echo "Installing APKs"
             adb wait-for-device
             adb install -r mobile/apk/GolfGalaxy.apk
