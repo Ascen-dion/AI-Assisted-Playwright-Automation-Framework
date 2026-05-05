@@ -53,14 +53,6 @@ jobs:
             --device "pixel_5" \
             --force
 
-      - name: Start mobilecli server
-        run: |
-          chmod +x node_modules/mobilecli/bin/mobilecli-linux-amd64
-          nohup node_modules/mobilecli/bin/mobilecli-linux-amd64 server start > /tmp/mobilecli.log 2>&1 &
-          echo "mobilecli server started in background (pid $!)"
-          sleep 5
-          cat /tmp/mobilecli.log
-
       - name: Start emulator and run MobileWright tests
         uses: reactivecircus/android-emulator-runner@v2
         env:
@@ -82,6 +74,10 @@ jobs:
             adb wait-for-device
             adb install -r mobile/apk/GolfGalaxy.apk
             adb install -r mobile/apk/DSG.apk
+            chmod +x node_modules/mobilecli/bin/mobilecli-linux-amd64
+            nohup node_modules/mobilecli/bin/mobilecli-linux-amd64 server start > /tmp/mobilecli.log 2>&1 &
+            sleep 15
+            cat /tmp/mobilecli.log
             npx mobilewright test mobile/tests/golfgalaxy-smoke.spec.js --reporter=list
 
       - name: Upload Mobile HTML report
@@ -101,7 +97,7 @@ jobs:
           retention-days: 30
 
       - name: Send Email Notification
-        if: always()
+        if: success()
         continue-on-error: true
         uses: dawidd6/action-send-mail@v3
         with:
