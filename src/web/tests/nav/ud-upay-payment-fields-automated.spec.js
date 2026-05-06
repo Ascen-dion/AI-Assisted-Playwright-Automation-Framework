@@ -14,9 +14,9 @@
  * TestRail: C286, C331
  */
 
-const { test, expect } = require('../../fixtures');
+const { test, expect } = require('../../../shared/fixtures');
 const UdUpayPaymentPage = require('../../pages/ud-upay-payment.page');
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 
 test.describe('[UI] ED-79: Validate Payment Page Fields', { tag: ['@smoke', '@regression'] }, () => {
   let paymentPage;

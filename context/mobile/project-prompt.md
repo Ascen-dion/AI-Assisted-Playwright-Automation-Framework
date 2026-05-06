@@ -82,8 +82,8 @@ They act as guardrails to keep all generated output aligned with this project's 
 - Each block must start with `// === FILE: <relative-path> ===` as the first line
 - Use CommonJS (`require`/`module.exports`) — this project does not use ES modules
 - Use 2-space indentation throughout
-- Spec imports: use `require('../../fixtures')` (not `@playwright/test`) for new specs to enable self-healing
-- Test data: all assertion strings/URLs must reference `const TD = require('../../data/test-data')` — never hardcode them inline
+- Spec imports: use `require('../../shared/fixtures')` (not `@mobilewright/test`) for new specs to enable self-healing
+- Test data: all assertion strings/URLs must reference `const TD = require('../../shared/data/golfgalaxy-test-data')` — never hardcode them inline
 - Tags: add `{ tag: ['@smoke', '@regression'] }` to nav specs; `{ tag: ['@regression'] }` to application/journey specs
 
 ## Jira Story Generation Format

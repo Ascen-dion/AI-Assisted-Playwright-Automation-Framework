@@ -11,7 +11,7 @@
 
 const mcpClient = require('../mcp/playwright-mcp-client');
 const aiEngine = require('./ai-engine');
-const logger = require('../../utils/logger');
+const logger = require('../../../utils/logger');
 const fs = require('fs').promises;
 const path = require('path');
 

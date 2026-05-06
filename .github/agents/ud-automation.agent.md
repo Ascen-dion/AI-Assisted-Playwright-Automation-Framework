@@ -269,12 +269,12 @@ class Ud<Feature>Page extends BasePage {
 module.exports = Ud<Feature>Page;
 ```
 
-**Spec file** (`src/tests/nav/ud-<feature>.spec.js`):
+**Spec file** (`src/web/tests/nav/ud-<feature>.spec.js`):
 ```js
-// === FILE: src/tests/nav/ud-<feature>.spec.js ===
-const { test, expect } = require('../../fixtures');
+// === FILE: src/web/tests/nav/ud-<feature>.spec.js ===
+const { test, expect } = require('../../../shared/fixtures');
 const Ud<Feature>Page = require('../../pages/ud-<feature>.page');
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 
 test.describe('[UI] ACN: <short description>', { tag: ['@smoke', '@regression'] }, () => {
   let pageObj;
@@ -340,11 +340,11 @@ src/tests/
   application/   ← application journey specs (deeper product flows)
 ```
 
-Page object require paths from `src/tests/nav/` or `src/tests/application/`:
+Page object require paths from `src/web/tests/nav/` or `src/web/tests/application/`:
 ```js
 const Page = require('../../pages/ud-<feature>.page');
-const TD   = require('../../data/test-data');
-const { test, expect } = require('../../fixtures');
+const TD   = require('../../../shared/data/test-data');
+const { test, expect } = require('../../../shared/fixtures');
 ```
 
 ---
@@ -354,7 +354,7 @@ const { test, expect } = require('../../fixtures');
 All hardcoded assertion strings must come from **`src/data/test-data.js`**.
 
 ```js
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 // Available exports:
 //   TD.urls.* — canonical page URLs
 //   TD.urlPatterns.* — URL regex patterns for expect().toHaveURL()

@@ -362,11 +362,11 @@ const locators = {
 module.exports = locators;
 ```
 
-**Page object** (`src/pages/<name>.page.js`):
+**Page object** (`src/web/pages/<name>.page.js`):
 ```js
-// === FILE: src/pages/<name>.page.js ===
+// === FILE: src/web/pages/<name>.page.js ===
 const BasePage = require('./base.page');
-const loc = require('./locators/<name>.locators');
+const loc = require('../locators/<name>.locators');
 
 const URL = '<target-url-from-context>';
 
@@ -592,30 +592,30 @@ The agent behaviour does not change — only the context files and `.env` change
 ## TEST DIRECTORY STRUCTURE
 
 ```
-src/tests/
+src/web/tests/
   nav/        ← navigation/smoke specs (broadband, entertainment, membership)
   purchase/   ← purchase journey spec (mobile, broadband order flows)
 ```
 
 When creating a new spec, place it in the appropriate subdirectory. The `testDir`
-in `config/playwright.config.js` is `src/tests` — it discovers recursively, so no
+in `config/playwright.config.js` is `src/web/tests` — it discovers recursively, so no
 config change is needed when adding subdirectories.
 
-Page object require paths from `src/tests/nav/` or `src/tests/purchase/`:
+Page object require paths from `src/web/tests/nav/` or `src/web/tests/purchase/`:
 ```js
 const Page = require('../../pages/my-page.page');      // two levels up
-const TD   = require('../../data/test-data');           // test data module
-const { test, expect } = require('../../fixtures');    // extended fixture (optional)
+const TD   = require('../../../shared/data/test-data');  // test data module
+const { test, expect } = require('../../../shared/fixtures');  // extended fixture (optional)
 ```
 
 ---
 
 ## TEST DATA MODULE
 
-All hardcoded assertion strings must come from **`src/data/test-data.js`**.
+All hardcoded assertion strings must come from **`src/shared/data/test-data.js`**.
 
 ```js
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 // Available exports:
 //   TD.urls.* — canonical page URLs
 //   TD.urlPatterns.* — URL regex patterns for expect().toHaveURL()
@@ -625,27 +625,27 @@ const TD = require('../../data/test-data');
 //   TD.pageTitles.* — page title regex patterns
 ```
 
-Add new entries to `src/data/test-data.js` whenever a spec introduces new assertion
+Add new entries to `src/shared/data/test-data.js` whenever a spec introduces new assertion
 strings or URLs. Never hardcode assertion values directly in specs.
 
 ---
 
 ## EXTENDED FIXTURE (SELF-HEALING)
 
-`src/fixtures/index.js` exports an extended `test` that wraps Playwright's built-in
+`src/shared/fixtures/index.js` exports an extended `test` that wraps Playwright's built-in
 `page` fixture. On test failure, it writes the error context to
 `test-results/healing-queue.json` for offline AI batch repair.
 
 **For new specs, prefer importing from fixtures:**
 ```js
-const { test, expect } = require('../../fixtures');
+const { test, expect } = require('../../../shared/fixtures');
 ```
 This is a drop-in replacement for `@playwright/test` — no other code changes needed.
 Existing specs using `require('@playwright/test')` continue to work unchanged.
 
 **Batch AI repair after failures:**
 ```bash
-node src/helpers/self-healing.js --queue test-results/healing-queue.json
+node src/shared/helpers/self-healing.js --queue test-results/healing-queue.json
 ```
 
 ---

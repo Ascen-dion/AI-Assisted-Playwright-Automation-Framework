@@ -3,7 +3,7 @@
  * GolfGalaxyBasePage — shared foundation for all Golf Galaxy mobile page objects.
  * Receives Mobilewright `device` and `screen` from each subclass constructor.
  */
-const TD = require('../data/golfgalaxy-test-data');
+const TD = require('../../shared/data/golfgalaxy-test-data');
 
 class GolfGalaxyBasePage {
   /**

@@ -12,7 +12,7 @@ module.exports = defineConfig({
   // Global setup: dismisses cookie consent once and saves storage state
   globalSetup: require.resolve('./globalSetup.js'),
 
-  testDir: path.resolve(__dirname, '../src/tests'),  // Absolute path from config location
+  testDir: path.resolve(__dirname, '../src/web/tests'),  // Absolute path from config location
   
   // Maximum time one test can run.
   // CI runners (ubuntu-latest) connect to uniondigitalbank.io from US East;
@@ -51,9 +51,9 @@ module.exports = defineConfig({
     ['list'],
     // TestRail reporter — posts results automatically when TESTRAIL_* env vars are set
     // If credentials are missing, it silently skips (no-op)
-    [path.resolve(__dirname, '../src/integrations/testrail-reporter.js')],
+    [path.resolve(__dirname, '../src/shared/integrations/testrail-reporter.js')],
     // Logging reporter — writes structured logs to logs/ via Winston (no page object changes needed)
-    [path.resolve(__dirname, '../src/integrations/logging-reporter.js')]
+    [path.resolve(__dirname, '../src/shared/integrations/logging-reporter.js')]
   ],
 
   use: {

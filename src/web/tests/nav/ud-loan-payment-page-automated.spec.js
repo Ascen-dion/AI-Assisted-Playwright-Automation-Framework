@@ -14,9 +14,9 @@
  * TestRail: C211, C212
  */
 
-const { test, expect } = require('../../fixtures');
+const { test, expect } = require('../../../shared/fixtures');
 const UdLoansGuidePage = require('../../pages/ud-loans-guide.page');
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 
 test.describe('[UI] ED-77: Navigate to Loan Payment Page', { tag: [ '@regression'] }, () => {
   let guidePage;

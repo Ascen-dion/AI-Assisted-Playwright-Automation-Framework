@@ -9,7 +9,7 @@
  */
 
 const aiEngine = require('../core/ai-engine');
-const logger = require('../../utils/logger');
+const logger = require('../../../utils/logger');
 const PageInspector = require('../helpers/page-inspector');
 
 class PlaywrightMCPServer {

@@ -1,5 +1,5 @@
 const aiEngine = require('../core/ai-engine');
-const logger = require('../../utils/logger');
+const logger = require('../../../utils/logger');
 const sharp = require('sharp');
 
 /**

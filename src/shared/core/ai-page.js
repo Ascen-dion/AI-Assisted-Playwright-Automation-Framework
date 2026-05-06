@@ -1,6 +1,6 @@
 const ElementFinder = require('./element-finder');
 const aiEngine = require('./ai-engine');
-const logger = require('../../utils/logger');
+const logger = require('../../../utils/logger');
 
 /**
  * AI-enhanced Page wrapper for Playwright

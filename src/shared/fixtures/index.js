@@ -22,7 +22,7 @@ const { test: base, expect } = require('@playwright/test');
 const path = require('path');
 const fs = require('fs');
 
-const HEALING_QUEUE_PATH = path.resolve(__dirname, '../../test-results/healing-queue.json');
+const HEALING_QUEUE_PATH = path.resolve(__dirname, '../../../test-results/healing-queue.json');
 
 /**
  * Append a failed test's context to the healing queue.

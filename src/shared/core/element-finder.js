@@ -1,5 +1,5 @@
 const aiEngine = require('./ai-engine');
-const logger = require('../../utils/logger');
+const logger = require('../../../utils/logger');
 
 /**
  * Smart element finder with AI-powered fallback strategies

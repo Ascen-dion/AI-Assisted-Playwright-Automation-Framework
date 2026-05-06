@@ -1,7 +1,7 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
-const logger = require('../../utils/logger');
+require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
+const logger = require('../../../utils/logger');
 
 /**
  * AI Engine for intelligent automation decisions

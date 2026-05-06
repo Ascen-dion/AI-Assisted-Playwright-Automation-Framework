@@ -1,7 +1,7 @@
 const { test: base, expect } = require('@playwright/test');
 const AIPage = require('./ai-page');
 const aiEngine = require('./ai-engine');
-const logger = require('../../utils/logger');
+const logger = require('../../../utils/logger');
 
 /**
  * Extended Playwright test with AI capabilities

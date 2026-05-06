@@ -17,17 +17,17 @@
 - Spec subdirectory: `nav/` for navigation specs; `application/` for application journey specs
 
 ## Require Paths (from spec subdirectory)
-When writing specs in `src/tests/nav/` or `src/tests/purchase/`, require paths are two levels up:
+When writing specs in `src/web/tests/nav/` or `src/web/tests/purchase/`, require paths are:
 ```js
-const Page = require('../../pages/my-page.page');     // page object
-const TD   = require('../../data/test-data');          // test data module
-const { test, expect } = require('../../fixtures');   // extended fixture (preferred for new specs)
+const Page = require('../../pages/my-page.page');        // web page object (same depth)
+const TD   = require('../../../shared/data/test-data');   // test data module
+const { test, expect } = require('../../../shared/fixtures');  // extended fixture (preferred for new specs)
 ```
 
-## Test Data Module — `src/data/test-data.js`
+## Test Data Module — `src/shared/data/test-data.js`
 All hardcoded assertion values and URLs must come from the test data module. Never hardcode them in specs.
 ```js
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 // TD.urls.*            — canonical page URLs
 // TD.urlPatterns.*     — URL regex patterns for expect().toHaveURL()
 // TD.accounts.*        — savings/current account product details
@@ -35,7 +35,7 @@ const TD = require('../../data/test-data');
 // TD.loans.*           — loan product details
 // TD.pageTitles.*      — page title regex patterns
 ```
-Add new entries to `src/data/test-data.js` for any new assertion strings or URLs.
+Add new entries to `src/shared/data/test-data.js` for any new assertion strings or URLs.
 
 ## Locator File Structure
 ```js
@@ -47,7 +47,7 @@ module.exports = locators;
 
 ## Page Object Structure
 ```js
-const loc = require('./locators/<name>.locators');
+const loc = require('../locators/<name>.locators');  // locators in src/web/locators/
 const URL = '<target-url>';
 
 class <Name>Page {
@@ -61,10 +61,10 @@ module.exports = <Name>Page;
 
 ## Spec File Structure
 ```js
-const { test, expect } = require('../../fixtures');  // preferred — enables self-healing queue
+const { test, expect } = require('../../../shared/fixtures');  // preferred — enables self-healing queue
 // OR: const { test, expect } = require('@playwright/test'); // for existing specs
 const <Name>Page = require('../../pages/<name>.page');
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 
 // Tags:
 //   @smoke      — nav/visibility checks; fast; run on every push
@@ -92,7 +92,7 @@ test.describe('[UI] <Story Title>', { tag: ['@smoke', '@regression'] }, () => {
 - Always catch async errors with try/catch and re-throw for clear failure messages
 
 ## Reuse Before Creating
-- Check existing page objects in `src/pages/` and their locators before creating new helpers
+- Check existing page objects in `src/web/pages/` and their locators in `src/web/locators/` before creating new helpers
 - If a method already exists in a page object, call it — do not reimplement
 - Extend existing page objects rather than duplicating them
 

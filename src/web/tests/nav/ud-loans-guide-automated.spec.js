@@ -10,9 +10,9 @@
  * TestRail: C128
  */
 
-const { test, expect } = require('../../fixtures');
+const { test, expect } = require('../../../shared/fixtures');
 const UdLoansGuidePage = require('../../pages/ud-loans-guide.page');
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 
 test.describe('[UI] ED-74: Validate Expand Option on UD Loans Payment Guide', { tag: [ '@regression'] }, () => {
   let guidePage;

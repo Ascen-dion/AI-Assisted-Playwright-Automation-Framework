@@ -16,7 +16,7 @@
  */
 
 const BasePage = require('./base.page');
-const loc = require('./locators/ud-upay-payment.locators');
+const loc = require('../locators/ud-upay-payment.locators');
 
 const PAGE_URL = 'https://loans.uniondigitalbank.io/LoanPayment';
 const UPAY_FORM_URL = 'https://loans.uniondigitalbank.io/LoanPayment/UPay';

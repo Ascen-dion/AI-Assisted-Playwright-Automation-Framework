@@ -4,8 +4,8 @@
  * Extends GolfGalaxyBasePage for launch/terminate lifecycle.
  */
 const GolfGalaxyBasePage = require('./golfgalaxy-base.page');
-const locators = require('./locators/golfgalaxy-home.locators');
-const TD = require('../data/golfgalaxy-test-data');
+const locators = require('../locators/golfgalaxy-home.locators');
+const TD = require('../../shared/data/golfgalaxy-test-data');
 
 class GolfGalaxyHomePage extends GolfGalaxyBasePage {
   /**

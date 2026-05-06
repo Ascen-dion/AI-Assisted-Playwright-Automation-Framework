@@ -16,7 +16,7 @@
  * See documentation: https://github.com/microsoft/playwright-mcp
  */
 
-const logger = require('../../utils/logger');
+const logger = require('../../../utils/logger');
 
 class MicrosoftPlaywrightMCPClient {
   constructor() {

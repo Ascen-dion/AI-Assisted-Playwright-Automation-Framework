@@ -10,9 +10,9 @@
  * TestRail: C254
  */
 
-const { test, expect } = require('../../fixtures');
+const { test, expect } = require('../../../shared/fixtures');
 const UdUpayPaymentPage = require('../../pages/ud-upay-payment.page');
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 
 test.describe('[UI] ED-78: Initiate UPAY Payment', { tag: ['@smoke', '@regression'] }, () => {
   let paymentPage;

@@ -1,7 +1,7 @@
 // === FILE: src/tests/nav/ud-about-us-nav-automated.spec.js ===
-const { test, expect } = require('../../fixtures');
+const { test, expect } = require('../../../shared/fixtures');
 const UdAboutUsNavPage = require('../../pages/ud-about-us-nav.page');
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 
 test.describe('[UI] ED-80: About Us page navigation', { tag: ['@smoke', '@regression'] }, () => {
   let pageObj;

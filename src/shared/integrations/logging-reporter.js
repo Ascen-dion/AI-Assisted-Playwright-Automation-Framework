@@ -13,7 +13,7 @@
  */
 
 const path = require('path');
-const logger = require(path.resolve(__dirname, '../../utils/logger'));
+const logger = require(path.resolve(__dirname, '../../../utils/logger'));
 
 // Playwright step titles that are worth logging — covers clicks, navigation,
 // form input, visibility checks, URL/title assertions, and waitFor calls.

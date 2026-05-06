@@ -1,7 +1,7 @@
 // === FILE: src/tests/nav/ud-loan-payment-guides-nav-automated.spec.js ===
-const { test, expect } = require('../../fixtures');
+const { test, expect } = require('../../../shared/fixtures');
 const UdLoanPaymentGuidesNavPage = require('../../pages/ud-loan-payment-guides-nav.page');
-const TD = require('../../data/test-data');
+const TD = require('../../../shared/data/test-data');
 
 test.describe('[UI] AC1: Navigate to Loan Payment Guides Page', { tag: [ '@regression'] }, () => {
   let navPage;

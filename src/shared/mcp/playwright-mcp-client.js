@@ -5,7 +5,7 @@
  */
 
 const mcpServer = require('./playwright-mcp-server');
-const logger = require('../../utils/logger');
+const logger = require('../../../utils/logger');
 
 class PlaywrightMCPClient {
   constructor() {

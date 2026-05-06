@@ -8,7 +8,7 @@
  */
 
 const BasePage = require('./base.page');
-const loc = require('./locators/ud-loan-payment-guides-nav.locators');
+const loc = require('../locators/ud-loan-payment-guides-nav.locators');
 
 const HOMEPAGE_URL = 'https://uniondigitalbank.io/en';
 

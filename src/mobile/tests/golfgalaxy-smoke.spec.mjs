@@ -9,8 +9,8 @@
  * Run:  npx mobilewright test mobile/tests/golfgalaxy-smoke.spec.js
  */
 import { test, expect } from '@mobilewright/test';
-import GolfGalaxyHomePage from '../pages/golfgalaxy-home.page.js';
-import TD from '../data/golfgalaxy-test-data.js';
+import GolfGalaxyHomePage from '../screens/golfgalaxy-home.page.js';
+import TD from '../../shared/data/golfgalaxy-test-data.js';
 
 test.use({ platform: 'android', bundleId: TD.app.bundleId });
 

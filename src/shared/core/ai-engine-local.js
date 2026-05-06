@@ -1,8 +1,8 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const OpenAI = require('openai');
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
-const logger = require('../../utils/logger');
+require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') });
+const logger = require('../../../utils/logger');
 
 /**
  * Flexible AI Engine supporting multiple providers:

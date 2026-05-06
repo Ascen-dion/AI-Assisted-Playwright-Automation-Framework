@@ -20,7 +20,7 @@
  *   This file is consumed by testrail-reporter.js to post results after each test run.
  */
 
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../../.env') });
 const fs   = require('fs');
 const path = require('path');
 const { TestRailIntegration } = require('./testrail-integration');

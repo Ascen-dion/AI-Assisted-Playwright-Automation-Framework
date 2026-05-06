@@ -1,6 +1,6 @@
 // === FILE: src/pages/ud-about-us-nav.page.js ===
 const BasePage = require('./base.page');
-const loc = require('./locators/ud-about-us-nav.locators');
+const loc = require('../locators/ud-about-us-nav.locators');
 
 const URL = 'https://uniondigitalbank.io/en';
 const ABOUT_US_URL = 'https://uniondigitalbank.io/en/about-us';

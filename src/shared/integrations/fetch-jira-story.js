@@ -15,7 +15,7 @@
  *   JIRA_HOST, JIRA_EMAIL, JIRA_API_TOKEN
  */
 
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../../.env') });
 
 const { JiraIntegration } = require('./jira-integration');
 

@@ -14,7 +14,7 @@
  * Only runs when TESTRAIL_PROJECT_ID + TESTRAIL_SUITE_ID are set in the environment.
  */
 
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
+require('dotenv').config({ path: require('path').resolve(__dirname, '../../../.env') });
 const fs   = require('fs');
 const path = require('path');
 const { TestRailIntegration } = require('./testrail-integration');

@@ -23,7 +23,7 @@
 
 const customMCPClient = require('./playwright-mcp-client');
 const microsoftMCPClient = require('./microsoft-playwright-mcp-client');
-const logger = require('../../utils/logger');
+const logger = require('../../../utils/logger');
 
 class MCPManager {
   constructor() {
