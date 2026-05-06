@@ -12,7 +12,7 @@ export default defineConfig({
   outputDir: './test-results/artifacts',
   reporter: [
     ['list'],
-    ['html', { outputFolder: 'mobile/reports/html', open: 'never' }],
+    ['html', { outputFolder: 'src/mobile/reports/html', open: 'never' }],
     ['json', { outputFile: 'test-results/results.json' }],
     ['./src/shared/integrations/testrail-reporter.js']
   ],

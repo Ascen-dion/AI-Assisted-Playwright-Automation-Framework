@@ -77,21 +77,21 @@ jobs:
             adb install -r mobile/apk/GolfGalaxy.apk
             adb install -r mobile/apk/DSG.apk
             bash scripts/start-mobilecli.sh
-            npx mobilewright test mobile/tests/golfgalaxy-smoke.spec.mjs
+            npx mobilewright test src/mobile/tests/golfgalaxy-smoke.spec.mjs
 
       - name: Verify report output path
         if: always()
         run: |
-          echo "Checking mobile/reports/html"
-          ls -la mobile/reports || true
-          ls -la mobile/reports/html || true
+          echo "Checking src/mobile/reports/html"
+          ls -la src/mobile/reports || true
+          ls -la src/mobile/reports/html || true
 
       - name: Upload Mobile HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: mobilewright-report-${{ github.run_number }}
-          path: mobile/reports/html
+          path: src/mobile/reports/html
           retention-days: 30
 
       - name: Upload test-results artifacts
@@ -101,6 +101,19 @@ jobs:
           name: mobilewright-test-results-${{ github.run_number }}
           path: test-results/
           retention-days: 30
+
+      - name: Generate email report
+        if: always()
+        run: node scripts/generate-email.js
+        env:
+          REPORT_TITLE: MobileWright AI Framework
+          GITHUB_SERVER_URL: ${{ github.server_url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_SHA: ${{ github.sha }}
 
       - name: Send Email Notification
         if: always()

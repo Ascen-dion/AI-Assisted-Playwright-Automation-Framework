@@ -10,6 +10,7 @@ const fs   = require('fs');
 const path = require('path');
 
 const RUN_URL = `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+const REPORT_TITLE = process.env.REPORT_TITLE || 'Playwright AI Framework';
 const REPO    = process.env.GITHUB_REPOSITORY || '';
 const BRANCH  = process.env.GITHUB_REF_NAME  || '';
 const ACTOR   = process.env.GITHUB_ACTOR     || '';
@@ -132,7 +133,7 @@ const html = `<!DOCTYPE html>
       <tr>
         <td>
           <p style="margin:0 0 6px;font-size:11px;font-weight:600;letter-spacing:2px;color:${MUTED};text-transform:uppercase;">CI / CD Pipeline</p>
-          <h1 style="margin:0;font-size:26px;font-weight:700;color:${TEXT};line-height:1.2;">Playwright AI Framework</h1>
+          <h1 style="margin:0;font-size:26px;font-weight:700;color:${TEXT};line-height:1.2;">${REPORT_TITLE}</h1>
           <p style="margin:8px 0 0;font-size:13px;color:${TEXT_DIM};">
             Run&nbsp;<strong style="color:${TEXT};">#${RUN_NUM}</strong>
             &nbsp;&middot;&nbsp;${BRANCH}
@@ -240,7 +241,7 @@ const html = `<!DOCTYPE html>
   <!-- footer -->
   <tr><td style="background:#13161f;padding:16px 36px;border-top:1px solid ${BORDER};">
     <p style="margin:0;font-size:11px;color:${MUTED};">
-      Automated by <strong style="color:${TEXT_DIM};">Playwright AI Framework</strong>
+      Automated by <strong style="color:${TEXT_DIM};">${REPORT_TITLE}</strong>
       &nbsp;&middot;&nbsp; ${REPO}
     </p>
   </td></tr>
