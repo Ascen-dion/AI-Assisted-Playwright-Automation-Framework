@@ -1,4 +1,4 @@
-﻿# AI-Assisted Playwright Automation Framework
+﻿# AI-Assisted Test Automation Framework
 
 This repository is an AI-assisted Playwright automation framework that combines a browser UI, workflow API, agent-driven test planning and generation, self-healing, MCP support, and enterprise integrations.
 
