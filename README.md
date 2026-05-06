@@ -242,65 +242,60 @@ That makes the framework usable not only as a test runtime, but also as an agent
 
 ## 11. Mobile Automation
 
-The framework includes a native mobile automation layer powered by **MobileWright** (`mobilewright.config.js`) that lets you drive real Android apps using the same POM patterns as the web layer.
+The framework includes a native mobile automation layer powered by **MobileWright** (`mobilewright.config.mjs`) that lets you drive real Android apps using the same POM patterns as the web layer.
 
 ### Current mobile target
 
-- **App:** YouTube Android (`com.google.android.youtube`)
+- **App:** Golf Galaxy Android (`com.dcsg.golfgalaxy.qa`)
 - **Platform:** Android (emulator or physical device)
 
 ### Mobile directory layout
 
 ```text
-mobile/
-  tests/              Spec files (youtube-smoke.spec.js, debug-viewtree.spec.js)
-  pages/              Mobile POM page objects
-    youtube-home.page.js
-    youtube-search.page.js
-    youtube-player.page.js
-    youtube-base.page.js
+src/mobile/
+  tests/              Spec files (golfgalaxy-smoke.spec.mjs)
+  screens/            Mobile POM page objects
+    golfgalaxy-base.page.js
+    golfgalaxy-home.page.js
     locators/         Mobile locator files
-  data/
-    youtube-test-data.js   Centralised mobile test data (TD.*)
-  reports/html/       HTML report output
+      golfgalaxy-home.locators.js
+src/shared/data/
+  golfgalaxy-test-data.js   Centralised mobile test data (TD.*)
+src/mobile/reports/html/    HTML report output
 ```
 
 ### MobileWright configuration
 
-Defined in `mobilewright.config.js` at the repo root:
+Defined in `mobilewright.config.mjs` at the repo root:
 
 - `platform: 'android'`
-- `testDir: './mobile/tests'`
-- `retries: 1`
-- HTML report output to `mobile/reports/html/`
+- `testDir: './src/mobile/tests'`
+- `retries: 0`
+- HTML report output to `src/mobile/reports/html/`
 
 ### Prerequisites
 
 - Android emulator booted (or physical device connected via ADB)
-- `com.google.android.youtube` installed on the device
+- `com.dcsg.golfgalaxy.qa` installed on the device
 - MobileWright installed (`npm install`)
 
 ### Run mobile tests
 
 ```bash
 # All mobile tests
-npx mobilewright test mobile/tests/youtube-smoke.spec.js
+npx mobilewright test golfgalaxy-smoke.spec.mjs
 
 # Smoke only
-npx mobilewright test mobile/tests/youtube-smoke.spec.js --grep "@smoke"
-
-# Regression only
-npx mobilewright test mobile/tests/youtube-smoke.spec.js --grep "@regression"
+npx mobilewright test golfgalaxy-smoke.spec.mjs --grep "@smoke"
 ```
 
-### Mobile test coverage (YouTube)
+### Mobile test coverage (Golf Galaxy)
 
 | Tag | Area | What is tested |
 |---|---|---|
-| `@smoke` | Home Screen | App launches, home screen visible, bottom nav tabs present |
-| `@smoke` | Search | Search flow opens and returns results |
-| `@regression` | Player | Video playback, play/pause controls |
-| `@regression` | Navigation | Tab-to-tab navigation |
+| `@smoke` | Home Screen | App launches, Welcome text visible |
+| `@smoke` | Home Screen | Shop tab visible below Welcome text |
+| `@smoke` | Home Screen | Hot Deals tab visible below Welcome text |
 
 All assertion strings and timeouts are centralised in `mobile/data/youtube-test-data.js`. No values are hardcoded in spec files.
 
@@ -367,11 +362,11 @@ src/tests/nav/              Navigation smoke + regression specs (Homepage, Produ
 src/tests/application/      Application journey specs
 src/data/                   Centralised test data module (TD.*)
 src/fixtures/               Extended Playwright fixture with self-healing queue
-mobile/tests/               Mobile spec files (Android — YouTube smoke + regression)
-mobile/pages/               Mobile POM page objects and locator files
-mobile/data/                Mobile test data module (TD.*)
-mobile/reports/             Mobile HTML report output
-mobilewright.config.js      MobileWright configuration (platform, testDir, retries, reporter)
+src/mobile/tests/           Mobile spec files (Android — Golf Galaxy smoke)
+src/mobile/screens/         Mobile POM page objects and locator files
+src/shared/data/            Centralised test data (web + mobile, TD.*)
+src/mobile/reports/         Mobile HTML report output
+mobilewright.config.mjs     MobileWright configuration (platform, testDir, retries, reporter)
 context/                    Live project context files (application, framework, domain, prompt)
 docs/                       Architecture diagrams and brownfield context documentation
 scripts/                    Local setup, startup, and email generation scripts
