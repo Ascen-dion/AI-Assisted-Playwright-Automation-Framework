@@ -19,7 +19,7 @@ const fs   = require('fs');
 const path = require('path');
 const { TestRailIntegration } = require('./testrail-integration');
 
-const CASE_MAP_PATH = path.resolve(__dirname, 'testrail-case-map.json');
+const CASE_MAP_PATH = path.resolve(__dirname, '../traceability/testrail-case-map.json');
 
 class TestRailReporter {
   constructor() {

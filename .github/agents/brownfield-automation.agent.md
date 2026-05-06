@@ -153,7 +153,7 @@ All nav page objects share the same `goto()` landing URL: `https://www.starhub.c
 
 Before creating anything new, check whether test cases for this story already exist in two places:
 
-**A. Check `src/integrations/testrail-case-map.json`**
+**A. Check `src/shared/traceability/testrail-case-map.json`**
 
 If the file exists, read it and look for entries that match the story's AC titles or spec titles.
 
@@ -253,8 +253,8 @@ testrail/update_case(caseId: <id>, title: '...', customPreconditions: '...', ref
 ```
 
 After each `add_case` or `update_case` call, record the returned `case.id` — this is the `Cxxx` to
-embed in the spec title. Also update `src/integrations/testrail-case-map.json` and
-`src/integrations/testrail-test-cases.json` with the new entries so `testrail-reporter.js`
+embed in the spec title. Also update `src/shared/traceability/testrail-case-map.json` and
+`src/shared/traceability/testrail-test-cases.json` with the new entries so `testrail-reporter.js`
 can post results after test runs.
 
 **TestRail project config** (read from `.env` — do not ask the user):
@@ -485,7 +485,7 @@ Before writing any file, verify:
 - [ ] File names follow convention: `starhub-<feature-area>.spec.js` or `starhub-<feature-area>-api.spec.js` placed under `src/tests/nav/` or `src/tests/purchase/` as appropriate
 - [ ] Three separate file blocks each starting with `// === FILE: <relative-path> ===`
 - [ ] Every test title carries a `[Cxxx]` TestRail case ID (Phase 3.3)
-- [ ] `src/integrations/testrail-case-map.json` exists and contains all case IDs for this story
+- [ ] `src/shared/traceability/testrail-case-map.json` exists and contains all case IDs for this story
 
 ---
 

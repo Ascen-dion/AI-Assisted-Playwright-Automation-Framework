@@ -44,7 +44,7 @@ if (!PROJECT_ID || !SUITE_ID) {
 // To add a new story: append an entry to testrail-test-cases.json and re-run this script.
 // The `specTitle` value MUST match the exact string passed to test() in the spec.
 const TEST_CASES_RAW = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, 'testrail-test-cases.json'), 'utf8')
+  fs.readFileSync(path.resolve(__dirname, '../traceability/testrail-test-cases.json'), 'utf8')
 );
 
 // Map jiraRef from JSON; override with JIRA_REF env var if set for the current run
@@ -77,7 +77,7 @@ async function main() {
   }
 
   // Save the case map so the reporter can reference it
-  const mapPath = path.resolve(__dirname, 'testrail-case-map.json');
+  const mapPath = path.resolve(__dirname, '../traceability/testrail-case-map.json');
   fs.writeFileSync(
     mapPath,
     JSON.stringify({ sectionId: SECTION_ID, cases: caseMap }, null, 2),

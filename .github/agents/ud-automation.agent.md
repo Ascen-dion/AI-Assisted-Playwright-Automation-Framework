@@ -121,7 +121,7 @@ src/tests/              → existing spec files
 
 Before creating anything new, check whether test cases for this story already exist in two places:
 
-**A. Check `src/integrations/testrail-case-map.json`**
+**A. Check `src/shared/traceability/testrail-case-map.json`**
 
 If the file exists, read it and look for entries that match the story's AC titles or spec titles.
 
@@ -183,7 +183,7 @@ Do this for **every** AC in the story — one test case object per AC.
 
 **Only run this step for ACs that Phase 2.2 determined are NEW or need updating.**
 
-Append only the new/changed entries to `src/integrations/testrail-test-cases.json`, then run:
+Append only the new/changed entries to `src/shared/traceability/testrail-test-cases.json`, then run:
 
 ```bash
 node src/integrations/push-to-testrail.js
