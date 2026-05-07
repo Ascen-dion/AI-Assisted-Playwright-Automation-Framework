@@ -1,5 +1,5 @@
 {
-  "sectionId": 46,
+  "sectionId": 49,
   "cases": {
     "Test Case 1: Navigate to UD Loans Payment Guide page via Loan Payment Guides dropdown": 127,
     "Test Case 1: Verify '+' expand icon is visible on UD Loans Payment Guide accordion": 128,
@@ -14,6 +14,22 @@
     "Test Case 1: App launches and Welcome text is visible on top left": 993,
     "Test Case 2: Shop tab is visible below Welcome text": 994,
     "Test Case 3: Hot Deals tab is visible below Welcome text": 995,
-    "Test Case 4: Cart button is visible in the bottom navigation bar": 1115
+    "Test Case 4: Cart button is visible in the bottom navigation bar": 1115,
+    "Test Case 1: Verify login page loads with correct title and branding": 1188,
+    "Test Case 2: Verify successful login with valid credentials": 1189,
+    "Test Case 3: Verify login fails with invalid credentials": 1190,
+    "Test Case 4: Verify login fails with empty username and password": 1191,
+    "Test Case 5: Verify Forgot Password link is visible and navigates correctly": 1192,
+    "Test Case 6: Verify Dashboard page displays all widgets after login": 1193,
+    "Test Case 7: Verify sidebar navigation displays all menu items": 1194,
+    "Test Case 8: Verify navigation to Admin module via sidebar": 1195,
+    "Test Case 9: Verify navigation to PIM module via sidebar": 1196,
+    "Test Case 10: Verify navigation to Leave module via sidebar": 1197,
+    "Test Case 11: Verify navigation to Recruitment module via sidebar": 1198,
+    "Test Case 12: Verify navigation to My Info page via sidebar": 1199,
+    "Test Case 13: Verify navigation to Directory module via sidebar": 1200,
+    "Test Case 14: Verify navigation to Buzz module via sidebar": 1201,
+    "Test Case 15: Verify user can logout successfully": 1202,
+    "Test Case 16: Verify sidebar search functionality filters menu items": 1203
   }
 }

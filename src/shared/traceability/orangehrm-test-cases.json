@@ -1,0 +1,130 @@
+[
+  {
+    "specTitle": "Test Case 1: Verify login page loads with correct title and branding",
+    "title": "OrangeHRM Login - AC1: Verify login page loads with correct title and branding",
+    "preconditions": "User navigates to https://opensource-demo.orangehrmlive.com/",
+    "steps": "1. Navigate to https://opensource-demo.orangehrmlive.com/\n2. Verify the page title is 'OrangeHRM'\n3. Verify the OrangeHRM logo is visible\n4. Verify the 'Login' heading is displayed\n5. Verify the Username and Password fields are visible",
+    "expected": "Login page loads with correct title 'OrangeHRM', logo is visible, 'Login' heading is displayed, and Username/Password fields are present",
+    "jiraRef": "OHRM-LOGIN"
+  },
+  {
+    "specTitle": "Test Case 2: Verify successful login with valid credentials",
+    "title": "OrangeHRM Login - AC2: Verify successful login with valid Admin credentials",
+    "preconditions": "User is on the OrangeHRM login page (https://opensource-demo.orangehrmlive.com/web/index.php/auth/login)",
+    "steps": "1. Navigate to https://opensource-demo.orangehrmlive.com/\n2. Enter 'Admin' in the Username field\n3. Enter 'admin123' in the Password field\n4. Click the 'Login' button\n5. Verify the URL changes to /web/index.php/dashboard/index\n6. Verify the 'Dashboard' heading is displayed",
+    "expected": "User is redirected to the Dashboard page at /web/index.php/dashboard/index and the 'Dashboard' heading is visible",
+    "jiraRef": "OHRM-LOGIN"
+  },
+  {
+    "specTitle": "Test Case 3: Verify login fails with invalid credentials",
+    "title": "OrangeHRM Login - AC3: Verify login fails with invalid credentials and shows error",
+    "preconditions": "User is on the OrangeHRM login page",
+    "steps": "1. Navigate to https://opensource-demo.orangehrmlive.com/\n2. Enter 'InvalidUser' in the Username field\n3. Enter 'wrongpassword' in the Password field\n4. Click the 'Login' button\n5. Verify the error message 'Invalid credentials' is displayed\n6. Verify the user remains on the login page",
+    "expected": "'Invalid credentials' error message is displayed and the user remains on the login page",
+    "jiraRef": "OHRM-LOGIN"
+  },
+  {
+    "specTitle": "Test Case 4: Verify login fails with empty username and password",
+    "title": "OrangeHRM Login - AC4: Verify login validation for empty credentials",
+    "preconditions": "User is on the OrangeHRM login page",
+    "steps": "1. Navigate to https://opensource-demo.orangehrmlive.com/\n2. Leave the Username field empty\n3. Leave the Password field empty\n4. Click the 'Login' button\n5. Verify 'Required' validation message is displayed for both fields",
+    "expected": "'Required' validation message is displayed under both Username and Password fields",
+    "jiraRef": "OHRM-LOGIN"
+  },
+  {
+    "specTitle": "Test Case 5: Verify Forgot Password link is visible and navigates correctly",
+    "title": "OrangeHRM Login - AC5: Verify Forgot Password link navigates to Reset Password page",
+    "preconditions": "User is on the OrangeHRM login page",
+    "steps": "1. Navigate to https://opensource-demo.orangehrmlive.com/\n2. Verify 'Forgot your password?' link is visible on the login page\n3. Click the 'Forgot your password?' link\n4. Verify the URL changes to /web/index.php/auth/requestPasswordResetCode\n5. Verify 'Reset Password' heading is displayed",
+    "expected": "User is navigated to the Reset Password page with the heading 'Reset Password'",
+    "jiraRef": "OHRM-LOGIN"
+  },
+  {
+    "specTitle": "Test Case 6: Verify Dashboard page displays all widgets after login",
+    "title": "OrangeHRM Dashboard - AC1: Verify Dashboard displays all expected widgets",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials (Admin/admin123)\n2. Verify 'Time at Work' widget is visible\n3. Verify 'My Actions' widget is visible\n4. Verify 'Quick Launch' widget is visible\n5. Verify 'Buzz Latest Posts' widget is visible\n6. Verify 'Employees on Leave Today' widget is visible\n7. Verify 'Employee Distribution by Sub Unit' widget is visible\n8. Verify 'Employee Distribution by Location' widget is visible",
+    "expected": "All seven dashboard widgets are visible: Time at Work, My Actions, Quick Launch, Buzz Latest Posts, Employees on Leave Today, Employee Distribution by Sub Unit, Employee Distribution by Location",
+    "jiraRef": "OHRM-DASH"
+  },
+  {
+    "specTitle": "Test Case 7: Verify sidebar navigation displays all menu items",
+    "title": "OrangeHRM Sidebar - AC1: Verify sidebar displays all 12 navigation menu items",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials\n2. Verify the sidebar navigation is visible\n3. Verify 'Admin' menu item is visible\n4. Verify 'PIM' menu item is visible\n5. Verify 'Leave' menu item is visible\n6. Verify 'Time' menu item is visible\n7. Verify 'Recruitment' menu item is visible\n8. Verify 'My Info' menu item is visible\n9. Verify 'Performance' menu item is visible\n10. Verify 'Dashboard' menu item is visible\n11. Verify 'Directory' menu item is visible\n12. Verify 'Maintenance' menu item is visible\n13. Verify 'Claim' menu item is visible\n14. Verify 'Buzz' menu item is visible",
+    "expected": "All 12 sidebar navigation menu items are visible: Admin, PIM, Leave, Time, Recruitment, My Info, Performance, Dashboard, Directory, Maintenance, Claim, Buzz",
+    "jiraRef": "OHRM-NAV"
+  },
+  {
+    "specTitle": "Test Case 8: Verify navigation to Admin module via sidebar",
+    "title": "OrangeHRM Sidebar - AC2: Navigate to Admin module and verify page loads",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials\n2. Click 'Admin' link in the sidebar navigation\n3. Verify the URL contains /web/index.php/admin/viewAdminModule\n4. Verify the 'Admin' page heading or User Management content is displayed",
+    "expected": "User is navigated to the Admin module page and the URL contains /admin/viewAdminModule",
+    "jiraRef": "OHRM-NAV"
+  },
+  {
+    "specTitle": "Test Case 9: Verify navigation to PIM module via sidebar",
+    "title": "OrangeHRM Sidebar - AC3: Navigate to PIM module and verify page loads",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials\n2. Click 'PIM' link in the sidebar navigation\n3. Verify the URL contains /web/index.php/pim/viewPimModule\n4. Verify the PIM Employee List content is displayed",
+    "expected": "User is navigated to the PIM module page and the URL contains /pim/viewPimModule",
+    "jiraRef": "OHRM-NAV"
+  },
+  {
+    "specTitle": "Test Case 10: Verify navigation to Leave module via sidebar",
+    "title": "OrangeHRM Sidebar - AC4: Navigate to Leave module and verify page loads",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials\n2. Click 'Leave' link in the sidebar navigation\n3. Verify the URL contains /web/index.php/leave/viewLeaveModule\n4. Verify the Leave List content is displayed",
+    "expected": "User is navigated to the Leave module page and the URL contains /leave/viewLeaveModule",
+    "jiraRef": "OHRM-NAV"
+  },
+  {
+    "specTitle": "Test Case 11: Verify navigation to Recruitment module via sidebar",
+    "title": "OrangeHRM Sidebar - AC5: Navigate to Recruitment module and verify page loads",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials\n2. Click 'Recruitment' link in the sidebar navigation\n3. Verify the URL contains /web/index.php/recruitment/viewRecruitmentModule\n4. Verify the Recruitment Candidates content is displayed",
+    "expected": "User is navigated to the Recruitment module page and the URL contains /recruitment/viewRecruitmentModule",
+    "jiraRef": "OHRM-NAV"
+  },
+  {
+    "specTitle": "Test Case 12: Verify navigation to My Info page via sidebar",
+    "title": "OrangeHRM Sidebar - AC6: Navigate to My Info page and verify page loads",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials\n2. Click 'My Info' link in the sidebar navigation\n3. Verify the URL contains /web/index.php/pim/viewMyDetails\n4. Verify the Personal Details form is displayed",
+    "expected": "User is navigated to the My Info page and the URL contains /pim/viewMyDetails",
+    "jiraRef": "OHRM-NAV"
+  },
+  {
+    "specTitle": "Test Case 13: Verify navigation to Directory module via sidebar",
+    "title": "OrangeHRM Sidebar - AC7: Navigate to Directory module and verify page loads",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials\n2. Click 'Directory' link in the sidebar navigation\n3. Verify the URL contains /web/index.php/directory/viewDirectory\n4. Verify the Directory search form is displayed",
+    "expected": "User is navigated to the Directory module page and the URL contains /directory/viewDirectory",
+    "jiraRef": "OHRM-NAV"
+  },
+  {
+    "specTitle": "Test Case 14: Verify navigation to Buzz module via sidebar",
+    "title": "OrangeHRM Sidebar - AC8: Navigate to Buzz module and verify page loads",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials\n2. Click 'Buzz' link in the sidebar navigation\n3. Verify the URL contains /web/index.php/buzz/viewBuzz\n4. Verify the Buzz social feed content is displayed",
+    "expected": "User is navigated to the Buzz module page and the URL contains /buzz/viewBuzz",
+    "jiraRef": "OHRM-NAV"
+  },
+  {
+    "specTitle": "Test Case 15: Verify user can logout successfully",
+    "title": "OrangeHRM Logout - AC1: Verify user can logout and is redirected to login page",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials\n2. Click on the user profile dropdown in the top-right corner\n3. Click 'Logout' option from the dropdown menu\n4. Verify the URL changes to /web/index.php/auth/login\n5. Verify the login page is displayed with Username and Password fields",
+    "expected": "User is logged out and redirected to the login page at /web/index.php/auth/login",
+    "jiraRef": "OHRM-AUTH"
+  },
+  {
+    "specTitle": "Test Case 16: Verify sidebar search functionality filters menu items",
+    "title": "OrangeHRM Sidebar - AC9: Verify sidebar search filters navigation items",
+    "preconditions": "User is logged in as Admin and on the Dashboard page",
+    "steps": "1. Login with valid credentials\n2. Click on the Search textbox in the sidebar\n3. Type 'Admin' in the search field\n4. Verify only the 'Admin' menu item is visible in the filtered results\n5. Clear the search field\n6. Verify all menu items are visible again",
+    "expected": "Sidebar search filters menu items correctly — typing 'Admin' shows only the Admin menu item, clearing restores all items",
+    "jiraRef": "OHRM-NAV"
+  }
+]
