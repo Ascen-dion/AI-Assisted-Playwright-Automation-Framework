@@ -10,7 +10,8 @@
     "test:debug": "playwright test --debug",
     "report": "playwright show-report",
     "install:browsers": "playwright install",
-    "jira:fetch": "node src/shared/integrations/fetch-jira-story.js"
+    "jira:fetch": "node src/shared/integrations/fetch-jira-story.js",
+    "tiis:analyze": "node tiis/run-impact-analysis.js"
   },
   "keywords": [
     "playwright",
