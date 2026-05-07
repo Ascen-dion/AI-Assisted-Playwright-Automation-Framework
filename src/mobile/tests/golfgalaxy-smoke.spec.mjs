@@ -52,6 +52,14 @@ test.describe('[Mobile][Smoke] Golf Galaxy Android App', () => {
         .toBeVisible({ timeout: TD.timeouts.screenTransition });
     });
 
+    test('[C1115] @smoke Test Case 4: Cart button is visible in the bottom navigation bar', async ({ device, screen }) => {
+      const homePage = new GolfGalaxyHomePage(device, screen);
+      await homePage.goto();
+
+      await expect(homePage.bottomNavCart())
+        .toBeVisible({ timeout: TD.timeouts.screenTransition });
+    });
+
   });
 
 });

@@ -69,3 +69,7 @@ out/
 *.heapsnapshot
 .playwright-cli/
 .playwright-mcp/
+docs/ignored_docs/TIIS-Test-Impact-Intelligence-System.html
+.gitignore
+scripts/build_deck.py
+.gitignore

@@ -13,6 +13,7 @@
     "Test Case 2: Verify About Us page displays hero heading": 362,
     "Test Case 1: App launches and Welcome text is visible on top left": 993,
     "Test Case 2: Shop tab is visible below Welcome text": 994,
-    "Test Case 3: Hot Deals tab is visible below Welcome text": 995
+    "Test Case 3: Hot Deals tab is visible below Welcome text": 995,
+    "Test Case 4: Cart button is visible in the bottom navigation bar": 1115
   }
 }

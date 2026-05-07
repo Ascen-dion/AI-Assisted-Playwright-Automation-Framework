@@ -102,5 +102,13 @@
     "steps": "1. Launch com.dcsg.golfgalaxy.qa\n2. Wait for the home screen to render\n3. Observe the tab bar area directly below the toolbar",
     "expected": "'Hot Deals' tab (RadioButton) is visible in the tab bar below the Welcome heading",
     "jiraRef": "ED-82"
+  },
+  {
+    "specTitle": "Test Case 4: Cart button is visible in the bottom navigation bar",
+    "title": "ED-83 AC1: Verify Cart button is visible in the bottom navigation bar after app launch",
+    "preconditions": "Android emulator is booted and com.dcsg.golfgalaxy.qa is installed",
+    "steps": "1. Terminate any existing Golf Galaxy session\n2. Launch com.dcsg.golfgalaxy.qa\n3. Wait for the home screen to fully render\n4. Observe the bottom navigation bar",
+    "expected": "Cart button (content-desc: 'Cart', resource-id: navigation_cart) is visible in the bottom navigation bar",
+    "jiraRef": "ED-83"
   }
 ]
