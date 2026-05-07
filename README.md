@@ -1,6 +1,6 @@
 ﻿# AI-Assisted Test Automation Framework
 
-This repository is an AI-assisted Playwright automation framework that combines a browser UI, workflow API, agent-driven test planning and generation, self-healing, MCP support, and enterprise integrations.
+This repository is an AI-assisted  automation framework that combines a browser UI, workflow API, agent-driven test planning and generation, self-healing, MCP support, and enterprise integrations.
 
 The current branch is focused on a brownfield e-commerce implementation, but the framework itself is designed to be reused for other applications, environments, and delivery pipelines.
 
