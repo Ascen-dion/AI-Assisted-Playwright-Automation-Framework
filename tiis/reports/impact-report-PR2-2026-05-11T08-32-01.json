@@ -1,0 +1,54 @@
+{
+  "reportVersion": "1.0",
+  "generatedAt": "2026-05-11T08:32:01.359Z",
+  "metadata": {
+    "project": "aava-ecom-demo",
+    "appUrl": "https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net",
+    "pr": {
+      "number": 2,
+      "title": "Navbar updated",
+      "author": "Kiruthika1505",
+      "branch": "testX → main"
+    },
+    "changeType": "feature",
+    "riskLevel": "low",
+    "overallRisk": "low",
+    "stats": {
+      "filesChanged": 1,
+      "testFilesFound": 80,
+      "coveredFeatures": 6,
+      "gapFeatures": 0
+    }
+  },
+  "executiveSummary": "The recent pull request introduces a new Profile link to the navigation bar, which is a low-risk feature change. We recommend running regression tests on the Navigation feature to ensure the new link functions correctly without affecting existing functionality.",
+  "overallRisk": "low",
+  "impactedAreas": {
+    "critical": [],
+    "high": [
+      {
+        "feature": "Navigation",
+        "reason": "New Profile link added, needs verification of functionality",
+        "tests": [
+          "src/web/tests/navigation.spec.js"
+        ]
+      }
+    ],
+    "medium": [],
+    "low": []
+  },
+  "coverageGaps": [],
+  "recommendedRegressionSuite": {
+    "testFiles": [
+      "src/web/tests/navigation.spec.js"
+    ],
+    "estimatedCoverage": "~100% of impacted area",
+    "runCommand": "npx playwright test src/web/tests/navigation.spec.js"
+  },
+  "safeToSkip": [
+    "Homepage — no changes made",
+    "Products — no changes made",
+    "Cart — no changes made",
+    "API — no changes made",
+    "Error Handling — no changes made"
+  ]
+}

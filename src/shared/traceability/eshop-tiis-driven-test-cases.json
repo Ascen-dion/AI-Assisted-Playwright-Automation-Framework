@@ -1,0 +1,179 @@
+[
+  {
+    "specTitle": "Profile Link in Navbar",
+    "title": "Test Case 51: Verify Profile link is visible in the navigation bar",
+    "preconditions": "Browser is open and the E-Shop homepage is loaded",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/",
+      "Inspect the navigation bar"
+    ],
+    "expected": "A 'Profile' link is visible in the navigation bar alongside Home, Products, and Cart links",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Profile Link in Navbar",
+    "title": "Test Case 52: Verify Profile link displays correct label text",
+    "preconditions": "Browser is open and the E-Shop homepage is loaded",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/",
+      "Locate the Profile link in the navigation bar",
+      "Read the link label text"
+    ],
+    "expected": "The link label reads exactly 'Profile'",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Profile Link in Navbar",
+    "title": "Test Case 53: Verify Profile link navigates to the profile page on click",
+    "preconditions": "Browser is open and the E-Shop homepage is loaded",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/",
+      "Click the Profile link in the navigation bar",
+      "Observe the resulting URL and page content"
+    ],
+    "expected": "The browser navigates to the profile page (e.g. /profile) without errors",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Profile Link in Navbar",
+    "title": "Test Case 54: Verify Profile link is accessible from the Products page",
+    "preconditions": "Browser is open on the Products page",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products",
+      "Inspect the navigation bar",
+      "Verify the Profile link is present"
+    ],
+    "expected": "Profile link is visible in the navbar on the Products page",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Profile Link in Navbar",
+    "title": "Test Case 55: Verify Profile link is accessible from the Cart page",
+    "preconditions": "Browser is open on the Cart page",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart",
+      "Inspect the navigation bar",
+      "Verify the Profile link is present"
+    ],
+    "expected": "Profile link is visible in the navbar on the Cart page",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Profile Link in Navbar",
+    "title": "Test Case 56: Verify Profile link has active styling when on the profile page",
+    "preconditions": "Browser has navigated to the profile page",
+    "steps": [
+      "Navigate to the profile page",
+      "Inspect the Profile link in the navbar",
+      "Check CSS class or styling of the Profile nav link"
+    ],
+    "expected": "Profile link has active/highlighted styling distinguishing it from inactive links",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Profile Link in Navbar",
+    "title": "Test Case 57: Verify navbar displays all five links when Profile is added",
+    "preconditions": "Browser is open and the E-Shop homepage is loaded",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/",
+      "Count all links in the navigation bar"
+    ],
+    "expected": "Navigation bar contains exactly five elements: E-Shop logo, Home, Products, Cart, and Profile",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Homepage Additional",
+    "title": "Test Case 58: Verify Free Shipping threshold text 'On orders over $50' is visible",
+    "preconditions": "Browser is open and the E-Shop homepage is loaded",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/",
+      "Locate the Free Shipping feature card",
+      "Read the description text"
+    ],
+    "expected": "Description text reads 'On orders over $50'",
+    "jiraRef": "ESHOP-UI"
+  },
+  {
+    "specTitle": "Homepage Additional",
+    "title": "Test Case 59: Verify Secure Payment description reads '100% secure transactions'",
+    "preconditions": "Browser is open and the E-Shop homepage is loaded",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/",
+      "Locate the Secure Payment feature card",
+      "Read the description text"
+    ],
+    "expected": "Description text reads '100% secure transactions'",
+    "jiraRef": "ESHOP-UI"
+  },
+  {
+    "specTitle": "Homepage Additional",
+    "title": "Test Case 60: Verify Easy Returns description reads '30-day return policy'",
+    "preconditions": "Browser is open and the E-Shop homepage is loaded",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/",
+      "Locate the Easy Returns feature card",
+      "Read the description text"
+    ],
+    "expected": "Description text reads '30-day return policy'",
+    "jiraRef": "ESHOP-UI"
+  },
+  {
+    "specTitle": "Homepage Additional",
+    "title": "Test Case 61: Verify Shop Now button href points to the /products route",
+    "preconditions": "Browser is open and the E-Shop homepage is loaded",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/",
+      "Inspect the href attribute of the Shop Now button"
+    ],
+    "expected": "The Shop Now button href is '/products' or the full products URL",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Products Page — Error State",
+    "title": "Test Case 62: Verify Products page search input is visible when backend is unavailable",
+    "preconditions": "Browser is open on the Products page with backend returning an error",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products",
+      "Observe the page while the backend returns an error",
+      "Check if the search input is rendered"
+    ],
+    "expected": "The search input field is visible on the Products page even when backend is unavailable",
+    "jiraRef": "ESHOP-PRODUCTS"
+  },
+  {
+    "specTitle": "Products Page — Error State",
+    "title": "Test Case 63: Verify error message text on Products page references the backend server",
+    "preconditions": "Backend server is unavailable",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products",
+      "Read the error message text displayed on the page"
+    ],
+    "expected": "Error message reads 'Failed to load products. Please make sure the backend server is running.'",
+    "jiraRef": "ESHOP-PRODUCTS"
+  },
+  {
+    "specTitle": "Navigation — Cross-Page",
+    "title": "Test Case 64: Verify E-Shop logo is visible on all three main pages",
+    "preconditions": "Browser is open",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/",
+      "Verify E-Shop logo is visible in the navbar",
+      "Navigate to /products and verify logo is visible",
+      "Navigate to /cart and verify logo is visible"
+    ],
+    "expected": "E-Shop logo appears in the navbar on the Homepage, Products, and Cart pages",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Navigation — Cross-Page",
+    "title": "Test Case 65: Verify cart count badge displays in format '(N)' in navbar",
+    "preconditions": "Browser is open and cart is empty",
+    "steps": [
+      "Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/",
+      "Locate the Cart link in the navigation bar",
+      "Read the cart count badge text"
+    ],
+    "expected": "Cart link displays count in parentheses format, e.g. 'Cart (0)' when cart is empty",
+    "jiraRef": "ESHOP-CART"
+  }
+]

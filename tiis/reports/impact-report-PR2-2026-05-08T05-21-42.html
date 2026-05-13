@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>TIIS Impact Report — PR #2</title>
+  <style>
+    body{font-family:Calibri,Arial,sans-serif;margin:32px 48px;color:#222;line-height:1.6;}
+    h1{color:#1a3c6e;border-bottom:3px solid #1a3c6e;padding-bottom:6px;}
+    h2{color:#1a3c6e;margin-top:36px;border-bottom:1px solid #c0c8d8;padding-bottom:3px;}
+    .risk-badge{display:inline-block;padding:4px 14px;border-radius:14px;font-weight:bold;
+      font-size:14px;color:#fff;background:#c0392b;}
+    table{border-collapse:collapse;width:100%;margin:12px 0;}
+    th{background:#1a3c6e;color:#fff;padding:9px 14px;text-align:left;}
+    td{border:1px solid #c0c8d8;padding:8px 14px;vertical-align:top;}
+    tr:nth-child(even) td{background:#f4f7fd;}
+    ul{margin:6px 0 6px 20px;}
+    code{background:#f0f4fb;padding:2px 6px;border-radius:3px;font-size:13px;}
+    pre{background:#f0f4fb;padding:14px;border-radius:4px;overflow-x:auto;font-size:13px;}
+    .section{background:#fafbff;border:1px solid #dde4f0;border-radius:6px;padding:16px 20px;margin:14px 0;}
+    .gap{background:#fff5f5;border-left:4px solid #c0392b;padding:10px 14px;margin:8px 0;border-radius:3px;}
+    footer{color:#aaa;font-size:12px;margin-top:48px;text-align:center;}
+  </style>
+</head>
+<body>
+<h1>Test Impact Report</h1>
+<p><strong>Project:</strong> AI-Assisted-Test-Automation-Framework &nbsp;|&nbsp;
+   <strong>PR:</strong> #2 — Capital one demo &nbsp;|&nbsp;
+   <strong>Author:</strong> RRC555<br/>
+   <strong>Branch:</strong> capital_one_demo → capital_one_poc &nbsp;|&nbsp;
+   <strong>Change Type:</strong> feature &nbsp;|&nbsp;
+   <strong>Generated:</strong> 5/8/2026, 10:51:42 AM<br/>
+   <strong>App:</strong> <a href="https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net">https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net</a>
+</p>
+<p>Overall Risk: <span class="risk-badge">CRITICAL</span></p>
+
+<div class="section">
+  <strong>Executive Summary</strong><br/>
+  The recent pull request introduces a high-risk feature that enhances our automation capabilities with an Adaptive Planning Automation Agent. Given the significant changes across multiple components, thorough testing is essential to ensure stability and functionality before merging.
+</div>
+
+<h2>Impacted Areas</h2>
+<table>
+  <tr><th>Priority</th><th>Feature</th><th>Reason</th><th>Test Files</th></tr>
+  <tr style="background:#fde8e8">
+      <td>🔴 Critical</td>
+      <td><strong>Agent Configuration</strong></td>
+      <td>No tests exist, high risk of failure</td>
+      <td><em>No tests</em></td>
+    </tr><tr style="background:#fde8e8">
+      <td>🔴 Critical</td>
+      <td><strong>Playwright Config</strong></td>
+      <td>No tests exist, high risk of failure</td>
+      <td><em>No tests</em></td>
+    </tr><tr style="background:#fef0e6">
+      <td>🟠 High</td>
+      <td><strong>Web Page Objects</strong></td>
+      <td>Only partially covered, needs verification</td>
+      <td><code>src/web/tests/nav/ud-upay-payment-fields-automated.spec.js</code></td>
+    </tr><tr style="background:#fef0e6">
+      <td>🟠 High</td>
+      <td><strong>Web Test Specs</strong></td>
+      <td>No tests exist, high risk of failure</td>
+      <td><em>No tests</em></td>
+    </tr><tr style="background:#fefbe6">
+      <td>🟡 Medium</td>
+      <td><strong>TestRail Integration</strong></td>
+      <td>No tests exist, should be included in next cycle</td>
+      <td><em>No tests</em></td>
+    </tr><tr style="background:#fefbe6">
+      <td>🟡 Medium</td>
+      <td><strong>Reporting</strong></td>
+      <td>No tests exist, should be included in next cycle</td>
+      <td><em>No tests</em></td>
+    </tr><tr style="background:#edfbee">
+      <td>🟢 Low</td>
+      <td><strong>AI Engine</strong></td>
+      <td>Indirectly impacted, monitor but not blocking</td>
+      <td><em>No tests</em></td>
+    </tr><tr style="background:#edfbee">
+      <td>🟢 Low</td>
+      <td><strong>Self-Healing</strong></td>
+      <td>Indirectly impacted, monitor but not blocking</td>
+      <td><em>No tests</em></td>
+    </tr>
+</table>
+
+<h2>⚠️ Coverage Gaps</h2>
+<div class="gap"><strong>Agent Configuration</strong>: No tests exist to validate configuration changes<br/>
+       <em>→ Create tests to validate agent configuration settings and behaviors.</em></div><div class="gap"><strong>Playwright Config</strong>: No tests exist to validate Playwright configurations<br/>
+       <em>→ Create tests to ensure Playwright configurations are correctly applied.</em></div><div class="gap"><strong>Web Locators</strong>: No tests exist to validate web locators functionality<br/>
+       <em>→ Create tests to verify the accuracy and functionality of web locators.</em></div><div class="gap"><strong>Test Data</strong>: No tests exist to validate test data integrity<br/>
+       <em>→ Create tests to ensure test data is correctly formatted and accessible.</em></div><div class="gap"><strong>Context Files</strong>: No tests exist to validate context file integration<br/>
+       <em>→ Create tests to ensure context files are loaded and utilized correctly.</em></div><div class="gap"><strong>Scripts</strong>: No tests exist to validate script execution<br/>
+       <em>→ Create tests to ensure scripts run as expected without errors.</em></div>
+
+<h2>Recommended Regression Suite</h2>
+<ul>
+  <li><code>src/web/tests/nav/ud-upay-payment-fields-automated.spec.js</code></li>
+</ul>
+<pre>npx playwright test src/web/tests/nav/ud-upay-payment-fields-automated.spec.js</pre>
+
+<h2>Safe to Skip</h2>
+<ul>
+  <li>Jira Integration — unaffected by the changes in this PR.</li><li>Package Config — unaffected by the changes in this PR.</li><li>TIIS Agents — unaffected by the changes in this PR.</li>
+</ul>
+
+<footer>Generated by Test Impact Intelligence System (TIIS) &nbsp;|&nbsp; 2026-05-08T05:21:42.092Z</footer>
+</body>
+</html>

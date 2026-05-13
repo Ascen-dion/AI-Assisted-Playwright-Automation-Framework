@@ -1,0 +1,282 @@
+[
+  {
+    "specTitle": "Test Case 16: Verify homepage tagline text is visible",
+    "title": "ESHOP-AC16: Verify 'Discover amazing products at great prices' tagline is displayed on homepage",
+    "preconditions": "User is on the E-Shop homepage (https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/)",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/\n2. Observe the text below the 'Welcome to E-Shop' heading",
+    "expected": "The paragraph text 'Discover amazing products at great prices' is visible below the hero heading",
+    "jiraRef": "ESHOP-UI"
+  },
+  {
+    "specTitle": "Test Case 17: Verify Free Shipping card description text",
+    "title": "ESHOP-AC17: Verify 'Free Shipping' feature card displays 'On orders over $50' description",
+    "preconditions": "User is on the E-Shop homepage",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/\n2. Locate the 'Free Shipping' feature card in the features section\n3. Observe the description text beneath the heading",
+    "expected": "The 'Free Shipping' card description reads 'On orders over $50' and is visible",
+    "jiraRef": "ESHOP-UI"
+  },
+  {
+    "specTitle": "Test Case 18: Verify Secure Payment card description text",
+    "title": "ESHOP-AC18: Verify 'Secure Payment' feature card displays '100% secure transactions' description",
+    "preconditions": "User is on the E-Shop homepage",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/\n2. Locate the 'Secure Payment' feature card in the features section\n3. Observe the description text beneath the heading",
+    "expected": "The 'Secure Payment' card description reads '100% secure transactions' and is visible",
+    "jiraRef": "ESHOP-UI"
+  },
+  {
+    "specTitle": "Test Case 19: Verify Easy Returns card description text",
+    "title": "ESHOP-AC19: Verify 'Easy Returns' feature card displays '30-day return policy' description",
+    "preconditions": "User is on the E-Shop homepage",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/\n2. Locate the 'Easy Returns' feature card in the features section\n3. Observe the description text beneath the heading",
+    "expected": "The 'Easy Returns' card description reads '30-day return policy' and is visible",
+    "jiraRef": "ESHOP-UI"
+  },
+  {
+    "specTitle": "Test Case 20: Verify Quality Products card description text",
+    "title": "ESHOP-AC20: Verify 'Quality Products' feature card displays 'Carefully curated selection' description",
+    "preconditions": "User is on the E-Shop homepage",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/\n2. Locate the 'Quality Products' feature card in the features section\n3. Observe the description text beneath the heading",
+    "expected": "The 'Quality Products' card description reads 'Carefully curated selection' and is visible",
+    "jiraRef": "ESHOP-UI"
+  },
+  {
+    "specTitle": "Test Case 21: Verify E-Shop logo navigates to homepage from Products page",
+    "title": "ESHOP-AC21: Verify clicking the E-Shop logo from Products page navigates back to homepage",
+    "preconditions": "User is on the Products page (/products)",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Click the '🛒 E-Shop' logo link in the navbar\n3. Observe the resulting URL and page content",
+    "expected": "User is navigated to the homepage at / and the 'Welcome to E-Shop' heading is visible",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Test Case 22: Verify Home link navigates to homepage from Products page",
+    "title": "ESHOP-AC22: Verify clicking 'Home' navbar link from Products page navigates to homepage",
+    "preconditions": "User is on the Products page (/products)",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Click the 'Home' link in the navbar\n3. Observe the resulting URL and page content",
+    "expected": "User is navigated back to the homepage at / and the 'Welcome to E-Shop' heading is visible",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Test Case 23: Verify Home link navigates to homepage from Cart page",
+    "title": "ESHOP-AC23: Verify clicking 'Home' navbar link from Cart page navigates to homepage",
+    "preconditions": "User is on the Cart page (/cart)",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart\n2. Click the 'Home' link in the navbar\n3. Observe the resulting URL and page content",
+    "expected": "User is navigated back to the homepage at / and the 'Welcome to E-Shop' heading is visible",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Test Case 24: Verify category filter section is displayed on Products page",
+    "title": "ESHOP-AC24: Verify category filter controls are visible on the Products listing page",
+    "preconditions": "User is on the Products page (/products) and products have loaded successfully",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Wait for products to finish loading\n3. Observe the area above the product grid for filter controls",
+    "expected": "Category filter buttons or a filter section labelled 'Category' is visible on the products page",
+    "jiraRef": "ESHOP-PRODUCTS"
+  },
+  {
+    "specTitle": "Test Case 25: Verify typing in search box filters products dynamically",
+    "title": "ESHOP-AC25: Verify search input filters the product list in real time when user types a keyword",
+    "preconditions": "User is on the Products page and products are loaded",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Wait for products to load\n3. Type a product name keyword into the 'Search products...' input field\n4. Observe the product list as text is entered",
+    "expected": "The product list updates dynamically to show only products whose names match the typed keyword; unmatched products are hidden",
+    "jiraRef": "ESHOP-PRODUCTS"
+  },
+  {
+    "specTitle": "Test Case 26: Verify No products found message when search returns no results",
+    "title": "ESHOP-AC26: Verify 'No products found' message is displayed when search keyword matches no products",
+    "preconditions": "User is on the Products page and products are loaded",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Wait for products to load\n3. Type a search string that does not match any product name (e.g. 'xyznonexistentproduct123')\n4. Observe the product listing area",
+    "expected": "A 'No products found' message is displayed in the product listing area and no product cards are shown",
+    "jiraRef": "ESHOP-PRODUCTS"
+  },
+  {
+    "specTitle": "Test Case 27: Verify product cards display name price and Add to Cart button when loaded",
+    "title": "ESHOP-AC27: Verify each product card shows product name, price and Add to Cart button when products load",
+    "preconditions": "User is on the Products page and the backend API is available, returning at least one product",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Wait for products to finish loading (loading indicator disappears)\n3. Observe the first visible product card",
+    "expected": "At least one product card is displayed showing a product name, a price (e.g. $XX.XX format), and an 'Add to Cart' button",
+    "jiraRef": "ESHOP-PRODUCTS"
+  },
+  {
+    "specTitle": "Test Case 28: Verify product card displays product image and category",
+    "title": "ESHOP-AC28: Verify product card shows product image and category label when products are loaded",
+    "preconditions": "User is on the Products page and the backend API is available, returning at least one product",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Wait for products to finish loading\n3. Observe the first visible product card",
+    "expected": "Each product card displays a product image and a category label identifying the product category",
+    "jiraRef": "ESHOP-PRODUCTS"
+  },
+  {
+    "specTitle": "Test Case 29: Verify product card shows In Stock status when product is available",
+    "title": "ESHOP-AC29: Verify product card displays 'In Stock' status when product stock is greater than zero",
+    "preconditions": "User is on the Products page and the backend API returns products with positive stock values",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Wait for products to finish loading\n3. Observe the stock status text on a product card with available stock",
+    "expected": "Product cards for in-stock items display an 'In Stock' indicator and the 'Add to Cart' button is enabled",
+    "jiraRef": "ESHOP-PRODUCTS"
+  },
+  {
+    "specTitle": "Test Case 30: Verify product card shows Out of Stock status when product has no stock",
+    "title": "ESHOP-AC30: Verify product card displays 'Out of Stock' status when product stock is zero",
+    "preconditions": "User is on the Products page and at least one product has zero stock",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Wait for products to finish loading\n3. Identify a product card where stock is zero\n4. Observe the stock status text and the Add to Cart button state",
+    "expected": "The product card displays an 'Out of Stock' indicator and the 'Add to Cart' button is disabled or hidden",
+    "jiraRef": "ESHOP-PRODUCTS"
+  },
+  {
+    "specTitle": "Test Case 31: Verify Shopping Cart heading is displayed on cart page with items",
+    "title": "ESHOP-AC31: Verify 'Shopping Cart' heading is displayed on the cart page when cart contains items",
+    "preconditions": "User has added at least one product to the cart and navigates to /cart",
+    "steps": "1. Navigate to the products page and add a product to the cart using the 'Add to Cart' button\n2. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart\n3. Observe the page heading",
+    "expected": "The cart page displays a 'Shopping Cart' heading when at least one item is in the cart",
+    "jiraRef": "ESHOP-CART"
+  },
+  {
+    "specTitle": "Test Case 32: Verify cart count in navbar updates after adding a product",
+    "title": "ESHOP-AC32: Verify Cart count in navbar increments from 'Cart (0)' to 'Cart (1)' after adding one product",
+    "preconditions": "User is on the Products page with an empty cart (Cart (0) shown in navbar)",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Wait for products to load\n3. Click 'Add to Cart' on one product\n4. Observe the Cart link text in the navbar",
+    "expected": "The Cart link in the navbar updates from 'Cart (0)' to 'Cart (1)' immediately after the product is added",
+    "jiraRef": "ESHOP-CART"
+  },
+  {
+    "specTitle": "Test Case 33: Verify Proceed to Checkout button is visible in cart with items",
+    "title": "ESHOP-AC33: Verify 'Proceed to Checkout' button is visible in cart summary when cart has items",
+    "preconditions": "User has added at least one product to the cart",
+    "steps": "1. Add a product to the cart from the products page\n2. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart\n3. Observe the cart summary section",
+    "expected": "A 'Proceed to Checkout' button is visible in the cart summary section",
+    "jiraRef": "ESHOP-CART"
+  },
+  {
+    "specTitle": "Test Case 34: Verify Order Summary section displays Subtotal and Shipping in cart",
+    "title": "ESHOP-AC34: Verify 'Order Summary' section shows Subtotal and Shipping labels in cart when items are present",
+    "preconditions": "User has added at least one product to the cart and is on the /cart page",
+    "steps": "1. Add a product to the cart from the products page\n2. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart\n3. Observe the order summary section on the cart page",
+    "expected": "An 'Order Summary' section is displayed containing a 'Subtotal:' line and a 'Shipping:' line with corresponding amounts",
+    "jiraRef": "ESHOP-CART"
+  },
+  {
+    "specTitle": "Test Case 35: Verify cart item details show product name and price",
+    "title": "ESHOP-AC35: Verify cart item row displays product name and unit price for each item in cart",
+    "preconditions": "User has added at least one product to the cart and is on the /cart page",
+    "steps": "1. Add a known product to the cart from the products page\n2. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart\n3. Observe the cart item row",
+    "expected": "Each cart item row displays the product name and unit price matching the product added from the Products page",
+    "jiraRef": "ESHOP-CART"
+  },
+  {
+    "specTitle": "Test Case 36: Verify cart item shows quantity increment and decrement controls",
+    "title": "ESHOP-AC36: Verify quantity increment and decrement buttons are displayed on each cart item row",
+    "preconditions": "User has added at least one product to the cart and is on the /cart page",
+    "steps": "1. Add a product to the cart from the products page\n2. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart\n3. Observe the quantity controls on the cart item row",
+    "expected": "Each cart item row displays quantity increment (+) and decrement (-) buttons alongside the current quantity value",
+    "jiraRef": "ESHOP-CART"
+  },
+  {
+    "specTitle": "Test Case 37: Verify incrementing quantity updates item total in cart",
+    "title": "ESHOP-AC37: Verify clicking the increment (+) button increases item quantity and recalculates item total",
+    "preconditions": "User has added one item to the cart and is on the /cart page",
+    "steps": "1. Add one product to the cart\n2. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart\n3. Note the current quantity (should be 1) and item total\n4. Click the increment (+) button on the cart item\n5. Observe the quantity and item total",
+    "expected": "Quantity increases to 2 and the item total updates to reflect 2 × unit price",
+    "jiraRef": "ESHOP-CART"
+  },
+  {
+    "specTitle": "Test Case 38: Verify Remove button removes item from cart and updates count",
+    "title": "ESHOP-AC38: Verify clicking Remove button removes the item from cart and resets cart count to 0",
+    "preconditions": "User has one item in the cart and is on the /cart page",
+    "steps": "1. Add one product to the cart from the products page\n2. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart\n3. Click the 'Remove' button on the cart item\n4. Observe the cart content and the Cart count in the navbar",
+    "expected": "The item is removed from the cart, 'Your cart is empty' message is displayed, and the navbar Cart count returns to 'Cart (0)'",
+    "jiraRef": "ESHOP-CART"
+  },
+  {
+    "specTitle": "Test Case 39: Verify subtotal updates when quantity is increased",
+    "title": "ESHOP-AC39: Verify cart Subtotal in Order Summary recalculates correctly when item quantity is increased",
+    "preconditions": "User has one item in the cart and is on the /cart page",
+    "steps": "1. Add one product to the cart\n2. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart\n3. Note the Subtotal in the Order Summary\n4. Click the increment (+) button to increase quantity to 2\n5. Observe the Subtotal value in Order Summary",
+    "expected": "The Subtotal in Order Summary updates to reflect quantity × unit price (i.e. doubles for quantity 2)",
+    "jiraRef": "ESHOP-CART"
+  },
+  {
+    "specTitle": "Test Case 40: Verify 404 page is displayed for non-existent route",
+    "title": "ESHOP-AC40: Verify navigating to a non-existent URL route displays a Not Found error page",
+    "preconditions": "User navigates to a URL path that does not exist in the application",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/this-page-does-not-exist\n2. Observe the page content",
+    "expected": "A 'Not Found' or 404 error page is displayed indicating the requested route does not exist",
+    "jiraRef": "ESHOP-UI"
+  },
+  {
+    "specTitle": "Test Case 41: Verify Loading products indicator is shown while products are being fetched",
+    "title": "ESHOP-AC41: Verify 'Loading products...' indicator is displayed while the products API call is in progress",
+    "preconditions": "User navigates to the Products page before the API response completes",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Immediately observe the page content before the API response returns",
+    "expected": "A 'Loading products...' loading indicator is displayed while the product data is being fetched from the API",
+    "jiraRef": "ESHOP-PRODUCTS"
+  },
+  {
+    "specTitle": "Test Case 42: Verify GET products API returns correct Content-Type header",
+    "title": "ESHOP-AC42: API - Verify GET /products response has Content-Type of application/json",
+    "preconditions": "The E-Shop backend API is running and accessible",
+    "steps": "1. Send a GET request to the /products API endpoint\n2. Inspect the response headers",
+    "expected": "The response Content-Type header contains 'application/json'",
+    "jiraRef": "ESHOP-API"
+  },
+  {
+    "specTitle": "Test Case 43: Verify each product has a numeric price greater than zero",
+    "title": "ESHOP-AC43: API - Verify each product in GET /products response has a numeric price value greater than zero",
+    "preconditions": "The E-Shop backend API is running and accessible",
+    "steps": "1. Send a GET request to the /products API endpoint\n2. Parse the JSON response\n3. For each product in the array, check the 'price' field",
+    "expected": "Every product object has a 'price' field that is a number greater than 0",
+    "jiraRef": "ESHOP-API"
+  },
+  {
+    "specTitle": "Test Case 44: Verify each product has a non-negative stock value",
+    "title": "ESHOP-AC44: API - Verify each product in GET /products response has a stock field with a non-negative integer value",
+    "preconditions": "The E-Shop backend API is running and accessible",
+    "steps": "1. Send a GET request to the /products API endpoint\n2. Parse the JSON response\n3. For each product in the array, check the 'stock' field",
+    "expected": "Every product object has a 'stock' field that is a non-negative integer (0 or greater)",
+    "jiraRef": "ESHOP-API"
+  },
+  {
+    "specTitle": "Test Case 45: Verify each product has a description field in API response",
+    "title": "ESHOP-AC45: API - Verify each product in GET /products response contains a non-empty description field",
+    "preconditions": "The E-Shop backend API is running and accessible",
+    "steps": "1. Send a GET request to the /products API endpoint\n2. Parse the JSON response\n3. For each product in the array, check the 'description' field",
+    "expected": "Every product object has a 'description' field that is a non-empty string",
+    "jiraRef": "ESHOP-API"
+  },
+  {
+    "specTitle": "Test Case 46: Verify each product has an image URL field in API response",
+    "title": "ESHOP-AC46: API - Verify each product in GET /products response contains an image field with a URL string",
+    "preconditions": "The E-Shop backend API is running and accessible",
+    "steps": "1. Send a GET request to the /products API endpoint\n2. Parse the JSON response\n3. For each product in the array, check the 'image' field",
+    "expected": "Every product object has an 'image' field that is a non-empty string containing a URL or image path",
+    "jiraRef": "ESHOP-API"
+  },
+  {
+    "specTitle": "Test Case 47: Verify Products navbar link has active styling on Products page",
+    "title": "ESHOP-AC47: Verify 'Products' navbar link reflects active/current page state when on the Products page",
+    "preconditions": "User is on the Products page (/products)",
+    "steps": "1. Navigate to https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products\n2. Observe the 'Products' link in the navbar",
+    "expected": "The 'Products' navbar link is visually highlighted or styled differently to indicate it is the current active page",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Test Case 48: Verify cart page is accessible directly via URL",
+    "title": "ESHOP-AC48: Verify navigating directly to /cart URL renders the cart page",
+    "preconditions": "User navigates directly to the cart URL without using the navbar link",
+    "steps": "1. Open a new browser tab or directly type https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart in the address bar\n2. Observe the resulting page content",
+    "expected": "The cart page loads and displays either the 'Your cart is empty' message (if no items) or the Shopping Cart heading with cart contents",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Test Case 49: Verify products page is accessible directly via URL",
+    "title": "ESHOP-AC49: Verify navigating directly to /products URL renders the products page",
+    "preconditions": "User navigates directly to the products URL without using the navbar link",
+    "steps": "1. Open a new browser tab or directly type https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products in the address bar\n2. Observe the resulting page heading",
+    "expected": "The products page loads and displays the 'Our Products' heading along with either a product grid or a loading/error state",
+    "jiraRef": "ESHOP-NAV"
+  },
+  {
+    "specTitle": "Test Case 50: Verify page title is consistent across all pages",
+    "title": "ESHOP-AC50: Verify browser tab page title is 'E-Shop - Your Online Store' on all pages including Home, Products and Cart",
+    "preconditions": "User navigates to each of the main pages of the application",
+    "steps": "1. Navigate to the homepage at /\n2. Note the browser page title\n3. Navigate to /products and note the page title\n4. Navigate to /cart and note the page title",
+    "expected": "The browser page title is 'E-Shop - Your Online Store' on all three pages: homepage, Products page, and Cart page",
+    "jiraRef": "ESHOP-UI"
+  }
+]

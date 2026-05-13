@@ -1,0 +1,121 @@
+{
+  "reportVersion": "1.0",
+  "generatedAt": "2026-05-08T05:21:42.092Z",
+  "metadata": {
+    "project": "AI-Assisted-Test-Automation-Framework",
+    "appUrl": "https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net",
+    "pr": {
+      "number": 2,
+      "title": "Capital one demo",
+      "author": "RRC555",
+      "branch": "capital_one_demo → capital_one_poc"
+    },
+    "changeType": "feature",
+    "riskLevel": "high",
+    "overallRisk": "critical",
+    "stats": {
+      "filesChanged": 15,
+      "testFilesFound": 3,
+      "coveredFeatures": 1,
+      "gapFeatures": 14
+    }
+  },
+  "executiveSummary": "The recent pull request introduces a high-risk feature that enhances our automation capabilities with an Adaptive Planning Automation Agent. Given the significant changes across multiple components, thorough testing is essential to ensure stability and functionality before merging.",
+  "overallRisk": "critical",
+  "impactedAreas": {
+    "critical": [
+      {
+        "feature": "Agent Configuration",
+        "reason": "No tests exist, high risk of failure",
+        "tests": []
+      },
+      {
+        "feature": "Playwright Config",
+        "reason": "No tests exist, high risk of failure",
+        "tests": []
+      }
+    ],
+    "high": [
+      {
+        "feature": "Web Page Objects",
+        "reason": "Only partially covered, needs verification",
+        "tests": [
+          "src/web/tests/nav/ud-upay-payment-fields-automated.spec.js"
+        ]
+      },
+      {
+        "feature": "Web Test Specs",
+        "reason": "No tests exist, high risk of failure",
+        "tests": []
+      }
+    ],
+    "medium": [
+      {
+        "feature": "TestRail Integration",
+        "reason": "No tests exist, should be included in next cycle",
+        "tests": []
+      },
+      {
+        "feature": "Reporting",
+        "reason": "No tests exist, should be included in next cycle",
+        "tests": []
+      }
+    ],
+    "low": [
+      {
+        "feature": "AI Engine",
+        "reason": "Indirectly impacted, monitor but not blocking",
+        "tests": []
+      },
+      {
+        "feature": "Self-Healing",
+        "reason": "Indirectly impacted, monitor but not blocking",
+        "tests": []
+      }
+    ]
+  },
+  "coverageGaps": [
+    {
+      "feature": "Agent Configuration",
+      "reason": "No tests exist to validate configuration changes",
+      "recommendation": "Create tests to validate agent configuration settings and behaviors."
+    },
+    {
+      "feature": "Playwright Config",
+      "reason": "No tests exist to validate Playwright configurations",
+      "recommendation": "Create tests to ensure Playwright configurations are correctly applied."
+    },
+    {
+      "feature": "Web Locators",
+      "reason": "No tests exist to validate web locators functionality",
+      "recommendation": "Create tests to verify the accuracy and functionality of web locators."
+    },
+    {
+      "feature": "Test Data",
+      "reason": "No tests exist to validate test data integrity",
+      "recommendation": "Create tests to ensure test data is correctly formatted and accessible."
+    },
+    {
+      "feature": "Context Files",
+      "reason": "No tests exist to validate context file integration",
+      "recommendation": "Create tests to ensure context files are loaded and utilized correctly."
+    },
+    {
+      "feature": "Scripts",
+      "reason": "No tests exist to validate script execution",
+      "recommendation": "Create tests to ensure scripts run as expected without errors."
+    }
+  ],
+  "recommendedRegressionSuite": {
+    "testFiles": [
+      "src/web/tests/nav/ud-upay-payment-fields-automated.spec.js"
+    ],
+    "estimatedCoverage": "~10% of impacted area",
+    "runCommand": "npx playwright test src/web/tests/nav/ud-upay-payment-fields-automated.spec.js"
+  },
+  "safeToSkip": [
+    "Jira Integration — unaffected by the changes in this PR.",
+    "Package Config — unaffected by the changes in this PR.",
+    "TIIS Agents — unaffected by the changes in this PR."
+  ]
+}

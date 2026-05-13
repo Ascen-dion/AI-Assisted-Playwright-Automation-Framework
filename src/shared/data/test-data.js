@@ -104,6 +104,61 @@ module.exports = {
     productsTimeDeposit:  /Time Deposit \| UnionDigital Bank/,
     udLoansGuide:         /UD Loans Payment Guides \| UnionDigital Bank/,
     aboutUs:              /About Us.*UnionDigital Bank/,
+    eshopHome:            /E-Shop - Your Online Store/,
+  },
+
+  // ── E-Shop ecommerce application ─────────────────────────────────────────
+  eshop: {
+    baseUrl:              'https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net',
+    apiBaseUrl:           'https://ecomsample-a4g8fhc7h2f6d0b6.canadacentral-01.azurewebsites.net/api',
+
+    urls: {
+      home:     'https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/',
+      products: 'https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/products',
+      cart:     'https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net/cart',
+    },
+
+    urlPatterns: {
+      home:     /ecomm-frontend-dvcdhygrandkdyhm\.eastus-01\.azurewebsites\.net\/$/,
+      products: /\/products$/,
+      cart:     /\/cart$/,
+    },
+
+    home: {
+      pageTitle:    'E-Shop - Your Online Store',
+      heroHeading:  'Welcome to E-Shop',
+      heroSubtitle: 'Discover amazing products at great prices',
+      shopNowText:  'Shop Now',
+      features: {
+        freeShipping:   'Free Shipping',
+        securePayment:  'Secure Payment',
+        easyReturns:    'Easy Returns',
+        qualityProducts: 'Quality Products',
+      },
+    },
+
+    nav: {
+      logoText:    '🛒 E-Shop',
+      homeText:    'Home',
+      productsText: 'Products',
+      cartText:    'Cart',
+    },
+
+    products: {
+      pageHeading:      'Our Products',
+      searchPlaceholder: 'Search products...',
+      loadingText:      'Loading products...',
+      errorText:        'Failed to load products. Please make sure the backend server is running.',
+      noProductsText:   'No products found',
+    },
+
+    cart: {
+      emptyHeading:  'Your cart is empty',
+      emptySubtext:  'Add some products to get started!',
+      cartHeading:   'Shopping Cart',
+      orderSummary:  'Order Summary',
+      checkoutText:  'Proceed to Checkout',
+    },
   },
 
 };

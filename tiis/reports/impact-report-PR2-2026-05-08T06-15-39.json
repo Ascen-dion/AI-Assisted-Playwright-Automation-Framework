@@ -1,0 +1,58 @@
+{
+  "reportVersion": "1.0",
+  "generatedAt": "2026-05-08T06:15:39.368Z",
+  "metadata": {
+    "project": "aava-ecom-demo",
+    "appUrl": "https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net",
+    "pr": {
+      "number": 2,
+      "title": "Navbar updated",
+      "author": "Kiruthika1505",
+      "branch": "testX → main"
+    },
+    "changeType": "feature",
+    "riskLevel": "low",
+    "overallRisk": "low",
+    "stats": {
+      "filesChanged": 1,
+      "testFilesFound": 3,
+      "coveredFeatures": 0,
+      "gapFeatures": 6
+    }
+  },
+  "executiveSummary": "The recent pull request introduces a new Profile link to the navigation bar, which is a low-risk feature change. However, there are currently no existing tests for the impacted areas, necessitating the creation of new tests to ensure functionality before merging.",
+  "overallRisk": "low",
+  "impactedAreas": {
+    "critical": [],
+    "high": [],
+    "medium": [],
+    "low": [
+      {
+        "feature": "Test Specs",
+        "reason": "New feature added to the Navbar requires testing to ensure it functions correctly.",
+        "tests": []
+      }
+    ]
+  },
+  "coverageGaps": [
+    {
+      "feature": "Test Specs",
+      "reason": "No tests exist for the newly added Profile link.",
+      "recommendation": "Create a test to verify the Profile link is present and navigates correctly."
+    }
+  ],
+  "recommendedRegressionSuite": {
+    "testFiles": [
+      "src/web/tests/navbar.spec.js"
+    ],
+    "estimatedCoverage": "~0% of impacted area",
+    "runCommand": "npx playwright test src/web/tests/navbar.spec.js"
+  },
+  "safeToSkip": [
+    "TIIS Pipeline — no changes related to this feature.",
+    "Test Runner Config — no changes related to this feature.",
+    "AI Engine — no changes related to this feature.",
+    "TestRail Reporting — no changes related to this feature.",
+    "Impact Report Output — no changes related to this feature."
+  ]
+}

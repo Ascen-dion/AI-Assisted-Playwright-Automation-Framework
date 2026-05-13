@@ -1,10 +1,9 @@
 /**
  * TIIS — Test Impact Intelligence System
- * Configuration for: aava-ecom-demo
+ * Configuration for: AI-Assisted-Test-Automation-Framework
  *
- * App:    https://github.com/Ascen-dion/aava-ecom-demo
- * Live:   https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net
- * Stack:  React 18 (frontend) + Spring Boot 3 (backend) + H2 DB
+ * Repo:   https://github.com/Ascen-dion/AI-Assisted-Test-Automation-Framework
+ * Stack:  Node.js, Playwright, React (UI), MCP integrations, TestRail/Jira
  *
  * To adapt for a different project:
  *   1. Update vcs.owner / vcs.repo
@@ -14,131 +13,100 @@
 
 module.exports = {
   project: {
-    name: 'aava-ecom-demo',
+    name: 'aava-ecom-demo', 
     appUrl: 'https://ecomm-frontend-dvcdhygrandkdyhm.eastus-01.azurewebsites.net',
   },
 
   vcs: {
     provider: 'github',
-    owner: 'Ascen-dion',
+    owner: 'karansethiascendion',
     repo: 'aava-ecom-demo',
     defaultBranch: 'main',
   },
 
   testInventory: {
-    provider: 'filesystem',
+    provider: 'testrail',
+    caseMapPath: './src/shared/traceability/testrail-case-map.json',
+    // fallback filesystem paths (used when provider is switched back to 'filesystem')
     rootPaths: ['./src/web/tests', './src/mobile/tests'],
     filePattern: '**/*.spec.*',
   },
 
   /**
-   * Feature Map — maps application features to their source files.
-   * Agent 2 uses this to determine what feature a changed file belongs to.
-   * Agent 3 uses feature names as keywords to match against test file names.
+   * Feature Map — maps E-Shop application features to their source files.
    *
-   * HOW TO UPDATE: Add/edit entries as the app grows.
-   * Keys = feature names (used in the impact report labels).
+   * PURPOSE (TIIS only):
+   *   - Agent 2 uses this to map changed PR files → feature names
+   *   - Agent 3 uses feature names as keywords to match against TestRail case titles
+   *   - Agent 4 uses feature names as labels in the impact report
+   *
+   * HOW TO UPDATE: Add a new entry when a new testable area is introduced.
+   * Keys = feature names used verbatim in the impact report.
    */
   appKnowledge: {
     featureMap: {
-      'Home Page': {
+      'Homepage': {
         files: [
-          'frontend/src/components/Home.js',
-          'frontend/src/components/Home.css',
+          'src/components/Home.jsx',
+          'src/pages/Home.jsx',
+          'src/pages/HomePage.jsx',
+          'src/App.js',
         ],
-        description: 'Landing page with hero section and featured products',
-      },
-
-      'Products Catalog': {
-        files: [
-          'frontend/src/components/Products.js',
-          'frontend/src/components/Products.css',
-          'frontend/src/components/ProductCard.js',
-          'frontend/src/components/ProductCard.css',
-        ],
-        description: 'Product listing page showing all products as cards',
-      },
-
-      'Shopping Cart': {
-        files: [
-          'frontend/src/components/Cart.js',
-          'frontend/src/components/Cart.css',
-        ],
-        description: 'Shopping cart — add items, remove items, view total, checkout',
+        description: 'E-Shop homepage with hero heading, Shop Now button, tagline, and feature cards (Free Shipping, Secure Payment, Easy Returns, Quality Products)',
       },
 
       'Navigation': {
         files: [
-          'frontend/src/components/Navbar.js',
-          'frontend/src/components/Navbar.css',
-          'frontend/src/App.js',
-          'frontend/src/App.css',
+          'src/components/Navbar.jsx',
+          'src/components/Nav.jsx',
+          'src/components/Header.jsx',
+          'src/components/NavBar.jsx',
         ],
-        description: 'Top navigation bar and app-level routing — present on all pages',
+        description: 'Navigation bar with E-Shop logo, Home link, Products link, and Cart link; active styling on current page',
       },
 
-      'Product Search': {
+      'Products': {
         files: [
-          'frontend/src/services/api.js',
-          'backend/src/main/java/com/ecommerce/app/controller/ProductController.java',
+          'src/components/Products.jsx',
+          'src/pages/Products.jsx',
+          'src/pages/ProductsPage.jsx',
+          'src/components/ProductCard.jsx',
+          'src/components/ProductList.jsx',
         ],
-        endpoints: ['GET /api/products/search?name=X'],
-        description: 'Search products by name via the search bar',
+        description: 'Products page with Our Products heading, search input, category filter, product cards showing name/price/image/stock status and Add to Cart button',
       },
 
-      'Category Filter': {
+      'Cart': {
         files: [
-          'frontend/src/components/Products.js',
-          'backend/src/main/java/com/ecommerce/app/controller/ProductController.java',
+          'src/components/Cart.jsx',
+          'src/pages/Cart.jsx',
+          'src/pages/CartPage.jsx',
+          'src/context/CartContext.jsx',
+          'src/context/CartProvider.jsx',
         ],
-        endpoints: ['GET /api/products/category/{cat}'],
-        description: 'Filter the product catalog by category',
+        description: 'Shopping Cart page with item list, quantity controls, Remove button, Order Summary (Subtotal/Shipping), Proceed to Checkout button, and empty cart state',
       },
 
-      'Product API - Read': {
+      'API': {
         files: [
-          'backend/src/main/java/com/ecommerce/app/controller/ProductController.java',
-          'backend/src/main/java/com/ecommerce/app/service/ProductService.java',
+          'src/services/api.js',
+          'src/api/',
+          'backend/',
+          'server/',
+          'src/services/',
         ],
-        endpoints: [
-          'GET /api/products',
-          'GET /api/products/{id}',
-        ],
-        description: 'Fetch all products or a single product from the backend',
+        endpoints: ['/products', '/api/products'],
+        description: 'REST API endpoints — GET /products returns product array with required fields (name, price, stock, description, image URL, category); Content-Type validation',
       },
 
-      'Product API - Write': {
+      'Error Handling': {
         files: [
-          'backend/src/main/java/com/ecommerce/app/controller/ProductController.java',
-          'backend/src/main/java/com/ecommerce/app/service/ProductService.java',
-          'backend/src/main/java/com/ecommerce/app/repository/ProductRepository.java',
+          'src/components/ErrorBoundary.jsx',
+          'src/pages/NotFound.jsx',
+          'src/pages/404.jsx',
+          'src/components/ErrorState.jsx',
         ],
-        endpoints: [
-          'POST /api/products',
-          'PUT /api/products/{id}',
-          'DELETE /api/products/{id}',
-        ],
-        description: 'Create, update, and delete products via REST API',
-      },
-
-      'Data Layer': {
-        files: [
-          'backend/src/main/java/com/ecommerce/app/model/Product.java',
-          'backend/src/main/java/com/ecommerce/app/repository/ProductRepository.java',
-          'backend/src/main/java/com/ecommerce/app/config/DataLoader.java',
-        ],
-        description: 'Product data model, JPA repository, and seed data loader',
-      },
-
-      'App Configuration': {
-        files: [
-          'backend/src/main/resources/application.properties',
-          'backend/src/main/java/com/ecommerce/app/config/CorsConfig.java',
-          'frontend/src/services/api.js',
-          'backend/pom.xml',
-          'frontend/package.json',
-        ],
-        description: 'Backend config, CORS settings, frontend API base URL, and dependencies',
+        description: '404 page for non-existent routes; error state when backend is unavailable; loading indicator while products are being fetched',
       },
     },
   },
