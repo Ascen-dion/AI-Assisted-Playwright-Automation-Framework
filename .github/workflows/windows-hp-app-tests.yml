@@ -93,9 +93,9 @@ jobs:
           Start-Sleep -Seconds 30
           $pkg = Get-AppxPackage -Name "AD2F1837.myHP" -ErrorAction SilentlyContinue
           if ($pkg) {
-            Write-Host "✅ myHP installed: $($pkg.PackageFullName)"
+            Write-Host "myHP installed: $($pkg.PackageFullName)"
           } else {
-            Write-Warning "⚠️ myHP package not found after install. Tests may fail."
+            Write-Warning "myHP package not found after install. Tests may fail."
           }
 
       # ─── Install WinAppDriver ─────────────────────────────────────────────
@@ -109,7 +109,7 @@ jobs:
           Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /quiet /norestart" -Wait
           $exe = "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
           if (Test-Path $exe) {
-            Write-Host "✅ WinAppDriver installed: $exe"
+            Write-Host "WinAppDriver installed: $exe"
           } else {
             Write-Error "WinAppDriver not found after install."
             exit 1
@@ -152,7 +152,7 @@ jobs:
             Write-Error "Appium did not start within 60 seconds."
             exit 1
           }
-          Write-Host "✅ Appium is ready on port 4723."
+          Write-Host "Appium is ready on port 4723."
 
       # ─── Run tests ────────────────────────────────────────────────────────
       - name: 🧪 Run HP App smoke tests
