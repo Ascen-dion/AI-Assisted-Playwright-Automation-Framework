@@ -67,14 +67,29 @@ jobs:
       - name: Install myHP from Microsoft Store (winget)
         shell: powershell
         run: |
-          winget source update --disable-interactivity 2>$null
+          # msstore source requires a 2-letter geographic region — set it via registry
+          $geoPath = "HKCU:\Control Panel\International\Geo"
+          if (-not (Test-Path $geoPath)) { New-Item -Path $geoPath -Force | Out-Null }
+          Set-ItemProperty -Path $geoPath -Name "Nation" -Value "244" -Type String -Force  # 244 = United States
+          Write-Host "Geographic region set to US (244)"
+
+          # Reset and re-accept msstore source agreements
+          winget source reset --force 2>$null
+          winget source update --accept-source-agreements 2>$null
+
+          # Install using the Store Product ID from the URL (not the AUMID)
+          # Store URL: https://apps.microsoft.com/detail/9n9phdt62w94
           winget install `
-            --id "AD2F1837.myHP" `
+            --id "9N9PHDT62W94" `
             --source msstore `
             --accept-package-agreements `
             --accept-source-agreements `
+            --locale en-US `
             --silent `
             --disable-interactivity
+          if ($LASTEXITCODE -ne 0) {
+            Write-Warning "winget exited with code $LASTEXITCODE — checking if package already present..."
+          }
           Start-Sleep -Seconds 30
           $pkg = Get-AppxPackage -Name "AD2F1837.myHP" -ErrorAction SilentlyContinue
           if ($pkg) {
