@@ -67,18 +67,26 @@ jobs:
       - name: Install myHP from Microsoft Store (winget)
         shell: powershell
         run: |
-          # msstore source requires a 2-letter geographic region — set it via registry
+          # 1. Set geographic region required by msstore source
           $geoPath = "HKCU:\Control Panel\International\Geo"
           if (-not (Test-Path $geoPath)) { New-Item -Path $geoPath -Force | Out-Null }
-          Set-ItemProperty -Path $geoPath -Name "Nation" -Value "244" -Type String -Force  # 244 = United States
+          Set-ItemProperty -Path $geoPath -Name "Nation" -Value "244" -Type String -Force
           Write-Host "Geographic region set to US (244)"
 
-          # Reset and re-accept msstore source agreements
-          winget source reset --force 2>$null
-          winget source update --accept-source-agreements 2>$null
+          # 2. Pre-accept msstore agreements via winget settings JSON
+          #    (winget source update does NOT support --accept-source-agreements)
+          $settingsDir = "$env:LOCALAPPDATA\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState"
+          New-Item -Path $settingsDir -ItemType Directory -Force | Out-Null
+          $settingsJson = '{"experimentalFeatures":{"experimentalMSStore":true},"interactivity":{"disable":true},"source":{"autoUpdateIntervalInMinutes":0}}'
+          Set-Content -Path "$settingsDir\settings.json" -Value $settingsJson -Encoding UTF8 -Force
+          Write-Host "winget settings configured"
 
-          # Install using the Store Product ID from the URL (not the AUMID)
-          # Store URL: https://apps.microsoft.com/detail/9n9phdt62w94
+          # 3. Reset and refresh sources (no unsupported flags on source update)
+          winget source reset --force 2>$null
+          winget source update 2>$null
+
+          # 4. Install from MS Store using Store Product ID
+          #    Store URL: https://apps.microsoft.com/detail/9n9phdt62w94
           winget install `
             --id "9N9PHDT62W94" `
             --source msstore `
@@ -87,8 +95,9 @@ jobs:
             --locale en-US `
             --silent `
             --disable-interactivity
-          if ($LASTEXITCODE -ne 0) {
-            Write-Warning "winget exited with code $LASTEXITCODE - checking if package already present..."
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -ne 0) {
+            Write-Host "winget exit code: $exitCode - verifying via Get-AppxPackage..."
           }
           Start-Sleep -Seconds 30
           $pkg = Get-AppxPackage -Name "AD2F1837.myHP" -ErrorAction SilentlyContinue
@@ -97,6 +106,7 @@ jobs:
           } else {
             Write-Warning "myHP package not found after install. Tests may fail."
           }
+
 
       # ─── Install WinAppDriver ─────────────────────────────────────────────
       - name: Install WinAppDriver v1.2.1
@@ -228,7 +238,7 @@ jobs:
       # ─── Send email notification ──────────────────────────────────────────
       # Requires GitHub secrets: EMAIL_USERNAME, EMAIL_PASSWORD, EMAIL_TO
       - name: 📬 Send email notification
-        if: always()
+        if: steps.run-tests.outcome == 'success'
         continue-on-error: true
         uses: dawidd6/action-send-mail@v3
         with:
