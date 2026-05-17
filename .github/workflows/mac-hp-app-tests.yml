@@ -1,0 +1,304 @@
+name: 🍎 HP Smart macOS App Tests
+
+on:
+  push:
+    branches: [main, master, adaptive_planning_captial_one_poc]
+    paths:
+      - 'src/mac/**'
+      - 'wdio.mac.config.js'
+      - 'config/platform/mac.config.js'
+      - 'scripts/generate-email-mac.js'
+      - 'scripts/report-mac-to-testrail.js'
+  pull_request:
+    branches: [main, master, adaptive_planning_captial_one_poc]
+  schedule:
+    # Run weekdays at 06:30 UTC (30 min after Windows run to avoid email overlap)
+    - cron: '30 6 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      run_reason:
+        description: 'Reason for manual run'
+        required: false
+        default: 'Manual smoke check'
+
+jobs:
+  hp-smart-mac-tests:
+    name: 🍎 HP Smart Smoke Tests (macOS)
+    runs-on: macos-latest
+    timeout-minutes: 40
+
+    steps:
+      # ─── Run context ──────────────────────────────────────────────────────
+      - name: 📋 Log run context
+        run: |
+          echo "=========================================="
+          echo " HP Smart macOS Tests — Run #${{ github.run_number }}"
+          echo "=========================================="
+          echo " Branch  : ${{ github.ref_name }}"
+          echo " Actor   : ${{ github.actor }}"
+          echo " Trigger : ${{ github.event_name }}"
+          echo " SHA     : ${{ github.sha }}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo " Reason  : ${{ github.event.inputs.run_reason }}"
+          fi
+          echo "=========================================="
+          sw_vers   # print macOS version info
+
+      # ─── Checkout & Node ──────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ─── Xcode Command Line Tools ─────────────────────────────────────────
+      # Required by appium-mac2-driver (XCTest framework)
+      - name: Ensure Xcode Command Line Tools
+        run: |
+          xcode-select --print-path 2>/dev/null && echo "CLT already installed" || \
+            xcode-select --install 2>/dev/null || true
+          xcrun --version
+
+      # ─── Install HP Smart from Mac App Store ──────────────────────────────
+      # mas (Mac App Store command line tool) is pre-installed on macos-latest runners.
+      # HP Smart App Store ID: 1474276998
+      # Requires APPLE_ID and APPLE_PASSWORD (app-specific password) secrets.
+      - name: Install HP Smart from Mac App Store
+        continue-on-error: true   # graceful — tests will report meaningful errors if skipped
+        run: |
+          echo "Installing HP Smart (App Store ID: 1474276998)..."
+          # mas sign in (requires Apple ID secrets — see repo secrets)
+          if [ -n "${{ secrets.APPLE_ID }}" ] && [ -n "${{ secrets.APPLE_PASSWORD }}" ]; then
+            mas signin --dialog "${{ secrets.APPLE_ID }}" <<< "${{ secrets.APPLE_PASSWORD }}" || true
+          else
+            echo "⚠️  APPLE_ID / APPLE_PASSWORD secrets not set — attempting unauthenticated install."
+          fi
+          mas install 1474276998 || echo "⚠️  mas install failed. HP Smart may already be installed."
+          sleep 15
+          # Verify
+          if mdfind "kMDItemCFBundleIdentifier == 'com.hp.SmartForDesktop'" | grep -q ".app"; then
+            echo "✅ HP Smart is installed."
+          else
+            echo "⚠️  HP Smart not detected. Locating bundle..."
+            mdfind "kMDItemCFBundleIdentifier == 'com.hp.SmartForDesktop'" || true
+          fi
+
+      # ─── Enable Accessibility for Appium ──────────────────────────────────
+      # appium-mac2-driver requires Accessibility access for the process running tests.
+      # On GitHub Actions runners, the /usr/bin/ruby trick grants it to the runner process.
+      - name: Enable Accessibility for Appium / XCTest
+        run: |
+          # Grant Accessibility permission to Node.js / the test runner process
+          # This uses the TCC database trick available on GitHub Actions macos-latest runners
+          sudo sqlite3 /Library/Application\ Support/com.apple.TCC/TCC.db \
+            "INSERT OR REPLACE INTO access VALUES('kTCCServiceAccessibility','$(which node)',0,2,4,1,NULL,NULL,0,'UNUSED',NULL,0,$(date +%s))" 2>/dev/null || \
+          echo "⚠️  TCC db update failed (may already be granted or protected). Continuing..."
+
+      # ─── npm dependencies ─────────────────────────────────────────────────
+      - name: Install npm dependencies
+        run: npm ci
+
+      # ─── Install mac2 Appium driver ───────────────────────────────────────
+      - name: Install appium-mac2-driver
+        run: npx appium driver install mac2
+
+      # ─── Output directories ───────────────────────────────────────────────
+      - name: Create test output directories
+        run: |
+          mkdir -p test-results/mac/html/screenshots
+          mkdir -p test-results/mac/videos
+          mkdir -p logs
+
+      # ─── Start Appium ─────────────────────────────────────────────────────
+      - name: Start Appium on port 4724 (background)
+        run: |
+          nohup npx appium --address 127.0.0.1 --port 4724 \
+            --log logs/appium-mac-ci.log &
+          echo "Waiting for Appium to be ready..."
+          for i in $(seq 1 12); do
+            sleep 5
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:4724/status 2>/dev/null || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "✅ Appium is ready on port 4724."
+              break
+            fi
+            echo "  Attempt $i/12 — status: $STATUS"
+          done
+          if [ "$STATUS" != "200" ]; then
+            echo "❌ Appium did not start within 60 seconds."
+            tail -30 logs/appium-mac-ci.log 2>/dev/null || true
+            exit 1
+          fi
+
+      # ─── Run tests ────────────────────────────────────────────────────────
+      - name: 🧪 Run HP Smart macOS smoke tests
+        id: run-tests
+        continue-on-error: true
+        run: npm run test:mac:hp
+        env:
+          CI: 'true'
+          MAC_BUNDLE_ID: 'com.hp.SmartForDesktop'
+          TESTRAIL_HOST:       ${{ secrets.TESTRAIL_HOST }}
+          TESTRAIL_USER:       ${{ secrets.TESTRAIL_USER }}
+          TESTRAIL_API_KEY:    ${{ secrets.TESTRAIL_API_KEY }}
+          TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+          TESTRAIL_SUITE_ID:   ${{ secrets.TESTRAIL_SUITE_ID }}
+
+      # ─── TestRail reporting ───────────────────────────────────────────────
+      - name: 📊 Report results to TestRail
+        if: always()
+        continue-on-error: true
+        run: node scripts/report-mac-to-testrail.js
+        env:
+          TESTRAIL_HOST:            ${{ secrets.TESTRAIL_HOST }}
+          TESTRAIL_USER:            ${{ secrets.TESTRAIL_USER }}
+          TESTRAIL_API_KEY:         ${{ secrets.TESTRAIL_API_KEY }}
+          TESTRAIL_PROJECT_ID:      ${{ secrets.TESTRAIL_PROJECT_ID }}
+          TESTRAIL_SUITE_ID:        ${{ secrets.TESTRAIL_SUITE_ID }}
+          TESTRAIL_RUN_NAME_PREFIX: HP Smart macOS Smoke
+          GITHUB_RUN_NUMBER:        ${{ github.run_number }}
+          GITHUB_REF_NAME:          ${{ github.ref_name }}
+          GITHUB_SHA:               ${{ github.sha }}
+          GITHUB_ACTOR:             ${{ github.actor }}
+
+      # ─── Upload test artifacts ────────────────────────────────────────────
+      - name: 📦 Upload HTML report & screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hp-mac-html-report-${{ github.run_number }}
+          path: |
+            test-results/mac/html/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: 📦 Upload logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hp-mac-logs-${{ github.run_number }}
+          path: |
+            logs/appium-mac-ci.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+      # ─── Generate HTML email ──────────────────────────────────────────────
+      - name: 📧 Generate email report
+        if: always()
+        run: node scripts/generate-email-mac.js
+        env:
+          REPORT_TITLE:       HP Smart macOS Tests
+          GITHUB_SERVER_URL:  ${{ github.server_url }}
+          GITHUB_REPOSITORY:  ${{ github.repository }}
+          GITHUB_RUN_ID:      ${{ github.run_id }}
+          GITHUB_RUN_NUMBER:  ${{ github.run_number }}
+          GITHUB_REF_NAME:    ${{ github.ref_name }}
+          GITHUB_ACTOR:       ${{ github.actor }}
+          GITHUB_SHA:         ${{ github.sha }}
+
+      # ─── Send email notification ──────────────────────────────────────────
+      - name: 📬 Send email notification
+        if: always()
+        continue-on-error: true
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: |
+            [HP macOS Tests] ${{ steps.run-tests.outcome == 'success' && '✅ PASSED' || '❌ FAILED' }} — Run #${{ github.run_number }} (${{ github.ref_name }})
+          to: ${{ secrets.EMAIL_TO }}
+          from: HP macOS AI Test Framework <${{ secrets.EMAIL_USERNAME }}>
+          html_body: file://email-body.html
+
+      # ─── PR comment ───────────────────────────────────────────────────────
+      - name: 💬 Comment PR with test results
+        if: github.event_name == 'pull_request' && always()
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const outcome  = '${{ steps.run-tests.outcome }}';
+            const runUrl   = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+            const runNum   = '${{ github.run_number }}';
+            const branch   = '${{ github.ref_name }}';
+            const sha      = '${{ github.sha }}'.slice(0, 7);
+            const isPassed = outcome === 'success';
+
+            const comment = `## 🍎 HP Smart macOS Test Results
+
+            | | |
+            |---|---|
+            | **Status** | ${isPassed ? '✅ Passed' : '❌ Failed'} |
+            | **Run** | [#${runNum}](${runUrl}) |
+            | **Branch** | \`${branch}\` |
+            | **Commit** | \`${sha}\` |
+            | **App** | HP Smart (Bundle ID: com.hp.SmartForDesktop) |
+            | **Platform** | macOS / Appium + mac2 Driver (XCTest) |
+
+            ### 📦 Artifacts
+            - 📊 [HTML Report](${runUrl}) — \`hp-mac-html-report-${runNum}\`
+            - 📄 [Logs](${runUrl}) — \`hp-mac-logs-${runNum}\`
+
+            ---
+            *Automated by AI-Assisted Test Automation Framework · WDIO v9*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      # ─── Job summary ──────────────────────────────────────────────────────
+      - name: 📊 Publish job summary
+        if: always()
+        run: |
+          OUTCOME="${{ steps.run-tests.outcome }}"
+          ICON=$( [ "$OUTCOME" = "success" ] && echo "✅" || echo "❌" )
+          STATUS=$( [ "$OUTCOME" = "success" ] && echo "PASSED" || echo "FAILED" )
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          SHA_SHORT=$(echo "${{ github.sha }}" | cut -c1-7)
+
+          # Try to read metrics from the latest report JSON
+          METRICS="N/A"
+          LATEST_JSON=$(ls -t test-results/mac/html/report-*-*.json 2>/dev/null | head -1)
+          if [ -n "$LATEST_JSON" ]; then
+            PASSED=$(node -e "const r=require('$LATEST_JSON'); console.log((r.metrics||{}).passed||0)" 2>/dev/null || echo "?")
+            FAILED=$(node -e "const r=require('$LATEST_JSON'); console.log((r.metrics||{}).failed||0)" 2>/dev/null || echo "?")
+            SKIPPED=$(node -e "const r=require('$LATEST_JSON'); console.log((r.metrics||{}).skipped||0)" 2>/dev/null || echo "?")
+            DURATION=$(node -e "const r=require('$LATEST_JSON'); console.log(((r.metrics||{}).duration||0)/1000+'s')" 2>/dev/null || echo "?")
+            METRICS="${PASSED} passed · ${FAILED} failed · ${SKIPPED} skipped · ${DURATION}"
+          fi
+
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
+          ## ${ICON} HP Smart macOS Tests — ${STATUS}
+
+          | Field | Value |
+          |---|---|
+          | Run | [#${{ github.run_number }}](${RUN_URL}) |
+          | Branch | \`${{ github.ref_name }}\` |
+          | Commit | \`${SHA_SHORT}\` |
+          | Actor | ${{ github.actor }} |
+          | Trigger | ${{ github.event_name }} |
+          | Results | ${METRICS} |
+
+          ### 🍎 App Under Test
+          | | |
+          |---|---|
+          | App | HP Smart |
+          | Bundle ID | \`com.hp.SmartForDesktop\` |
+          | Driver | Appium v3 + mac2 Driver (XCTest) |
+          | Runner | macos-latest (GitHub Actions) |
+          | Framework | WDIO v9 + Mocha |
+
+          ### 📦 Artifacts
+          - HTML Report: \`hp-mac-html-report-${{ github.run_number }}\`
+          - Logs: \`hp-mac-logs-${{ github.run_number }}\`
+
+          [🔗 View full run](${RUN_URL})
+          EOF

@@ -1,90 +1,130 @@
-flowchart LR
-    classDef input fill:#eef4ff,stroke:#3d6dcc,color:#0f172a,stroke-width:1.5px;
-    classDef orchestration fill:#f3f0ff,stroke:#6d4aff,color:#1f2937,stroke-width:1.5px;
-    classDef automation fill:#ecfdf3,stroke:#0f9f6e,color:#0f172a,stroke-width:1.5px;
-    classDef enterprise fill:#fff7e8,stroke:#d97706,color:#111827,stroke-width:1.5px;
-    classDef output fill:#fff1f2,stroke:#e11d48,color:#111827,stroke-width:1.5px;
+flowchart TD
+    classDef input    fill:#eef4ff,stroke:#3d6dcc,color:#0f172a,stroke-width:1.5px;
+    classDef norm     fill:#dbeafe,stroke:#1d4ed8,color:#0f172a,stroke-width:2px;
+    classDef ctx      fill:#fdf6ec,stroke:#d97706,color:#111827,stroke-width:1.5px;
+    classDef ai       fill:#fff7ed,stroke:#ea580c,color:#111827,stroke-width:1.5px;
+    classDef platform fill:#ecfdf3,stroke:#0f9f6e,color:#0f172a,stroke-width:1.5px;
+    classDef exec     fill:#fff1f2,stroke:#e11d48,color:#111827,stroke-width:1.5px;
+    classDef heal     fill:#fef9c3,stroke:#ca8a04,color:#111827,stroke-width:1.5px;
+    classDef output   fill:#f3f0ff,stroke:#6d4aff,color:#1f2937,stroke-width:1.5px;
 
-    subgraph Inputs[External Inputs Panel]
-        REQ[Plain-English Requirements]
-        JIRA_REQ[Jira Stories and Acceptance Criteria]
-        APP[Application Knowledge]
-        FW[Framework Knowledge]
-        DOMAIN[Domain Knowledge - Core Business Processes and Logic]
-        DOCS[Wiki Links and Uploaded Documents]
+    subgraph L1["LAYER 1 — INPUT CHANNELS"]
+        direction LR
+        WEB_UI["A) Web UI — React App<br/>Enter story/URL · select platform<br/>Web / Android / iOS / macOS / Windows<br/>optionally upload context"]
+        IDE_A["B) IDE Agent — GitHub Copilot / CLI<br/>Developer prompts in IDE/CLI<br/>Specify platform and framework"]
+        JIRA_IN["C) Jira / Test Management<br/>Fetch user stories, acceptance<br/>criteria and tags via Jira API"]
     end
 
-    subgraph Core[Core Logic Module]
-        UI[Workflow UI<br/>React Control Surface]
-        API[Workflow API<br/>Node and Express Orchestration]
-        CTX[Project Context Engine<br/>Normalizes Business and Technical Context]
-        COPILOT[GitHub Copilot Agent Layer<br/>Healing Workflows, CodeGen and Assistance]
-        CLI[Playwright CLI Skills<br/>Page Inspection and Browser Tools]
-        PLAN[Planner Agent<br/>Creates Test Scenarios and Coverage]
-        GEN[Generator Agent<br/>Builds Playwright POM and Specs]
-        HEAL[Healer Agent<br/>Analyzes Failures and Retries Intelligently]
-        MCP[MCP Layer<br/>Browser Actions]
-        AI[AI Engine - LLMs<br/>OpenRouter, Claude, Local LLM]
+    NORM["Normalized Test Intent<br/>Story + Platform + Context"]
+
+    subgraph L2["LAYER 2 — CONTEXT AND PLATFORM RESOLUTION"]
+        direction LR
+        CTX_SRC["Context Sources<br/>application.md · domain.md · framework.md · project-prompt.md<br/>Platform capabilities · guardrails · naming conventions"]
+        RESOLVER["Platform Resolver<br/>Detect platform and select framework"]
+        subgraph ROUTES["Framework Routes"]
+            direction TB
+            WEB_R["Web → Playwright"]
+            MOB_R["Mobile → MobileWright<br/>Android / iOS"]
+            MAC_R["macOS → WDIO + mac2<br/>XCTest / Appium port 4724"]
+            WIN_R["Windows → WDIO + WinAppDriver<br/>UIAutomation / Appium port 4723"]
+        end
     end
 
-    subgraph Execution[POM Assets and Tests Module]
-        POM[Reusable POM Assets<br/>Pages, Locators, Seeds]
-        TESTS[Generated Playwright Tests<br/>Test Files]
-        RUN[Playwright Execution<br/>Headed or CI Run]
-        SELF[Self-Healing Loop]
-        REPORTS[Execution Outputs<br/>Videos, Logs, HTML Report, Results]
+    subgraph L3["LAYER 3 — AI ENGINE (MULTI-FRAMEWORK)"]
+        direction LR
+        TC_GEN["1. Generate Test Cases<br/>AI generates structured test cases<br/>Gherkin / JSON<br/>based on story + context + platform"]
+        subgraph CODE_GEN["2. Generate Automation Code — Framework-Aware<br/>AI generates maintainable test code following best practices"]
+            direction LR
+            WEB_CODE["Web — Playwright<br/>• locators/<br/>• pages/ (POM)<br/>• tests/ (specs)"]
+            MOB_CODE["Mobile — MobileWright<br/>• locators/<br/>• screens/ (POM)<br/>• tests/ (specs)"]
+            MAC_CODE["macOS — WDIO mac2<br/>• locators/<br/>• screens/ (POM)<br/>• tests/ (specs)"]
+            WIN_CODE["Windows — WDIO WinAppDriver<br/>• locators/<br/>• screens/ (POM)<br/>• tests/ (specs)"]
+        end
+        AI_OPT["AI Provider Options<br/>• OpenRouter (cloud / free / paid)<br/>• Local LLM via Ollama (gemma:4e4b)<br/>• GitHub Copilot / GitHub Models API<br/>  VS Code / CLI"]
     end
 
-    subgraph Enterprise[Hosted Services, CI/CD and Project Tracking]
-        CLOUD[Hosted Services Module<br/>GitHub Pages and Node Hosting]
-        TR[Test Management and CI/CD Module<br/>TestRail Case Sync and GitHub Actions]
-        JIRA_SYS[Project Tracking Module<br/>Jira Story Lifecycle and Result Updates]
-        CLIENT[Client Facing Reporting<br/>Client Reporting and QA Visibility]
+    subgraph L4["LAYER 4 — EXECUTION AND SELF-HEALING LOOP"]
+        direction LR
+        subgraph RUNNERS["Execution Engine — Multi-Runner"]
+            direction LR
+            WEB_RUN["Web — Playwright<br/>• Chromium<br/>• WebKit<br/>• Firefox"]
+            MOB_RUN["Mobile — MobileWright<br/>• Android Emulator / Real Device<br/>• iOS Simulator / Real Device"]
+            MAC_RUN["macOS — WDIO mac2<br/>• HP Smart App<br/>• Appium + mac2 driver<br/>• XCTest bridge / port 4724"]
+            WIN_RUN["Windows — WDIO WinAppDriver<br/>• HP myHP App<br/>• WinAppDriver<br/>• UIAutomation / port 4723"]
+        end
+        RESULT{"Test<br/>Result?"}
+        PASS_SYS["Update Systems<br/>• Update TestRail (results)<br/>• Update Jira (story status)"]
+        ERR_ANA["AI Error Analysis<br/>Analyze logs, screenshots, videos<br/>Identify root cause<br/>locator · timing · assertion · env"]
     end
 
-    REQ --> UI
-    JIRA_REQ --> UI
-    APP --> UI
-    FW --> UI
-    DOMAIN --> UI
-    DOCS --> UI
+    subgraph L5["LAYER 5 — REPORTING AND INTEGRATIONS"]
+        direction LR
+        RPT_W["Playwright HTML Report<br/>Web results in HTML<br/>test-results/html-report/"]
+        RPT_M["MobileWright HTML Report<br/>Mobile results in HTML<br/>test-results/mobile-report/"]
+        RPT_MAC["macOS HTML Report<br/>macOS results in HTML<br/>test-results/mac/html/"]
+        RPT_WIN["Windows HTML Report<br/>Windows results in HTML<br/>test-results/windows/html/"]
+        RPT_JSON["JSON Results File<br/>Unified results in JSON<br/>test-results/results.json"]
+        RPT_TR["TestRail Integration<br/>Push results, attachments<br/>logs linked to test cases"]
+        RPT_PR["PR Comment + Step Summary<br/>GitHub Actions step summary<br/>and pull request comment"]
+    end
 
-    UI --> API
-    API --> CTX
-    UI --> COPILOT
-    COPILOT --> PLAN
-    COPILOT --> GEN
-    COPILOT --> HEAL
-    CTX --> PLAN
-    CTX --> GEN
-    CTX --> HEAL
-    API --> MCP
-    CLI --> MCP
-    PLAN --> AI
-    GEN --> AI
-    HEAL --> AI
-    MCP --> AI
+    WEB_UI --> NORM
+    IDE_A  --> NORM
+    JIRA_IN --> NORM
 
-    PLAN --> TR
-    GEN --> POM
-    POM --> TESTS
-    TESTS --> RUN
-    RUN --> REPORTS
-    RUN --> SELF
-    SELF --> HEAL
-    HEAL --> TESTS
+    NORM --> CTX_SRC
+    CTX_SRC --> RESOLVER
+    RESOLVER --> WEB_R
+    RESOLVER --> MOB_R
+    RESOLVER --> MAC_R
+    RESOLVER --> WIN_R
 
-    API --> JIRA_SYS
-    API --> TR
-    TR --> RUN
-    CLOUD --> API
-    CLOUD --> UI
-    REPORTS --> CLIENT
-    JIRA_SYS --> CLIENT
-    TR --> CLIENT
+    WEB_R --> TC_GEN
+    MOB_R --> TC_GEN
+    MAC_R --> TC_GEN
+    WIN_R --> TC_GEN
 
-    class REQ,JIRA_REQ,APP,FW,DOMAIN,DOCS input;
-    class UI,API,CTX,COPILOT,CLI,PLAN,GEN,HEAL,MCP,AI orchestration;
-    class POM,TESTS,RUN,SELF,REPORTS automation;
-    class CLOUD,TR,JIRA_SYS enterprise;
-    class CLIENT output;
+    TC_GEN --> WEB_CODE
+    TC_GEN --> MOB_CODE
+    TC_GEN --> MAC_CODE
+    TC_GEN --> WIN_CODE
+    TC_GEN --> AI_OPT
+
+    WEB_CODE --> AI_OPT
+    MOB_CODE --> AI_OPT
+    MAC_CODE --> AI_OPT
+    WIN_CODE --> AI_OPT
+
+    WEB_CODE --> WEB_RUN
+    MOB_CODE --> MOB_RUN
+    MAC_CODE --> MAC_RUN
+    WIN_CODE --> WIN_RUN
+
+    WEB_RUN --> RESULT
+    MOB_RUN --> RESULT
+    MAC_RUN --> RESULT
+    WIN_RUN --> RESULT
+
+    RESULT -->|PASS| PASS_SYS
+    RESULT -->|FAIL| ERR_ANA
+    ERR_ANA -->|retry with updated code| WEB_RUN
+    ERR_ANA -->|retry with updated code| MOB_RUN
+    ERR_ANA -->|retry with updated code| MAC_RUN
+    ERR_ANA -->|retry with updated code| WIN_RUN
+
+    WEB_RUN --> RPT_W
+    MOB_RUN --> RPT_M
+    MAC_RUN --> RPT_MAC
+    WIN_RUN --> RPT_WIN
+    PASS_SYS --> RPT_JSON
+    PASS_SYS --> RPT_TR
+    PASS_SYS --> RPT_PR
+
+    class WEB_UI,IDE_A,JIRA_IN input;
+    class NORM norm;
+    class CTX_SRC,RESOLVER,WEB_R,MOB_R,MAC_R,WIN_R ctx;
+    class TC_GEN,WEB_CODE,MOB_CODE,MAC_CODE,WIN_CODE,AI_OPT ai;
+    class WEB_RUN,MOB_RUN,MAC_RUN,WIN_RUN platform;
+    class RESULT,ERR_ANA exec;
+    class PASS_SYS heal;
+    class RPT_W,RPT_M,RPT_MAC,RPT_WIN,RPT_JSON,RPT_TR,RPT_PR output;

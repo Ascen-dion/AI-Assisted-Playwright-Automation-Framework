@@ -1,0 +1,26 @@
+{
+  "_comment": "Maps HP Smart macOS smoke test titles → TestRail case IDs.",
+  "_instructions": [
+    "Populate this file after creating test cases in TestRail.",
+    "Use the exact test title string (without any [TC-MAC-HP-NNN] prefix)",
+    "OR embed [Cxxx] directly in the test title for automatic resolution.",
+    "",
+    "Example with case map (no code change needed):",
+    "  'should launch HP Smart and display the home screen': 2001",
+    "",
+    "Example with embedded ID in test title ([C2001] should launch...):",
+    "  No entry needed here — the reporter extracts it automatically.",
+    "",
+    "Discover the real bundle ID on your Mac:",
+    "  osascript -e 'id of app \"HP Smart\"'",
+    "  defaults read /Applications/HP\\ Smart.app/Contents/Info CFBundleIdentifier"
+  ],
+  "cases": {
+    "should launch HP Smart and display the home screen": null,
+    "should display the Sign In button on the home screen": null,
+    "should display the correct label on the Sign In button": null,
+    "should display all main navigation items (Printers, Scan, Print)": null,
+    "should display the My Printers section": null,
+    "should display the printer status indicator": null
+  }
+}

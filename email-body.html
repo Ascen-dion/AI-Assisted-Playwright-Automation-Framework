@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Playwright Report</title>
+<title>HP Windows App Test Report</title>
 </head>
 <body style="margin:0;padding:0;background:#080b12;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 
@@ -20,12 +20,12 @@
     <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
       <tr>
         <td>
-          <p style="margin:0 0 6px;font-size:11px;font-weight:600;letter-spacing:2px;color:#94a3b8;text-transform:uppercase;">CI / CD Pipeline</p>
-          <h1 style="margin:0;font-size:26px;font-weight:700;color:#e2e8f0;line-height:1.2;">Playwright AI Framework</h1>
+          <p style="margin:0 0 6px;font-size:11px;font-weight:600;letter-spacing:2px;color:#94a3b8;text-transform:uppercase;">Windows App Automation</p>
+          <h1 style="margin:0;font-size:26px;font-weight:700;color:#e2e8f0;line-height:1.2;">&#x1F5A5; HP Windows App Tests</h1>
           <p style="margin:8px 0 0;font-size:13px;color:#94a3b8;">
-            Run&nbsp;<strong style="color:#e2e8f0;">#</strong>
-            &nbsp;&middot;&nbsp;
-            &nbsp;&middot;&nbsp;<code style="background:#ffffff10;padding:1px 6px;border-radius:4px;font-size:12px;"></code>
+            Run&nbsp;<strong style="color:#e2e8f0;">#0</strong>
+            &nbsp;&middot;&nbsp;local
+            &nbsp;&middot;&nbsp;<code style="background:#ffffff10;padding:1px 6px;border-radius:4px;font-size:12px;">local</code>
           </p>
         </td>
         <td align="right" valign="top">
@@ -37,281 +37,175 @@
     </table>
   </td></tr>
 
-  <!-- stat cards -->
-  <tr><td style="padding:28px 36px 0;">
+  <!-- stats bar -->
+  <tr><td style="padding:24px 36px 20px;border-bottom:1px solid #2a2d3a;">
     <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
       <tr>
-        <td width="23%" style="background:#0d2318;border:1px solid #1a4030;border-radius:12px;padding:16px 12px;text-align:center;">
-          <p style="margin:0;font-size:30px;font-weight:800;color:#00c896;">0</p>
-          <p style="margin:4px 0 0;font-size:11px;font-weight:600;letter-spacing:1px;color:#00c896;text-transform:uppercase;opacity:.8;">Passed</p>
+        <td style="text-align:center;padding:0 12px;">
+          <p style="margin:0;font-size:28px;font-weight:700;color:#00c896;">6</p>
+          <p style="margin:4px 0 0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Passed</p>
         </td>
-        <td width="4%"></td>
-        <td width="23%" style="background:#1a1d27;border:1px solid #2a2d3a;border-radius:12px;padding:16px 12px;text-align:center;">
-          <p style="margin:0;font-size:30px;font-weight:800;color:#ff4d6d;">0</p>
-          <p style="margin:4px 0 0;font-size:11px;font-weight:600;letter-spacing:1px;color:#ff4d6d;text-transform:uppercase;opacity:.8;">Failed</p>
+        <td style="text-align:center;padding:0 12px;border-left:1px solid #2a2d3a;">
+          <p style="margin:0;font-size:28px;font-weight:700;color:#ff4d6d;">0</p>
+          <p style="margin:4px 0 0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Failed</p>
         </td>
-        <td width="4%"></td>
-        <td width="23%" style="background:#1c1a10;border:1px solid #3a3210;border-radius:12px;padding:16px 12px;text-align:center;">
-          <p style="margin:0;font-size:30px;font-weight:800;color:#f59e0b;">16</p>
-          <p style="margin:4px 0 0;font-size:11px;font-weight:600;letter-spacing:1px;color:#f59e0b;text-transform:uppercase;opacity:.8;">Skipped</p>
+        <td style="text-align:center;padding:0 12px;border-left:1px solid #2a2d3a;">
+          <p style="margin:0;font-size:28px;font-weight:700;color:#f59e0b;">0</p>
+          <p style="margin:4px 0 0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Skipped</p>
         </td>
-        <td width="4%"></td>
-        <td width="19%" style="background:#16122a;border:1px solid #2e2460;border-radius:12px;padding:16px 12px;text-align:center;">
-          <p style="margin:0;font-size:30px;font-weight:800;color:#6c47ff;">0%</p>
-          <p style="margin:4px 0 0;font-size:11px;font-weight:600;letter-spacing:1px;color:#6c47ff;text-transform:uppercase;opacity:.8;">Pass Rate</p>
+        <td style="text-align:center;padding:0 12px;border-left:1px solid #2a2d3a;">
+          <p style="margin:0;font-size:28px;font-weight:700;color:#e2e8f0;">100%</p>
+          <p style="margin:4px 0 0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Pass Rate</p>
+        </td>
+        <td style="text-align:center;padding:0 12px;border-left:1px solid #2a2d3a;">
+          <p style="margin:0;font-size:28px;font-weight:700;color:#e2e8f0;">25.9s</p>
+          <p style="margin:4px 0 0;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Duration</p>
         </td>
       </tr>
     </table>
   </td></tr>
 
-  <!-- progress bar -->
-  <tr><td style="padding:20px 36px 0;">
-    <p style="margin:0 0 8px;font-size:11px;color:#94a3b8;font-weight:500;">
-      16 tests &nbsp;&middot;&nbsp; 0.0s total
-    </p>
-    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-radius:999px;overflow:hidden;height:8px;background:#2a2d3a;">
+  <!-- pass rate bar -->
+  <tr><td style="padding:16px 36px;">
+    <p style="margin:0 0 8px;font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;">Pass Rate</p>
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+      style="background:#0d1117;border-radius:999px;overflow:hidden;height:8px;">
       <tr>
-        <td width="0.0%" style="background:#00c896;height:8px;font-size:0;">&nbsp;</td>
-        <td width="0.0%" style="background:#ff4d6d;height:8px;font-size:0;">&nbsp;</td>
-        <td width="100.0%" style="background:#f59e0b;height:8px;font-size:0;">&nbsp;</td>
-        <td style="background:#2a2d3a;height:8px;font-size:0;">&nbsp;</td>
+        <td style="width:100.0%;background:#00c896;height:8px;font-size:0;">&nbsp;</td>
+        <td style="width:0.0%;background:#ff4d6d;height:8px;font-size:0;">&nbsp;</td>
+        <td style="background:#1a2030;height:8px;font-size:0;">&nbsp;</td>
       </tr>
     </table>
+    <p style="margin:6px 0 0;font-size:11px;color:#94a3b8;">100.0% passed &middot; 0.0% failed &middot; 0.0% skipped</p>
   </td></tr>
 
-  <!-- meta -->
-  <tr><td style="padding:20px 36px 0;">
-    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background:#13161f;border:1px solid #2a2d3a;border-radius:10px;">
+  <!-- env details -->
+  <tr><td style="padding:0 36px 20px;">
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+      style="background:#0d1117;border-radius:8px;padding:14px 18px;border:1px solid #2a2d3a;">
       <tr>
-        <td style="padding:14px 18px;border-right:1px solid #2a2d3a;width:25%;">
-          <p style="margin:0;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;">Repo</p>
-          <p style="margin:4px 0 0;font-size:12px;color:#e2e8f0;font-weight:500;word-break:break-all;"></p>
-        </td>
-        <td style="padding:14px 18px;border-right:1px solid #2a2d3a;width:25%;">
-          <p style="margin:0;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;">Branch</p>
-          <p style="margin:4px 0 0;font-size:12px;color:#e2e8f0;font-weight:500;"></p>
-        </td>
-        <td style="padding:14px 18px;border-right:1px solid #2a2d3a;width:25%;">
-          <p style="margin:0;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;">Triggered by</p>
-          <p style="margin:4px 0 0;font-size:12px;color:#e2e8f0;font-weight:500;"></p>
-        </td>
-        <td style="padding:14px 18px;width:25%;">
-          <p style="margin:0;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;">Run</p>
-          <p style="margin:4px 0 0;font-size:12px;font-weight:500;">
-            <a href="undefined/undefined/actions/runs/undefined" style="color:#6c47ff;text-decoration:none;"># &rarr;</a>
-          </p>
+        <td style="font-size:12px;color:#94a3b8;line-height:1.8;">
+          <strong style="color:#e2e8f0;">&#x1F4BB; Platform</strong>&nbsp;&nbsp;Windows (windows-latest)<br>
+          <strong style="color:#e2e8f0;">&#x1F50D; App</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HP myHP (AD2F1837.myHP_v10z8vjag6ke6!App)<br>
+          <strong style="color:#e2e8f0;">&#x26A1; Driver</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Appium + WinAppDriver v1.2.1<br>
+          <strong style="color:#e2e8f0;">&#x1F4E6; Suite</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HP App Smoke Tests (6 TCs)<br>
+          <strong style="color:#e2e8f0;">&#x1F91D; Actor</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;local<br>
+          <strong style="color:#e2e8f0;">&#x1F4E6; Repo</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;local
         </td>
       </tr>
     </table>
   </td></tr>
 
-  <!-- results table -->
-  <tr><td style="padding:24px 36px 0;">
-    <p style="margin:0 0 12px;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;">Test Results</p>
-    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="border-radius:10px;overflow:hidden;border:1px solid #2a2d3a;">
-      <tr style="background:#13161f;">
-        <th style="padding:10px 14px;text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;font-weight:600;width:80px;border-bottom:1px solid #2a2d3a;">Status</th>
-        <th style="padding:10px 14px;text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;font-weight:600;border-bottom:1px solid #2a2d3a;">Test Name</th>
-        <th style="padding:10px 14px;text-align:right;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;font-weight:600;width:60px;border-bottom:1px solid #2a2d3a;">Time</th>
-        <th style="padding:10px 14px;text-align:left;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#94a3b8;font-weight:600;border-bottom:1px solid #2a2d3a;">Error</th>
-      </tr>
-      <tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
+  <!-- test results table -->
+  <tr><td style="padding:0 36px 24px;">
+    <p style="margin:0 0 12px;font-size:13px;font-weight:600;color:#e2e8f0;">Test Results</p>
+    <table width="100%" cellpadding="0" cellspacing="0" role="presentation"
+      style="border:1px solid #2a2d3a;border-radius:8px;overflow:hidden;">
+      <thead>
+        <tr style="background:#0d1117;">
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #2a2d3a;white-space:nowrap;">Status</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #2a2d3a;">Test Case</th>
+          <th style="padding:10px 14px;text-align:right;font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #2a2d3a;white-space:nowrap;">Duration</th>
+          <th style="padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #2a2d3a;">Error</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#1a1d27;">
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;white-space:nowrap;">
+    <span style="display:inline-block;background:#0d2318;color:#00c896;
+      border:1px solid #1a4030;font-size:10px;font-weight:700;letter-spacing:.5px;
       padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
+      &#10004; PASSED
     </span>
   </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] AC6: Broadband Tab Navigation to Broadband Overview › [C504] Test Case 6: Navigate to Broadband overview via Broadband dropdown</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[TC-WIN-HP-001] should launch the HP app and display the home screen</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">112ms</td>
   <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
 </tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;white-space:nowrap;">
+    <span style="display:inline-block;background:#0d2318;color:#00c896;
+      border:1px solid #1a4030;font-size:10px;font-weight:700;letter-spacing:.5px;
       padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
+      &#10004; PASSED
     </span>
   </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] AC6: Broadband Tab Navigation to Broadband Overview › [C504] Test Case 6: Navigate to Broadband overview via Broadband dropdown</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[TC-WIN-HP-002] should display the Sign In button in the top-right navigation bar</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">659ms</td>
   <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
 </tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;white-space:nowrap;">
+    <span style="display:inline-block;background:#0d2318;color:#00c896;
+      border:1px solid #1a4030;font-size:10px;font-weight:700;letter-spacing:.5px;
       padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
+      &#10004; PASSED
     </span>
   </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] AC7: Entertainment Tab Navigation to Entertainment Overview › [C536] Test Case 7: Navigate to Entertainment overview via Entertainment dropdown</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[TC-WIN-HP-003] should display the correct label on the Sign In button</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">909ms</td>
   <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
 </tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;white-space:nowrap;">
+    <span style="display:inline-block;background:#0d2318;color:#00c896;
+      border:1px solid #1a4030;font-size:10px;font-weight:700;letter-spacing:.5px;
       padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
+      &#10004; PASSED
     </span>
   </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] AC7: Entertainment Tab Navigation to Entertainment Overview › [C536] Test Case 7: Navigate to Entertainment overview via Entertainment dropdown</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[TC-WIN-HP-004] should display all top navigation bar icons (shopping, add, notifications, account)</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">2.0s</td>
   <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
 </tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;white-space:nowrap;">
+    <span style="display:inline-block;background:#0d2318;color:#00c896;
+      border:1px solid #1a4030;font-size:10px;font-weight:700;letter-spacing:.5px;
       padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
+      &#10004; PASSED
     </span>
   </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] AC8: Membership Tab Navigation to Membership Overview › [C572] Test Case 8: Navigate to Membership overview via Membership dropdown</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[TC-WIN-HP-005] should display the notebook model name in the My Notebook section</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">1.4s</td>
   <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
 </tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;white-space:nowrap;">
+    <span style="display:inline-block;background:#0d2318;color:#00c896;
+      border:1px solid #1a4030;font-size:10px;font-weight:700;letter-spacing:.5px;
       padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
+      &#10004; PASSED
     </span>
   </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] AC8: Membership Tab Navigation to Membership Overview › [C572] Test Case 8: Navigate to Membership overview via Membership dropdown</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
-</tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
-      padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
-    </span>
-  </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] StarHub Mobile Purchase Journey › [C499] Test Case 1: Navigate to All Phones listing via Mobile dropdown</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
-</tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
-      padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
-    </span>
-  </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] StarHub Mobile Purchase Journey › [C500] Test Case 2: Select Samsung Galaxy A57 5G from the device listing</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
-</tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
-      padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
-    </span>
-  </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] StarHub Mobile Purchase Journey › [C501] Test Case 3: Verify Samsung Galaxy A57 5G default configuration</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
-</tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
-      padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
-    </span>
-  </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] StarHub Mobile Purchase Journey › [C502] Test Case 4: Click Next to initiate the purchase journey next step</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
-</tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
-      padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
-    </span>
-  </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] StarHub Mobile Purchase Journey › [C503] Test Case 5: Verify login and sign-up popup after clicking Next</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
-</tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
-      padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
-    </span>
-  </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] StarHub Mobile Purchase Journey › [C499] Test Case 1: Navigate to All Phones listing via Mobile dropdown</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
-</tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
-      padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
-    </span>
-  </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] StarHub Mobile Purchase Journey › [C500] Test Case 2: Select Samsung Galaxy A57 5G from the device listing</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
-</tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
-      padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
-    </span>
-  </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] StarHub Mobile Purchase Journey › [C501] Test Case 3: Verify Samsung Galaxy A57 5G default configuration</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
-</tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
-      padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
-    </span>
-  </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] StarHub Mobile Purchase Journey › [C502] Test Case 4: Click Next to initiate the purchase journey next step</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
-</tr><tr style="background:#1a1d27;">
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;">
-    <span style="display:inline-block;background:#1c1a10;color:#f59e0b;
-      border:1px solid #3a3210;font-size:10px;font-weight:700;letter-spacing:.5px;
-      padding:3px 8px;border-radius:999px;white-space:nowrap;">
-      &#9654; SKIPPED
-    </span>
-  </td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[UI] StarHub Mobile Purchase Journey › [C503] Test Case 5: Verify login and sign-up popup after clicking Next</td>
-  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">0ms</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#e2e8f0;">[TC-WIN-HP-006] should display the battery/charging status</td>
+  <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:12px;color:#94a3b8;text-align:right;white-space:nowrap;">3.9s</td>
   <td style="padding:10px 14px;border-bottom:1px solid #2a2d3a;font-size:11px;color:#ff4d6d;font-family:monospace;"></td>
 </tr>
+      </tbody>
     </table>
   </td></tr>
 
-  <!-- cta -->
-  <tr><td style="padding:28px 36px;">
-    <a href="undefined/undefined/actions/runs/undefined" style="display:inline-block;background:#6c47ff;color:#fff;padding:13px 28px;border-radius:10px;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:.3px;">
-      View Full Report &amp; Artifacts &nbsp;&rarr;
+  <!-- CTA -->
+  <tr><td style="padding:0 36px 28px;text-align:center;">
+    <a href="undefined/undefined/actions/runs/undefined"
+      style="display:inline-block;background:#6c47ff;color:#fff;font-size:13px;font-weight:600;padding:12px 28px;border-radius:8px;text-decoration:none;letter-spacing:.3px;">
+      &#x1F4CA; View Full Run Details
+    </a>
+    &nbsp;&nbsp;
+    <a href="undefined/undefined/actions/runs/undefined"
+      style="display:inline-block;background:#0d1117;color:#e2e8f0;border:1px solid #2a2d3a;font-size:13px;font-weight:600;padding:12px 28px;border-radius:8px;text-decoration:none;letter-spacing:.3px;">
+      &#x1F4E5; Download Artifacts
     </a>
   </td></tr>
 
   <!-- footer -->
-  <tr><td style="background:#13161f;padding:16px 36px;border-top:1px solid #2a2d3a;">
+  <tr><td style="padding:18px 36px;border-top:1px solid #2a2d3a;text-align:center;">
     <p style="margin:0;font-size:11px;color:#94a3b8;">
-      Automated by <strong style="color:#94a3b8;">Playwright AI Framework</strong>
-      &nbsp;&middot;&nbsp; 
+      Powered by AI-Assisted Test Automation Framework &middot; WDIO v9 + Appium + WinAppDriver<br>
+      <a href="undefined/undefined/actions/runs/undefined" style="color:#6c47ff;text-decoration:none;">Run #0</a>
+      &nbsp;&middot;&nbsp;local
     </p>
   </td></tr>
 
 </table>
 </td></tr>
 </table>
+
 </body>
 </html>

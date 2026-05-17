@@ -1,0 +1,319 @@
+name: 🖥️ HP Windows App Tests
+
+on:
+  push:
+    branches: [main, master, adaptive_planning_captial_one_poc]
+    paths:
+      - 'src/windows/**'
+      - 'wdio.windows.config.js'
+      - 'config/platform/windows.config.js'
+      - 'scripts/generate-email-windows.js'
+      - 'scripts/report-windows-to-testrail.js'
+  pull_request:
+    branches: [main, master, adaptive_planning_captial_one_poc]
+  schedule:
+    # Run weekdays at 06:00 UTC (overnight regression)
+    - cron: '0 6 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      run_reason:
+        description: 'Reason for manual run'
+        required: false
+        default: 'Manual smoke check'
+
+jobs:
+  hp-app-smoke-tests:
+    name: 🖥️ HP App Smoke Tests (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 40
+
+    steps:
+      # ─── Run context ──────────────────────────────────────────────────────
+      - name: 📋 Log run context
+        shell: powershell
+        run: |
+          Write-Host "=========================================="
+          Write-Host " HP Windows App Tests — Run #${{ github.run_number }}"
+          Write-Host "=========================================="
+          Write-Host " Branch  : ${{ github.ref_name }}"
+          Write-Host " Actor   : ${{ github.actor }}"
+          Write-Host " Trigger : ${{ github.event_name }}"
+          Write-Host " SHA     : ${{ github.sha }}"
+          if ('${{ github.event_name }}' -eq 'workflow_dispatch') {
+            Write-Host " Reason  : ${{ github.event.inputs.run_reason }}"
+          }
+          Write-Host "=========================================="
+
+      # ─── Checkout & Node ──────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # ─── Developer Mode (required for WinAppDriver UWP launch) ───────────
+      - name: Enable Windows Developer Mode
+        shell: powershell
+        run: |
+          $key = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock"
+          Set-ItemProperty -Path $key -Name "AllowDevelopmentWithoutDevLicense" -Value 1 -Type DWord -Force
+          Set-ItemProperty -Path $key -Name "AllowAllTrustedApps"               -Value 1 -Type DWord -Force
+          Write-Host "Developer Mode enabled."
+
+      # ─── Install HP myHP app from Microsoft Store via winget ─────────────
+      - name: Install myHP from Microsoft Store (winget)
+        shell: powershell
+        run: |
+          winget source update --disable-interactivity 2>$null
+          winget install `
+            --id "AD2F1837.myHP" `
+            --source msstore `
+            --accept-package-agreements `
+            --accept-source-agreements `
+            --silent `
+            --disable-interactivity
+          Start-Sleep -Seconds 30
+          $pkg = Get-AppxPackage -Name "AD2F1837.myHP" -ErrorAction SilentlyContinue
+          if ($pkg) {
+            Write-Host "✅ myHP installed: $($pkg.PackageFullName)"
+          } else {
+            Write-Warning "⚠️ myHP package not found after install. Tests may fail."
+          }
+
+      # ─── Install WinAppDriver ─────────────────────────────────────────────
+      - name: Install WinAppDriver v1.2.1
+        shell: powershell
+        run: |
+          $url = "https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi"
+          $msi = "$env:RUNNER_TEMP\WinAppDriver.msi"
+          Write-Host "Downloading WinAppDriver..."
+          Invoke-WebRequest -Uri $url -OutFile $msi -UseBasicParsing
+          Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /quiet /norestart" -Wait
+          $exe = "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
+          if (Test-Path $exe) {
+            Write-Host "✅ WinAppDriver installed: $exe"
+          } else {
+            Write-Error "WinAppDriver not found after install."
+            exit 1
+          }
+
+      # ─── npm dependencies ─────────────────────────────────────────────────
+      - name: Install npm dependencies
+        run: npm ci
+
+      # ─── Output directories ───────────────────────────────────────────────
+      - name: Create test output directories
+        shell: powershell
+        run: |
+          @(
+            'test-results/windows/html/screenshots',
+            'test-results/windows/videos',
+            'logs'
+          ) | ForEach-Object { New-Item -ItemType Directory -Force $_ | Out-Null }
+
+      # ─── Start Appium ─────────────────────────────────────────────────────
+      - name: Start Appium (background)
+        shell: powershell
+        run: |
+          $appiumBin = Resolve-Path "node_modules/.bin/appium.cmd"
+          $logFile   = Join-Path (Resolve-Path "logs") "appium-ci.log"
+          Start-Process -NoNewWindow `
+            -FilePath "node" `
+            -ArgumentList "`"$appiumBin`" --address 127.0.0.1 --port 4723 --log `"$logFile`""
+          Write-Host "Waiting for Appium to be ready..."
+          $ready = $false
+          for ($i = 0; $i -lt 12; $i++) {
+            Start-Sleep -Seconds 5
+            try {
+              $r = Invoke-WebRequest -Uri "http://127.0.0.1:4723/status" -TimeoutSec 3 -UseBasicParsing
+              if ($r.StatusCode -eq 200) { $ready = $true; break }
+            } catch {}
+          }
+          if (-not $ready) {
+            Get-Content $logFile -ErrorAction SilentlyContinue | Select-Object -Last 30
+            Write-Error "Appium did not start within 60 seconds."
+            exit 1
+          }
+          Write-Host "✅ Appium is ready on port 4723."
+
+      # ─── Run tests ────────────────────────────────────────────────────────
+      - name: 🧪 Run HP App smoke tests
+        id: run-tests
+        # continue-on-error so post-test steps (email, artifacts) always run
+        continue-on-error: true
+        run: npm run test:windows:hp
+        env:
+          CI: 'true'
+          TESTRAIL_HOST:       ${{ secrets.TESTRAIL_HOST }}
+          TESTRAIL_USER:       ${{ secrets.TESTRAIL_USER }}
+          TESTRAIL_API_KEY:    ${{ secrets.TESTRAIL_API_KEY }}
+          TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
+          TESTRAIL_SUITE_ID:   ${{ secrets.TESTRAIL_SUITE_ID }}
+
+      # ─── TestRail reporting ───────────────────────────────────────────────
+      # Posts pass/fail results for every test case that has a TestRail mapping.
+      # Skipped gracefully when TESTRAIL_* secrets are not configured.
+      - name: 📊 Report results to TestRail
+        if: always()
+        continue-on-error: true
+        shell: powershell
+        run: node scripts/report-windows-to-testrail.js
+        env:
+          TESTRAIL_HOST:            ${{ secrets.TESTRAIL_HOST }}
+          TESTRAIL_USER:            ${{ secrets.TESTRAIL_USER }}
+          TESTRAIL_API_KEY:         ${{ secrets.TESTRAIL_API_KEY }}
+          TESTRAIL_PROJECT_ID:      ${{ secrets.TESTRAIL_PROJECT_ID }}
+          TESTRAIL_SUITE_ID:        ${{ secrets.TESTRAIL_SUITE_ID }}
+          TESTRAIL_RUN_NAME_PREFIX: HP Windows App Smoke
+          GITHUB_RUN_NUMBER:        ${{ github.run_number }}
+          GITHUB_REF_NAME:          ${{ github.ref_name }}
+          GITHUB_SHA:               ${{ github.sha }}
+          GITHUB_ACTOR:             ${{ github.actor }}
+
+      # ─── Upload test artifacts ────────────────────────────────────────────
+      - name: 📦 Upload HTML report & screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hp-windows-html-report-${{ github.run_number }}
+          path: |
+            test-results/windows/html/
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: 📦 Upload videos & logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hp-windows-videos-logs-${{ github.run_number }}
+          path: |
+            test-results/windows/videos/
+            logs/appium-ci.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+      # ─── Generate HTML email ──────────────────────────────────────────────
+      - name: 📧 Generate email report
+        if: always()
+        shell: powershell
+        run: node scripts/generate-email-windows.js
+        env:
+          REPORT_TITLE:       HP Windows App Tests
+          GITHUB_SERVER_URL:  ${{ github.server_url }}
+          GITHUB_REPOSITORY:  ${{ github.repository }}
+          GITHUB_RUN_ID:      ${{ github.run_id }}
+          GITHUB_RUN_NUMBER:  ${{ github.run_number }}
+          GITHUB_REF_NAME:    ${{ github.ref_name }}
+          GITHUB_ACTOR:       ${{ github.actor }}
+          GITHUB_SHA:         ${{ github.sha }}
+
+      # ─── Send email notification ──────────────────────────────────────────
+      # Requires GitHub secrets: EMAIL_USERNAME, EMAIL_PASSWORD, EMAIL_TO
+      - name: 📬 Send email notification
+        if: always()
+        continue-on-error: true
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: |
+            [HP Windows Tests] ${{ steps.run-tests.outcome == 'success' && '✅ PASSED' || '❌ FAILED' }} — Run #${{ github.run_number }} (${{ github.ref_name }})
+          to: ${{ secrets.EMAIL_TO }}
+          from: HP Windows AI Test Framework <${{ secrets.EMAIL_USERNAME }}>
+          html_body: file://email-body.html
+
+      # ─── PR comment ───────────────────────────────────────────────────────
+      - name: 💬 Comment PR with test results
+        if: github.event_name == 'pull_request' && always()
+        continue-on-error: true
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const outcome   = '${{ steps.run-tests.outcome }}';
+            const runUrl    = '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}';
+            const runNum    = '${{ github.run_number }}';
+            const branch    = '${{ github.ref_name }}';
+            const sha       = '${{ github.sha }}'.slice(0, 7);
+            const isPassed  = outcome === 'success';
+
+            const comment = `## 🖥️ HP Windows App Test Results
+
+            | | |
+            |---|---|
+            | **Status** | ${isPassed ? '✅ Passed' : '❌ Failed'} |
+            | **Run** | [#${runNum}](${runUrl}) |
+            | **Branch** | \`${branch}\` |
+            | **Commit** | \`${sha}\` |
+            | **App** | HP myHP (AUMID: AD2F1837.myHP_v10z8vjag6ke6!App) |
+            | **Platform** | Windows / Appium + WinAppDriver v1.2.1 |
+
+            ### 📦 Artifacts
+            - 📊 [HTML Report](${runUrl}) — \`hp-windows-html-report-${runNum}\`
+            - 🎥 [Videos & Logs](${runUrl}) — \`hp-windows-videos-logs-${runNum}\`
+
+            ---
+            *Automated by AI-Assisted Test Automation Framework · WDIO v9*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+      # ─── Job summary ──────────────────────────────────────────────────────
+      - name: 📊 Publish job summary
+        if: always()
+        shell: powershell
+        run: |
+          $outcome  = "${{ steps.run-tests.outcome }}"
+          $icon     = if ($outcome -eq "success") { "✅" } else { "❌" }
+          $status   = if ($outcome -eq "success") { "PASSED" } else { "FAILED" }
+          $runUrl   = "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          # Try to read metrics from the report JSON
+          $metrics = "N/A"
+          try {
+            $jsonFiles = Get-ChildItem "test-results\windows\html" -Filter "report-*-*.json" -ErrorAction SilentlyContinue
+            if ($jsonFiles) {
+              $latest = $jsonFiles | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+              $report = Get-Content $latest.FullName | ConvertFrom-Json
+              $m = $report.metrics
+              $metrics = "$($m.passed) passed · $($m.failed) failed · $($m.skipped) skipped · $([math]::Round($m.duration/1000,1))s"
+            }
+          } catch {}
+
+          $summary = @"
+          ## $icon HP Windows App Tests — $status
+
+          | Field | Value |
+          |---|---|
+          | Run | [#${{ github.run_number }}]($runUrl) |
+          | Branch | ``${{ github.ref_name }}`` |
+          | Commit | ``$("${{ github.sha }}".Substring(0,7))`` |
+          | Actor | ${{ github.actor }} |
+          | Trigger | ${{ github.event_name }} |
+          | Results | $metrics |
+
+          ### 📱 App Under Test
+          | | |
+          |---|---|
+          | App | HP myHP |
+          | AUMID | ``AD2F1837.myHP_v10z8vjag6ke6!App`` |
+          | Driver | Appium v3 + WinAppDriver v1.2.1 |
+          | Runner | windows-latest (GitHub Actions) |
+          | Framework | WDIO v9 + Mocha |
+
+          ### 📦 Artifacts
+          - HTML Report: ``hp-windows-html-report-${{ github.run_number }}``
+          - Videos & Logs: ``hp-windows-videos-logs-${{ github.run_number }}``
+
+          [🔗 View full run]($runUrl)
+          "@
+
+          $summary | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8

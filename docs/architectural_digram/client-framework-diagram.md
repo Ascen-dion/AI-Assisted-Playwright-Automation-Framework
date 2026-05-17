@@ -1,113 +1,187 @@
-# Client Architecture Diagram
+# AI-Assisted Test Automation Framework — Multi-Platform Architecture
 
-This diagram is designed for client conversations. It shows how the framework turns requirements into maintainable Playwright automation while integrating with Jira, TestRail, AI services, and CI/CD platforms.
+This diagram shows how the framework turns plain-English requirements into production-grade automation across **Web, API, iOS, Android, macOS, and Windows** — all orchestrated through GitHub Copilot agents.
 
 ```mermaid
-flowchart LR
-    classDef input fill:#eef4ff,stroke:#3d6dcc,color:#0f172a,stroke-width:1.5px;
-    classDef orchestration fill:#f3f0ff,stroke:#6d4aff,color:#1f2937,stroke-width:1.5px;
-    classDef automation fill:#ecfdf3,stroke:#0f9f6e,color:#0f172a,stroke-width:1.5px;
-    classDef enterprise fill:#fff7e8,stroke:#d97706,color:#111827,stroke-width:1.5px;
-    classDef output fill:#fff1f2,stroke:#e11d48,color:#111827,stroke-width:1.5px;
+flowchart TD
+    classDef input    fill:#eef4ff,stroke:#3d6dcc,color:#0f172a,stroke-width:1.5px;
+    classDef norm     fill:#dbeafe,stroke:#1d4ed8,color:#0f172a,stroke-width:2px;
+    classDef ctx      fill:#fdf6ec,stroke:#d97706,color:#111827,stroke-width:1.5px;
+    classDef ai       fill:#fff7ed,stroke:#ea580c,color:#111827,stroke-width:1.5px;
+    classDef platform fill:#ecfdf3,stroke:#0f9f6e,color:#0f172a,stroke-width:1.5px;
+    classDef exec     fill:#fff1f2,stroke:#e11d48,color:#111827,stroke-width:1.5px;
+    classDef heal     fill:#fef9c3,stroke:#ca8a04,color:#111827,stroke-width:1.5px;
+    classDef output   fill:#f3f0ff,stroke:#6d4aff,color:#1f2937,stroke-width:1.5px;
 
-    subgraph Inputs[Business Inputs and Knowledge Sources]
-        REQ[Plain-English Requirements]
-        JIRA_REQ[Jira Stories and Acceptance Criteria]
-        APP[Application Knowledge]
-        FW[Framework Knowledge]
-        DOMAIN[Domain Knowledge]
-        DOCS[Wiki Links and Uploaded Documents]
+    subgraph L1["LAYER 1 — INPUT CHANNELS"]
+        direction LR
+        WEB_UI["A) Web UI — React App\nEnter story/URL · select platform\nWeb / Android / iOS / macOS / Windows\noptionally upload context"]
+        IDE_A["B) IDE Agent — GitHub Copilot / CLI\nDeveloper prompts in IDE/CLI\nSpecify platform and framework"]
+        JIRA_IN["C) Jira / Test Management\nFetch user stories, acceptance\ncriteria and tags via Jira API"]
     end
 
-    subgraph Core[AI-Assisted Automation Framework]
-        UI[Workflow UI<br/>React control surface]
-        API[Workflow API<br/>Node and Express orchestration]
-        CTX[Project Context Engine<br/>normalizes business and technical context]
-        COPILOT[GitHub Copilot Agent Layer<br/>planning, generation, healing workflows]
-        CLI[Playwright CLI Skills<br/>browser actions and automation assistance]
-        PLAN[Planner Agent<br/>creates test scenarios and coverage]
-        GEN[Generator Agent<br/>builds Playwright POM assets and specs]
-        HEAL[Healer Agent<br/>analyzes failures and retries intelligently]
-        MCP[MCP Layer<br/>page inspection, browser tools, AI workflow support]
-        AI[AI Engine<br/>OpenRouter, Claude, Local LLM]
+    NORM["Normalized Test Intent\nStory + Platform + Context"]
+
+    subgraph L2["LAYER 2 — CONTEXT AND PLATFORM RESOLUTION"]
+        direction LR
+        CTX_SRC["Context Sources\napplication.md · domain.md · framework.md · project-prompt.md\nPlatform capabilities · guardrails · naming conventions"]
+        RESOLVER["Platform Resolver\nDetect platform and select framework"]
+        subgraph ROUTES["Framework Routes"]
+            direction TB
+            WEB_R["Web → Playwright"]
+            MOB_R["Mobile → MobileWright\nAndroid / iOS"]
+            MAC_R["macOS → WDIO + mac2\nXCTest / Appium port 4724"]
+            WIN_R["Windows → WDIO + WinAppDriver\nUIAutomation / Appium port 4723"]
+        end
     end
 
-    subgraph Execution[Automation Execution Layer]
-        POM[Reusable POM Assets<br/>pages, locators, seed specs]
-        TESTS[Generated Playwright Tests]
-        RUN[Playwright Execution<br/>headed or CI run]
-        SELF[Self-Healing Loop]
-        REPORTS[Execution Outputs<br/>videos, logs, HTML report, results.json]
+    subgraph L3["LAYER 3 — AI ENGINE (MULTI-FRAMEWORK)"]
+        direction LR
+        TC_GEN["1. Generate Test Cases\nAI generates structured test cases\nGherkin / JSON\nbased on story + context + platform"]
+        subgraph CODE_GEN["2. Generate Automation Code — Framework-Aware\nAI generates maintainable test code following best practices"]
+            direction LR
+            WEB_CODE["Web — Playwright\n• locators/\n• pages/ (POM)\n• tests/ (specs)"]
+            MOB_CODE["Mobile — MobileWright\n• locators/\n• screens/ (POM)\n• tests/ (specs)"]
+            MAC_CODE["macOS — WDIO mac2\n• locators/\n• screens/ (POM)\n• tests/ (specs)"]
+            WIN_CODE["Windows — WDIO WinAppDriver\n• locators/\n• screens/ (POM)\n• tests/ (specs)"]
+        end
+        AI_OPT["AI Provider Options\n• OpenRouter (cloud / free / paid)\n• Local LLM via Ollama (gemma:4e4b)\n• GitHub Copilot / GitHub Models API\n  VS Code / CLI"]
     end
 
-    subgraph Enterprise[Enterprise Systems and Delivery]
-        JIRA_SYS[Jira<br/>story lifecycle and result updates]
-        TR[TestRail<br/>case creation and synchronization]
-        GHA[GitHub Actions<br/>automated execution and deployment]
-        CLOUD[Azure, Railway, or Node Hosting<br/>API and environment deployment]
-        PAGES[GitHub Pages<br/>hosted workflow UI]
-        CLIENT[Client Reporting and QA Visibility]
+    subgraph L4["LAYER 4 — EXECUTION AND SELF-HEALING LOOP"]
+        direction LR
+        subgraph RUNNERS["Execution Engine — Multi-Runner"]
+            direction LR
+            WEB_RUN["Web — Playwright\n• Chromium\n• WebKit\n• Firefox"]
+            MOB_RUN["Mobile — MobileWright\n• Android Emulator / Real Device\n• iOS Simulator / Real Device"]
+            MAC_RUN["macOS — WDIO mac2\n• HP Smart App\n• Appium + mac2 driver\n• XCTest bridge / port 4724"]
+            WIN_RUN["Windows — WDIO WinAppDriver\n• HP myHP App\n• WinAppDriver\n• UIAutomation / port 4723"]
+        end
+        RESULT{"Test\nResult?"}
+        PASS_SYS["Update Systems\n• Update TestRail (results)\n• Update Jira (story status)"]
+        ERR_ANA["AI Error Analysis\nAnalyze logs, screenshots, videos\nIdentify root cause\nlocator · timing · assertion · env"]
     end
 
-    REQ --> UI
-    JIRA_REQ --> UI
-    APP --> UI
-    FW --> UI
-    DOMAIN --> UI
-    DOCS --> UI
+    subgraph L5["LAYER 5 — REPORTING AND INTEGRATIONS"]
+        direction LR
+        RPT_W["Playwright HTML Report\nWeb results in HTML\ntest-results/html-report/"]
+        RPT_M["MobileWright HTML Report\nMobile results in HTML\ntest-results/mobile-report/"]
+        RPT_MAC["macOS HTML Report\nmacOS results in HTML\ntest-results/mac/html/"]
+        RPT_WIN["Windows HTML Report\nWindows results in HTML\ntest-results/windows/html/"]
+        RPT_JSON["JSON Results File\nUnified results in JSON\ntest-results/results.json"]
+        RPT_TR["TestRail Integration\nPush results, attachments\nlogs linked to test cases"]
+        RPT_PR["PR Comment + Step Summary\nGitHub Actions step summary\nand pull request comment"]
+    end
 
-    UI --> API
-    API --> CTX
-    UI --> COPILOT
-    COPILOT --> PLAN
-    COPILOT --> GEN
-    COPILOT --> HEAL
-    CTX --> PLAN
-    CTX --> GEN
-    CTX --> HEAL
-    API --> MCP
-    CLI --> MCP
-    PLAN --> AI
-    GEN --> AI
-    HEAL --> AI
-    MCP --> AI
+    WEB_UI --> NORM
+    IDE_A  --> NORM
+    JIRA_IN --> NORM
 
-    PLAN --> TR
-    GEN --> POM
-    POM --> TESTS
-    TESTS --> RUN
-    RUN --> REPORTS
-    RUN --> SELF
-    SELF --> HEAL
-    HEAL --> TESTS
+    NORM --> CTX_SRC
+    CTX_SRC --> RESOLVER
+    RESOLVER --> WEB_R
+    RESOLVER --> MOB_R
+    RESOLVER --> MAC_R
+    RESOLVER --> WIN_R
 
-    API --> JIRA_SYS
-    API --> TR
-    GHA --> RUN
-    CLOUD --> API
-    PAGES --> UI
-    REPORTS --> CLIENT
-    JIRA_SYS --> CLIENT
-    TR --> CLIENT
+    WEB_R --> TC_GEN
+    MOB_R --> TC_GEN
+    MAC_R --> TC_GEN
+    WIN_R --> TC_GEN
 
-    class REQ,JIRA_REQ,APP,FW,DOMAIN,DOCS input;
-    class UI,API,CTX,COPILOT,CLI,PLAN,GEN,HEAL,MCP,AI orchestration;
-    class POM,TESTS,RUN,SELF automation;
-    class JIRA_SYS,TR,GHA,CLOUD,PAGES enterprise;
-    class REPORTS,CLIENT output;
+    TC_GEN --> WEB_CODE
+    TC_GEN --> MOB_CODE
+    TC_GEN --> MAC_CODE
+    TC_GEN --> WIN_CODE
+    TC_GEN --> AI_OPT
+
+    WEB_CODE --> AI_OPT
+    MOB_CODE --> AI_OPT
+    MAC_CODE --> AI_OPT
+    WIN_CODE --> AI_OPT
+
+    WEB_CODE --> WEB_RUN
+    MOB_CODE --> MOB_RUN
+    MAC_CODE --> MAC_RUN
+    WIN_CODE --> WIN_RUN
+
+    WEB_RUN --> RESULT
+    MOB_RUN --> RESULT
+    MAC_RUN --> RESULT
+    WIN_RUN --> RESULT
+
+    RESULT -->|PASS| PASS_SYS
+    RESULT -->|FAIL| ERR_ANA
+    ERR_ANA -->|retry with updated code| WEB_RUN
+    ERR_ANA -->|retry with updated code| MOB_RUN
+    ERR_ANA -->|retry with updated code| MAC_RUN
+    ERR_ANA -->|retry with updated code| WIN_RUN
+
+    WEB_RUN --> RPT_W
+    MOB_RUN --> RPT_M
+    MAC_RUN --> RPT_MAC
+    WIN_RUN --> RPT_WIN
+    PASS_SYS --> RPT_JSON
+    PASS_SYS --> RPT_TR
+    PASS_SYS --> RPT_PR
+
+    class WEB_UI,IDE_A,JIRA_IN input;
+    class NORM norm;
+    class CTX_SRC,RESOLVER,WEB_R,MOB_R,MAC_R,WIN_R ctx;
+    class TC_GEN,WEB_CODE,MOB_CODE,MAC_CODE,WIN_CODE,AI_OPT ai;
+    class WEB_RUN,MOB_RUN,MAC_RUN,WIN_RUN platform;
+    class RESULT,ERR_ANA exec;
+    class PASS_SYS heal;
+    class RPT_W,RPT_M,RPT_MAC,RPT_WIN,RPT_JSON,RPT_TR,RPT_PR output;
 ```
 
-## Client Talk Track
+---
 
-1. Business users can start from plain-English requirements or an existing Jira story.
-2. The UI captures project context such as application knowledge, framework rules, domain guidance, and supporting documents.
-3. GitHub Copilot agent workflows can drive planning, script generation, and healing as part of the broader automation operating model.
-4. Playwright CLI skills add browser-operation capabilities for inspection, interaction, and assisted automation flows.
-5. The workflow API orchestrates AI agents that plan coverage, generate Playwright automation, inspect live pages, and self-heal failures.
-6. Generated assets follow a Page Object Model structure so tests stay maintainable and reusable.
-7. Test cases can be synchronized to TestRail, and execution outcomes can be pushed back into Jira.
-8. The same framework can run locally or inside GitHub Actions, while the UI and API can be hosted on platforms such as GitHub Pages, Azure, or Railway.
+## Agent → Platform Mapping
 
-## Suggested Caption
+| Agent | Platform | Locator Discovery | Config | Context |
+|---|---|---|---|---|
+| `starhub-automation-agent` | Web + API (Playwright) | Live DOM via Playwright MCP | `playwright.config.js` | `context/ui&api/` |
+| `mobile-brownfield-automation-agent` | iOS + Android (MobileWright) | Mobile MCP + device element dump | `mobilewright.config.mjs` | `context/mobile/` |
+| `mac-app-agent` | macOS (WDIO + mac2) | Xcode Accessibility Inspector + element dump | `wdio.mac.config.js` | `context/mac/` |
+| `windows-app-agent` | Windows (WDIO + WinAppDriver) | windows-app-mcp + Accessibility Insights | `wdio.windows.config.js` | `context/windows/` |
 
-AI-assisted test automation framework that connects requirements, GitHub Copilot agent workflows, Playwright CLI skills, enterprise QA systems, and Playwright execution into a single delivery workflow.
+---
+
+## Traceability Flow
+
+```
+Plain English AC
+       │
+       ▼
+  Agent reads context/  ──►  discovers real locators from live app
+       │
+       ▼
+  TestRail Case created  ──►  [TC-xxx] embedded in every spec title
+       │
+       ▼
+  3 files generated: locators.js · screen/page.js · spec.js
+       │
+       ▼
+  CI run (GitHub Actions)  ──►  HTML report + Email + PR comment
+       │
+       ▼
+  TestRail pass/fail posted  ──►  full AC → code → result traceability
+```
+
+---
+
+## Talk Track
+
+1. Engineers describe what to automate in plain English inside GitHub Copilot Chat — or enter a URL/story in the Workflow UI.
+2. They select the agent for the platform — Web, Mobile, macOS, or Windows.
+3. The agent loads platform context files, audits existing POM assets, and discovers real locators from the running app.
+4. TestRail cases are created automatically and case IDs are embedded in every test title.
+5. Three production-ready files are generated: locators, screen/page object, and spec.
+6. Tests run in CI on the appropriate GitHub Actions runner — `ubuntu-latest`, `macos-latest`, or `windows-latest`.
+7. Results flow back to TestRail, HTML report, email, PR comments, and GitHub step summaries automatically.
+8. Failing tests can be repaired by invoking `@playwright-test-healer` with the failure output — the self-healing loop retries automatically.
+
+## Caption
+
+AI-Assisted Test Automation Framework (Web + Mobile + Desktop) — 5-layer architecture covering Web/API via Playwright, iOS/Android via MobileWright, macOS via WDIO+mac2, and Windows via WDIO+WinAppDriver — all driven through GitHub Copilot agents with full TestRail traceability and CI/CD integration.

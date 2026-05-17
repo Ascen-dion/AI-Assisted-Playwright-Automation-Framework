@@ -1,0 +1,25 @@
+{
+  "_comment": "Maps HP Windows smoke test titles → TestRail case IDs.",
+  "_instructions": [
+    "Populate this file after creating test cases in TestRail.",
+    "Use the exact test title string (without any [TC-WIN-HP-NNN] prefix)",
+    "OR embed [Cxxx] directly in the test title for automatic resolution.",
+    "",
+    "Example with case map (no code change needed):",
+    "  'should launch the HP app and display the home screen': 1001",
+    "",
+    "Example with embedded ID in test title ([C1001] should launch...):",
+    "  No entry needed here — the reporter extracts it automatically.",
+    "",
+    "Run 'node src/shared/integrations/push-to-testrail.js' to auto-create cases.",
+    "Then update this file with the returned IDs."
+  ],
+  "cases": {
+    "should launch the HP app and display the home screen": null,
+    "should display the Sign In button in the top-right navigation bar": null,
+    "should display the correct label on the Sign In button": null,
+    "should display all top navigation bar icons (shopping, add, notifications, account)": null,
+    "should display the notebook model name in the My Notebook section": null,
+    "should display the battery/charging status": null
+  }
+}
