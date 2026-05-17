@@ -2,7 +2,7 @@ name: 🖥️ HP Windows App Tests
 
 on:
   push:
-    branches: [main, master, adaptive_planning_captial_one_poc]
+    branches: [poc_windows_web_mobile] 
     paths:
       - 'src/windows/**'
       - 'wdio.windows.config.js'
@@ -10,7 +10,7 @@ on:
       - 'scripts/generate-email-windows.js'
       - 'scripts/report-windows-to-testrail.js'
   pull_request:
-    branches: [main, master, adaptive_planning_captial_one_poc]
+    branches: [poc_windows_web_mobile]
   schedule:
     # Run weekdays at 06:00 UTC (overnight regression)
     - cron: '0 6 * * 1-5'
@@ -67,26 +67,35 @@ jobs:
       - name: Install myHP from Microsoft Store (winget)
         shell: powershell
         run: |
-          # 1. Set geographic region required by msstore source
+          # 1. Set geographic region required by msstore backend
           $geoPath = "HKCU:\Control Panel\International\Geo"
           if (-not (Test-Path $geoPath)) { New-Item -Path $geoPath -Force | Out-Null }
           Set-ItemProperty -Path $geoPath -Name "Nation" -Value "244" -Type String -Force
-          Write-Host "Geographic region set to US (244)"
+          Write-Host "Region set to US (244)"
 
-          # 2. Pre-accept msstore agreements via winget settings JSON
-          #    (winget source update does NOT support --accept-source-agreements)
-          $settingsDir = "$env:LOCALAPPDATA\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState"
-          New-Item -Path $settingsDir -ItemType Directory -Force | Out-Null
+          # 2. Write winget settings JSON to disable all interactivity
           $settingsJson = '{"experimentalFeatures":{"experimentalMSStore":true},"interactivity":{"disable":true},"source":{"autoUpdateIntervalInMinutes":0}}'
-          Set-Content -Path "$settingsDir\settings.json" -Value $settingsJson -Encoding UTF8 -Force
-          Write-Host "winget settings configured"
+          $settingsDirs = @(
+            "$env:LOCALAPPDATA\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState",
+            "C:\Users\runneradmin\AppData\Local\Packages\Microsoft.DesktopAppInstaller_8wekyb3d8bbwe\LocalState"
+          )
+          foreach ($dir in $settingsDirs) {
+            New-Item -Path $dir -ItemType Directory -Force | Out-Null
+            Set-Content -Path "$dir\settings.json" -Value $settingsJson -Encoding UTF8 -Force
+            Write-Host "Settings written to: $dir"
+          }
 
-          # 3. Reset and refresh sources (no unsupported flags on source update)
-          winget source reset --force 2>$null
-          winget source update 2>$null
+          # 3. Remove and re-add msstore source with explicit agreement acceptance
+          #    NOTE: --accept-source-agreements is valid on 'source add', NOT 'source update'
+          winget source remove msstore 2>$null
+          winget source add `
+            --name msstore `
+            --arg "https://storeedgefd.dsx.mp.microsoft.com/v9.0" `
+            --type "Microsoft.Rest" `
+            --accept-source-agreements
+          winget source update --name msstore 2>$null
 
-          # 4. Install from MS Store using Store Product ID
-          #    Store URL: https://apps.microsoft.com/detail/9n9phdt62w94
+          # 4. Install HP myHP from Store (product ID from store URL)
           winget install `
             --id "9N9PHDT62W94" `
             --source msstore `
@@ -96,15 +105,16 @@ jobs:
             --silent `
             --disable-interactivity
           $exitCode = $LASTEXITCODE
-          if ($exitCode -ne 0) {
-            Write-Host "winget exit code: $exitCode - verifying via Get-AppxPackage..."
-          }
+          Write-Host "winget exit code: $exitCode"
+
+          # 5. Verify installation
           Start-Sleep -Seconds 30
           $pkg = Get-AppxPackage -Name "AD2F1837.myHP" -ErrorAction SilentlyContinue
           if ($pkg) {
             Write-Host "myHP installed: $($pkg.PackageFullName)"
           } else {
-            Write-Warning "myHP package not found after install. Tests may fail."
+            Write-Error "myHP installation failed. Cannot run tests."
+            exit 1
           }
 
 
