@@ -33,7 +33,7 @@ jobs:
         shell: powershell
         run: |
           Write-Host "=========================================="
-          Write-Host " HP Windows App Tests — Run #${{ github.run_number }}"
+          Write-Host " HP Windows App Tests - Run #${{ github.run_number }}"
           Write-Host "=========================================="
           Write-Host " Branch  : ${{ github.ref_name }}"
           Write-Host " Actor   : ${{ github.actor }}"
@@ -88,7 +88,7 @@ jobs:
             --silent `
             --disable-interactivity
           if ($LASTEXITCODE -ne 0) {
-            Write-Warning "winget exited with code $LASTEXITCODE — checking if package already present..."
+            Write-Warning "winget exited with code $LASTEXITCODE - checking if package already present..."
           }
           Start-Sleep -Seconds 30
           $pkg = Get-AppxPackage -Name "AD2F1837.myHP" -ErrorAction SilentlyContinue
