@@ -39,6 +39,8 @@ jobs:
       # ─── Checkout & Node ──────────────────────────────────────────────────
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          lfs: true
 
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
@@ -55,53 +57,41 @@ jobs:
           Set-ItemProperty -Path $key -Name "AllowAllTrustedApps"               -Value 1 -Type DWord -Force
           Write-Host "Developer Mode enabled."
 
-      # ─── Install HP myHP app (direct MSIX download) ──────────────────────
-      # winget msstore source fails on Windows Server (GitHub Actions windows-latest)
-      # because the StoreID installer type requires the Store client which is absent.
-      # Workaround: resolve the direct MSIX download URL via store.rg-adguard.net.
-      - name: Install myHP from Microsoft Store (direct MSIX)
+      # ─── Install HP myHP from repo PreinstallKit (Git LFS) ─────────────
+      # The zip contains the msixbundle + all framework deps (VCLibs, .NET Native, UI.Xaml).
+      # No internet access needed; the file is stored in the repo via Git LFS.
+      - name: Install myHP from PreinstallKit
         shell: powershell
         run: |
-          $productId = "9N9PHDT62W94"
-          $storeUrl  = "https://www.microsoft.com/store/productId/$productId"
+          $zipPath    = "src\windows\msixbundle\HP.HPX_57.42619.3217.0_x64.msixbundle_Windows10_PreinstallKit.zip"
+          $extractDir = "$env:RUNNER_TEMP\myHP_install"
 
-          Write-Host "Querying package list for $productId ..."
-          $postBody = "type=url&url=$storeUrl&ring=Retail&lang=en-US"
-          try {
-            $resp = Invoke-WebRequest `
-              -Method Post `
-              -Uri "https://store.rg-adguard.net/api/GetFiles" `
-              -Body $postBody `
-              -ContentType "application/x-www-form-urlencoded" `
-              -UseBasicParsing `
-              -TimeoutSec 60
-          } catch {
-            Write-Error "store.rg-adguard.net query failed: $_"
-            exit 1
+          Write-Host "Extracting PreinstallKit..."
+          Expand-Archive -Path $zipPath -DestinationPath $extractDir -Force
+          Write-Host "Extracted to: $extractDir"
+
+          # Install x64 framework dependencies first (skip silently if already present)
+          $deps = @(
+            "Microsoft.VCLibs.140.00_14.0.33519.0_x64__8wekyb3d8bbwe.appx",
+            "Microsoft.VCLibs.140.00.UWPDesktop_14.0.33728.0_x64__8wekyb3d8bbwe.appx",
+            "Microsoft.NET.Native.Framework.2.2_2.2.29512.0_x64__8wekyb3d8bbwe.appx",
+            "Microsoft.NET.Native.Runtime.2.2_2.2.28604.0_x64__8wekyb3d8bbwe.appx",
+            "Microsoft.UI.Xaml.2.8_8.2501.31001.0_x64__8wekyb3d8bbwe.appx"
+          )
+          foreach ($dep in $deps) {
+            $depPath = Join-Path $extractDir $dep
+            if (Test-Path $depPath) {
+              Write-Host "Installing dependency: $dep"
+              Add-AppxPackage -Path $depPath -ErrorAction SilentlyContinue
+            } else {
+              Write-Host "Dependency not found (skipping): $dep"
+            }
           }
 
-          # Extract .msixbundle / .appxbundle / .msix href links (skip .p7x and BlockMap)
-          $linkMatches = [regex]::Matches($resp.Content, 'href="(https://[^"]+\.(msixbundle|appxbundle|msix))"')
-          $links = $linkMatches | ForEach-Object { $_.Groups[1].Value } |
-            Where-Object { $_ -notmatch "BlockMap|\.p7x" }
-
-          if (-not $links -or $links.Count -eq 0) {
-            Write-Error "No downloadable MSIX package links found for product $productId"
-            exit 1
-          }
-
-          # Prefer bundle packages over loose .msix
-          $dlUrl = ($links | Where-Object { $_ -match "bundle" } | Select-Object -First 1)
-          if (-not $dlUrl) { $dlUrl = $links | Select-Object -First 1 }
-          Write-Host "Selected package URL: $dlUrl"
-
-          $outFile = "$env:RUNNER_TEMP\myHP_package.msixbundle"
-          Write-Host "Downloading..."
-          Invoke-WebRequest -Uri $dlUrl -OutFile $outFile -UseBasicParsing -TimeoutSec 300
-          Write-Host "Download complete. Size: $((Get-Item $outFile).Length) bytes"
-
-          Write-Host "Installing via Add-AppxPackage..."
-          Add-AppxPackage -Path $outFile -ForceApplicationShutdown
+          # Install the main HP myHP bundle
+          $bundle = Join-Path $extractDir "c11df6b8d4234dc09bb4eeb90d80e65d.msixbundle"
+          Write-Host "Installing main bundle: $bundle"
+          Add-AppxPackage -Path $bundle -ForceApplicationShutdown
 
           Start-Sleep -Seconds 20
           $pkg = Get-AppxPackage -Name "AD2F1837.myHP" -ErrorAction SilentlyContinue
