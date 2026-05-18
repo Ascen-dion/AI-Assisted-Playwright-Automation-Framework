@@ -122,7 +122,7 @@ jobs:
 
       # ─── npm dependencies ─────────────────────────────────────────────────
       - name: Install npm dependencies
-        run: npm ci --legacy-peer-deps
+        run: npm install --legacy-peer-deps
 
       # ─── Output directories ───────────────────────────────────────────────
       - name: Create test output directories
