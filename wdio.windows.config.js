@@ -166,7 +166,7 @@ exports.config = {
     _currentTestScreenshot = null;
   },
 
-  afterTest(test, context, { error }) {
+  async afterTest(test, context, { error }) {
     // ── Screenshot every test (PASS and FAIL) ──────────────────────────────
     const timestamp      = new Date().toISOString().replace(/[:.]/g, '-');
     const safeName       = test.title.replace(/[^a-zA-Z0-9-]/g, '_').substring(0, 50);
@@ -176,7 +176,7 @@ exports.config = {
     const screenshotPath = path.join(screenshotsDir, `${status}-${safeName}-${timestamp}.png`);
 
     try {
-      browser.saveScreenshot(screenshotPath);
+      await browser.saveScreenshot(screenshotPath);
       if (error) console.log(`  📸 Failure screenshot: ${path.basename(screenshotPath)}`);
       _currentTestScreenshot = screenshotPath;
     } catch (e) {
@@ -196,7 +196,7 @@ exports.config = {
     fs.writeFileSync(stepLogPath, JSON.stringify(stepLog, null, 2));
   },
 
-  afterSuite(suite) {
+  async afterSuite(suite) {
     // When before() throws (e.g. waitUntil timeout), afterTest is never called for
     // individual tests. Capture a screenshot at the suite level so the app state
     // at the point of failure is always preserved in the artifact.
@@ -206,7 +206,7 @@ exports.config = {
     fs.mkdirSync(screenshotsDir, { recursive: true });
     const screenshotPath = path.join(screenshotsDir, `FAIL-before-hook-${timestamp}.png`);
     try {
-      browser.saveScreenshot(screenshotPath);
+      await browser.saveScreenshot(screenshotPath);
       console.log(`  Suite failure screenshot saved: ${path.basename(screenshotPath)}`);
 
       // Also write to the steps-log so onComplete injects it into the HTML report

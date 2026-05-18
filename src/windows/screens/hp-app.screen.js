@@ -36,20 +36,29 @@ class HpAppScreen extends WindowsBaseScreen {
       throw new Error(`HP app window not found. Window title: "${title}"`);
     }
 
-    // Step 2: wait for React content to render ANY known screen.
-    // RootWebArea appears BEFORE the React MFE renders its content — so we poll
-    // for any recognisable interactive element rather than just the document root.
-    // This avoids a race where dismissPrivacyScreenIfPresent() checks too early.
-    await browser.waitUntil(
-      async () => {
-        const onPrivacy  = await this.isVisible(locators.BTN_ACCEPT_ALL);
-        const onWelcome  = await this.isVisible(locators.BTN_CONTINUE_AS_GUEST);
-        const onHome     = await this.isVisible(locators.HEADING_MY_NOTEBOOK);
-        const navReady   = await this.isVisible(locators.BTN_SIGN_IN);
-        return onPrivacy || onWelcome || onHome || navReady;
-      },
-      { timeout, timeoutMsg: 'HP app content did not load within timeout — no known screen detected' }
-    );
+    // Step 2: wait for React/WebView2 content to render ANY known screen.
+    // Wrapped in try-catch so a CI timeout does NOT throw from before() —
+    // individual tests will assert their own elements and screenshot on failure.
+    let screenDetected = false;
+    try {
+      await browser.waitUntil(
+        async () => {
+          const onPrivacy  = await this.isVisible(locators.BTN_ACCEPT_ALL);
+          const onWelcome  = await this.isVisible(locators.BTN_CONTINUE_AS_GUEST);
+          const onHome     = await this.isVisible(locators.HEADING_MY_NOTEBOOK);
+          const navReady   = await this.isVisible(locators.BTN_SIGN_IN);
+          return onPrivacy || onWelcome || onHome || navReady;
+        },
+        { timeout, timeoutMsg: 'HP app content did not load within timeout — no known screen detected' }
+      );
+      screenDetected = true;
+    } catch (e) {
+      // Do not re-throw: app window is alive (title confirmed above) but WebView2
+      // content is still loading. Individual tests will fail with their own
+      // element-not-found errors and screenshots instead of silently skipping.
+      console.warn(`  waitForHomeScreen: ${e.message}. Tests will run and verify elements individually.`);
+      return;
+    }
 
     // Step 3: dismiss first-launch interstitials in order.
     // Each method is a no-op if the screen is not currently visible.
@@ -57,16 +66,19 @@ class HpAppScreen extends WindowsBaseScreen {
     await this.dismissWelcomeScreenIfPresent();  // Screen 2: Sign in / Create account
 
     // Step 4: confirm the device/home page is loaded.
-    // BTN_SIGN_IN = Account.NavBarView.SignInButton — exists ONLY on the home nav bar,
-    // NOT on the welcome screen (which uses Account.WelcomeScreenView.SignInButton).
-    await browser.waitUntil(
-      async () => {
-        const signIn     = await this.isVisible(locators.BTN_SIGN_IN);
-        const myNotebook = await this.isVisible(locators.HEADING_MY_NOTEBOOK);
-        return signIn || myNotebook;
-      },
-      { timeout, timeoutMsg: 'Home screen did not load: neither Sign In nav button nor My Notebook heading appeared' }
-    );
+    // Soft-fail the same way as step 2 — don't block test execution.
+    try {
+      await browser.waitUntil(
+        async () => {
+          const signIn     = await this.isVisible(locators.BTN_SIGN_IN);
+          const myNotebook = await this.isVisible(locators.HEADING_MY_NOTEBOOK);
+          return signIn || myNotebook;
+        },
+        { timeout, timeoutMsg: 'Home screen did not load: neither Sign In nav button nor My Notebook heading appeared' }
+      );
+    } catch (e) {
+      console.warn(`  waitForHomeScreen (step 4): ${e.message}.`);
+    }
   }
 
   /**
