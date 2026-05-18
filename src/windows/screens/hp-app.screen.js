@@ -36,6 +36,14 @@ class HpAppScreen extends WindowsBaseScreen {
       throw new Error(`HP app window not found. Window title: "${title}"`);
     }
 
+    // Give WebView2 a short grace period before polling UI elements.
+    // On a fresh CI install the runtime needs a few extra seconds to register
+    // and begin rendering the React MFE content.
+    if (process.env.CI) {
+      console.log('  CI detected — waiting 15s for WebView2 to initialise...');
+      await browser.pause(15000);
+    }
+
     // Step 2: wait for React/WebView2 content to render ANY known screen.
     // Wrapped in try-catch so a CI timeout does NOT throw from before() —
     // individual tests will assert their own elements and screenshot on failure.

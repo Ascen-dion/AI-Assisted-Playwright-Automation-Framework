@@ -103,6 +103,29 @@ jobs:
           }
 
 
+      # ─── Install WebView2 Runtime ────────────────────────────────────────
+      # The HP myHP app renders its UI inside a WebView2 frame. The GitHub
+      # Actions runner has an Evergreen WebView2 runtime but it may be stale
+      # or not registered for the freshly-installed app. Installing the latest
+      # Evergreen Runtime forces re-registration and fixes the blank white screen.
+      - name: Install WebView2 Runtime
+        shell: powershell
+        run: |
+          $url      = "https://go.microsoft.com/fwlink/p/?LinkId=2124703"
+          $installer = "$env:RUNNER_TEMP\MicrosoftEdgeWebview2Setup.exe"
+          Write-Host "Downloading WebView2 Evergreen Runtime..."
+          Invoke-WebRequest -Uri $url -OutFile $installer -UseBasicParsing
+          Write-Host "Installing WebView2 Runtime (silent)..."
+          Start-Process -FilePath $installer -ArgumentList "/silent /install" -Wait
+          # Verify the runtime is present
+          $regPath = "HKLM:\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}"
+          if (Test-Path $regPath) {
+            $ver = (Get-ItemProperty $regPath).pv
+            Write-Host "WebView2 Runtime installed: $ver"
+          } else {
+            Write-Warning "WebView2 registry key not found - runtime may still be installing via Evergreen updater."
+          }
+
       # ─── Install WinAppDriver ─────────────────────────────────────────────
       - name: Install WinAppDriver v1.2.1
         shell: powershell
