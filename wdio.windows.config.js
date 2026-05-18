@@ -59,8 +59,8 @@ exports.config = {
        */
       'appium:app': windowsPlatformConfig.app,
 
-      // Increase launch timeout for slow apps
-      'appium:ms:waitForAppLaunch': 10,
+      // Increase launch timeout for slow apps (30s for CI cold-start, 10s locally)
+      'appium:ms:waitForAppLaunch': process.env.CI ? 30 : 10,
 
       // --- Optional capabilities (uncomment as needed) ---
       // 'appium:appArguments': '--some-flag',   // CLI args to pass to the app
@@ -194,6 +194,33 @@ exports.config = {
       screenshot: _currentTestScreenshot,
     };
     fs.writeFileSync(stepLogPath, JSON.stringify(stepLog, null, 2));
+  },
+
+  afterSuite(suite) {
+    // When before() throws (e.g. waitUntil timeout), afterTest is never called for
+    // individual tests. Capture a screenshot at the suite level so the app state
+    // at the point of failure is always preserved in the artifact.
+    if (!suite.error) return;
+    const timestamp      = new Date().toISOString().replace(/[:.]/g, '-');
+    const screenshotsDir = path.resolve(__dirname, 'test-results/windows/html/screenshots');
+    fs.mkdirSync(screenshotsDir, { recursive: true });
+    const screenshotPath = path.join(screenshotsDir, `FAIL-before-hook-${timestamp}.png`);
+    try {
+      browser.saveScreenshot(screenshotPath);
+      console.log(`  Suite failure screenshot saved: ${path.basename(screenshotPath)}`);
+
+      // Also write to the steps-log so onComplete injects it into the HTML report
+      const stepLogPath = path.resolve(__dirname, 'test-results/windows/steps-log.json');
+      let stepLog = {};
+      try { stepLog = JSON.parse(fs.readFileSync(stepLogPath, 'utf-8')); } catch (_e) {}
+      stepLog['__suite_failure__'] = {
+        steps: [`Suite before() hook failed: ${suite.error.message || 'unknown error'}`],
+        screenshot: screenshotPath,
+      };
+      fs.writeFileSync(stepLogPath, JSON.stringify(stepLog, null, 2));
+    } catch (e) {
+      console.warn('  Could not save suite failure screenshot:', e.message);
+    }
   },
 
   onComplete() {

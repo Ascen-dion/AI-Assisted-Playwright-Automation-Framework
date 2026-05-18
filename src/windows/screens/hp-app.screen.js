@@ -29,7 +29,7 @@ class HpAppScreen extends WindowsBaseScreen {
    *
    * @param {number} timeout - ms to wait for WebView2 to become ready (default 30s)
    */
-  async waitForHomeScreen(timeout = 30000) {
+  async waitForHomeScreen(timeout = process.env.CI ? 90000 : 30000) {
     // Step 1: verify the window is alive (works even before WebView2 loads)
     const title = await browser.getTitle();
     if (!title || !title.toLowerCase().includes('hp')) {
