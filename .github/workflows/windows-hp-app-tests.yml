@@ -138,11 +138,14 @@ jobs:
       - name: Start Appium (background)
         shell: powershell
         run: |
-          $appiumBin = Resolve-Path "node_modules/.bin/appium.cmd"
-          $logFile   = Join-Path (Resolve-Path "logs") "appium-ci.log"
+          # Resolve appium's JS entry point from its package.json bin field.
+          # Running node directly avoids the .cmd wrapper quoting issues on Windows.
+          $appiumPkg  = Get-Content "node_modules\appium\package.json" -Raw | ConvertFrom-Json
+          $appiumJs   = (Resolve-Path "node_modules\appium\$($appiumPkg.bin.appium)").Path
+          $logFile    = (Join-Path (Resolve-Path "logs").Path "appium-ci.log")
           Start-Process -NoNewWindow `
-            -FilePath "cmd.exe" `
-            -ArgumentList "/c `"$appiumBin`" --address 127.0.0.1 --port 4723 --log `"$logFile`""
+            -FilePath "node" `
+            -ArgumentList @($appiumJs, "--address", "127.0.0.1", "--port", "4723", "--log", $logFile)
           Write-Host "Waiting for Appium to be ready..."
           $ready = $false
           for ($i = 0; $i -lt 12; $i++) {
