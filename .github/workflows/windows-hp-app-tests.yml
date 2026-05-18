@@ -141,8 +141,8 @@ jobs:
           $appiumBin = Resolve-Path "node_modules/.bin/appium.cmd"
           $logFile   = Join-Path (Resolve-Path "logs") "appium-ci.log"
           Start-Process -NoNewWindow `
-            -FilePath "node" `
-            -ArgumentList "`"$appiumBin`" --address 127.0.0.1 --port 4723 --log `"$logFile`""
+            -FilePath "cmd.exe" `
+            -ArgumentList "/c `"$appiumBin`" --address 127.0.0.1 --port 4723 --log `"$logFile`""
           Write-Host "Waiting for Appium to be ready..."
           $ready = $false
           for ($i = 0; $i -lt 12; $i++) {
