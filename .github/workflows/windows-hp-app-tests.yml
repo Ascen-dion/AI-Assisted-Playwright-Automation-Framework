@@ -143,9 +143,12 @@ jobs:
           $appiumPkg  = Get-Content "node_modules\appium\package.json" -Raw | ConvertFrom-Json
           $appiumJs   = (Resolve-Path "node_modules\appium\$($appiumPkg.bin.appium)").Path
           $logFile    = (Join-Path (Resolve-Path "logs").Path "appium-ci.log")
-          Start-Process -NoNewWindow `
+          # -WindowStyle Hidden creates a detached process that survives the step's shell closing.
+          # -NoNewWindow attaches to the console and kills the process when PowerShell exits.
+          Start-Process `
             -FilePath "node" `
-            -ArgumentList @($appiumJs, "--address", "127.0.0.1", "--port", "4723", "--log", $logFile)
+            -ArgumentList @($appiumJs, "--address", "127.0.0.1", "--port", "4723", "--log", $logFile) `
+            -WindowStyle Hidden
           Write-Host "Waiting for Appium to be ready..."
           $ready = $false
           for ($i = 0; $i -lt 12; $i++) {
