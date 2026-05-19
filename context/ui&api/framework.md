@@ -100,7 +100,7 @@ test.describe('[UI] <Story Title>', { tag: ['@smoke', '@regression'] }, () => {
     await page.goto();
     // Cookie consent is dismissed by globalSetup — try/catch safety net only
     try {
-      await p.getByRole('button', { name: /i understand/i }).first().click({ timeout: 3000 });
+      await p.getByRole('button', { name: 'Close' }).first().click({ timeout: 3000 });
     } catch {}
   });
 
@@ -136,7 +136,7 @@ To navigate via menu:
 5. wait page.waitForLoadState('domcontentloaded') — wait for navigation
 
 ## globalSetup & Cookie Consent
-config/globalSetup.js dismisses the "I understand" cookie consent banner once and saves
+config/globalSetup.js dismisses the OneTrust cookie consent banner (aria-label="Close") once and saves
 storage state to playwright/.auth/storageState.json. New specs do NOT call
 dismissCookieConsent() in eforeEach — globalSetup handles it.
 Legacy try/catch in eforeEach is a safety net only.

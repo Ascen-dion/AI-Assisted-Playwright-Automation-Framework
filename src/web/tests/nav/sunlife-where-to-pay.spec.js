@@ -23,7 +23,7 @@ test.describe('[UI] ED-86: Where to pay link visibility on homepage', { tag: ['@
     homePage = new SunLifeHomePage(page);
     await homePage.goto();
     try {
-      await page.getByRole('button', { name: /i understand/i }).first().click({ timeout: 10000 });
+      await page.getByRole('button', { name: 'Close' }).first().click({ timeout: 10000 });
     } catch {}
   });
 

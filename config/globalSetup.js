@@ -54,9 +54,9 @@ module.exports = async function globalSetup() {
   try {
     await page.goto(HOMEPAGE, { waitUntil: 'networkidle', timeout: 60000 });
 
-    // Dismiss cookie/privacy consent banner ("I understand" button on UnionDigital Bank)
+    // Dismiss cookie/privacy consent banner (Close button)
     try {
-      await page.getByRole('button', { name: /i understand/i }).first().click({ timeout: 8000 });
+      await page.getByRole('button', { name: 'Close' }).first().click({ timeout: 8000 });
       console.log('[globalSetup] Cookie consent dismissed');
     } catch {
       console.log('[globalSetup] No cookie consent banner found — skipping');
@@ -68,8 +68,8 @@ module.exports = async function globalSetup() {
     // are flagged by Kasada bot-detection and served a "You have been blocked" page.
     try {
       await page.goto('https://www.sunlife.com.ph/en/', { waitUntil: 'domcontentloaded', timeout: 60000 });
-      // Dismiss Sun Life cookie consent
-      await page.getByRole('button', { name: /i understand/i }).first().click({ timeout: 8000 });
+      // Dismiss Sun Life cookie consent (OneTrust banner — aria-label="Close")
+      await page.getByRole('button', { name: 'Close' }).first().click({ timeout: 8000 });
       console.log('[globalSetup] Sun Life cookie consent dismissed');
     } catch {
       console.log('[globalSetup] Sun Life: no cookie consent or blocked — continuing');

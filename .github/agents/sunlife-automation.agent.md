@@ -249,7 +249,7 @@ test.describe('[UI] <Story Title>', { tag: ['@smoke'] }, () => {
     pageObj = new SunLife<Name>Page(page);
     await pageObj.goto();
     try {
-      await page.getByRole('button', { name: /i understand/i }).first().click({ timeout: 10000 });
+      await page.getByRole('button', { name: 'Close' }).first().click({ timeout: 10000 });
     } catch {}
   });
 
@@ -326,7 +326,7 @@ node src/shared/integrations/update-jira-results.js <STORY-KEY>
 
 ### Cookie consent
 - globalSetup dismisses it and saves storageState — specs use try/catch only
-- Button: getByRole('button', { name: /i understand/i })
+- Button: getByRole('button', { name: 'Close' }) — OneTrust banner, aria-label="Close"
 
 ### Comboboxes — click-based interaction only
 ```js

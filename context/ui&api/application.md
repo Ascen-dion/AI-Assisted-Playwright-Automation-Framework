@@ -327,7 +327,7 @@ All calculator links are external to https://online.sunlife.com.ph/cdt/
 - **Hamburger menu button**: utton[name='open menu'] — opens dialog[name='Sun Life menu']
 - **Main nav buttons**: utton[name='Insurance'], utton[name='Investments'], utton[name='Life goals'], utton[name='About us'] — each expands a sub-list
 - **Log in link**: link[name='Log in'] inside the menu dialog
-- **Cookie/privacy consent banner**: utton with text "I understand" — appears on first visit
+- **Cookie/privacy consent banner**: button with aria-label="Close" (OneTrust banner) — appears on first visit
 - **"Talk to an advisor" sticky CTA**: link[name='Talk to an advisor'] linking to #o2o-leadgen anchor
 - **Get a quote combobox**: combobox[name='Select a product'] + utton[name='Get a quote']
 - **Calculators combobox**: combobox[name='Calculators and quizzes'] + utton[name='Go to online tool']
@@ -340,7 +340,7 @@ All calculator links are external to https://online.sunlife.com.ph/cdt/
 
 - **Viewport**: 1280×720 (desktop); menu is hamburger-only at all widths
 - **Timeout recommendation**: waitUntil: 'domcontentloaded', timeout: 60000
-- **Cookie consent**: page.getByRole('button', { name: /i understand/i }) — dismiss in globalSetup storage state
+- **Cookie consent**: page.getByRole('button', { name: 'Close' }) — OneTrust banner (aria-label="Close"); dismiss in globalSetup storage state
 - **Language**: English only (no language toggle on this site)
 - **Page load strategy**: waitUntil: 'domcontentloaded' — site is server-rendered CMS, not SPA
 - **External links**: calculator and eSales links open in new tab — verify visibility only, not navigation
