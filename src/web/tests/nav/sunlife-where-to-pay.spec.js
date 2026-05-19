@@ -13,7 +13,7 @@ const TD                  = require('../../../shared/data/test-data');
 
 test.describe.configure({ mode: 'serial' }); // MANDATORY — prevents Kasada rate limiting
 
-test.describe('[UI] ED-86: Where to pay link visibility on homepage', { tag: ['@smoke'] }, () => {
+test.describe('[UI] ED-86: Where to pay link visibility on homepage', { tag: ['@smoke','@regression'] }, () => {
   let homePage;
 
   test.beforeEach(async ({ page }) => {
