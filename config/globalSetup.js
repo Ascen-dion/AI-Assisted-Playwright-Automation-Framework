@@ -28,6 +28,7 @@ module.exports = async function globalSetup() {
   fs.mkdirSync(path.dirname(STORAGE_STATE_PATH), { recursive: true });
 
   const browser = await chromium.launch({
+    channel: 'chrome',   // real Chrome — passes Kasada/Cloudflare bot-detection fingerprint checks
     headless: true,
     args: [
       '--no-sandbox',
@@ -60,6 +61,20 @@ module.exports = async function globalSetup() {
     } catch {
       console.log('[globalSetup] No cookie consent banner found — skipping');
     }
+
+    // ── Sun Life Philippines warm-up ──────────────────────────────────────────
+    // Visit sunlife.com.ph homepage to establish a trusted session.
+    // Without this, Playwright tests starting with a fresh sunlife.com.ph session
+    // are flagged by Kasada bot-detection and served a "You have been blocked" page.
+    try {
+      await page.goto('https://www.sunlife.com.ph/en/', { waitUntil: 'domcontentloaded', timeout: 60000 });
+      // Dismiss Sun Life cookie consent
+      await page.getByRole('button', { name: /i understand/i }).first().click({ timeout: 8000 });
+      console.log('[globalSetup] Sun Life cookie consent dismissed');
+    } catch {
+      console.log('[globalSetup] Sun Life: no cookie consent or blocked — continuing');
+    }
+    // ─────────────────────────────────────────────────────────────────────────
 
     // Save cookies and localStorage so all tests start with consent already given
     await context.storageState({ path: STORAGE_STATE_PATH });

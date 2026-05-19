@@ -1,137 +1,347 @@
-﻿# Application Context - UnionDigital Bank Philippines
+﻿# Application Context - Sun Life Philippines
 
 ## Base Configuration
 
-**Target URL**: https://uniondigitalbank.io/en
-**UD Save URL**: https://uniondigitalbank.io/en/products-savings
-**UD Time Deposit URL**: https://uniondigitalbank.io/en/products-time-deposit
-**Application Type**: Digital banking website (mobile-first, Next.js)
+**Target URL**: https://www.sunlife.com.ph/en/
+**Application Type**: Corporate insurance & investment marketing website (multi-page, CMS-driven)
 **Environment**: Production
-**Domain**: UnionDigital Bank Philippines — BSP-licensed digital bank
+**Domain**: Sun Life Philippines — country's #1 life insurance company, regulated by the Insurance Commission of the Philippines
 
 ---
 
 ## Homepage Structure
 
-The homepage at `https://uniondigitalbank.io/en` is the main entry point. It is a
-single-page marketing site that promotes the UD mobile banking app.
+The homepage at https://www.sunlife.com.ph/en/ is the main entry point.
 
-### Homepage Sections (anchor IDs)
+### Homepage Sections
 
-| Anchor ID | Heading |
+| Section | Description |
 |---|---|
-| `#homepage-banner` | "Empowering Every Filipino, EVERYWHERE!" |
-| `#homepage-awards` | "Magtiwala sa Pinalaki nang Tama!" |
-| `#homepage-products` | "High Earnings sa Aming High-Interest Accounts" |
-| `#homepage-download` | "Mag-bank na with the UBEH bank" |
+| Header / Nav | Hamburger menu (mobile-style), Sun Life logo, "open menu" button |
+| Hero Carousel | 6 slides linking to featured products; Previous/Next buttons; group[name=Carousel] |
+| Get Help | Link to Client Services directory |
+| Calculators & Quizzes | combobox to select online tool + "Go to online tool" button |
+| Get a Quote | combobox to select product + "Get a quote" button |
+| Needs Finder | "I would like to" combobox with life-goal options |
+| Bright Ideas | 4 featured audience segments (Business Owners, OFW, Professionals, Employees) |
+| Payment Section | Online Payment, Autocredit/Autodebit, Bank Bills Payment |
+| Why Sun Life | #1 in PH, Reliable policies, Building wealth |
+| Trustpilot Carousel | Embedded iframe with customer reviews |
+| Footer | Quick links, Products, Careers, About us, Contact us, Legal, Privacy, Security, Sitemap |
 
 ---
 
 ## Top-Level Navigation
 
-### Products Dropdown
+### Responsive Behaviour (CRITICAL)
 
-**Page Object**: `src/pages/ud-products-nav.page.js`
-**Locators**: `src/pages/locators/ud-products-nav.locators.js`
+Sun Life PH uses a **responsive nav** — behaviour differs by viewport:
 
-| Link Text | URL |
+| Viewport width | Hamburger button (`[aria-label="open menu"]`) | Nav items (Insurance, Investments…) | Log in link |
+|---|---|---|---|
+| ≥992px (desktop, default 1280px) | `display:none` — **NOT clickable** | Directly visible in top bar | **Directly visible** in utility nav — NO hamburger click needed |
+| <992px (mobile) | Visible | Hidden inside dialog | Hidden inside dialog — requires hamburger click |
+
+**Default Playwright viewport is 1280×720 (desktop).**
+
+At desktop width:
+- `button[aria-label='open menu']` is CSS-hidden — calling `click()` will timeout
+- Nav sub-menu items (Insurance sub-pages, Investments, etc.) are directly accessible via their visible buttons
+- "Log in" link is directly visible — do NOT call `openMenu()` before asserting it
+
+To test the **hamburger menu on mobile**, resize the viewport first:
+```js
+await page.setViewportSize({ width: 390, height: 844 }); // iPhone 14
+```
+Only after resize does `button[aria-label='open menu']` become visible.
+
+Navigation is accessed via **dialog[name='Sun Life menu']** (mobile) or directly (desktop).
+Opening selector (mobile only): `button[name='open menu']`
+
+### Main Nav Buttons (expand to sub-menus)
+
+| Button | Expands To |
 |---|---|
-| UD Save | https://uniondigitalbank.io/en/products-savings |
-| UD Time Deposit | https://uniondigitalbank.io/en/products-time-deposit |
-| UD Loan Protect Insurance | https://uniondigitalbank.io/en/products-ud-loan-protect-insurance |
-| In App Helpdesk | https://uniondigitalbank.io/en/products-inapp-ticket |
-| Rates & Fees | https://uniondigitalbank.io/en/product-rates-fees |
+| Insurance | Insurance sub-navigation |
+| Investments | Investments sub-navigation |
+| Life goals | Life goals articles |
+| About us | About us sub-navigation |
+
+### Utility Links (always visible in open menu)
+
+| Link | URL |
+|---|---|
+| Log in | https://mobile.sunlife.com.ph/slocpicp/index.html#/ |
+| Search | Opens search dialog |
 
 ---
 
-### Loan Payment Guides Dropdown
+## Insurance Navigation (sub-menu)
 
-| Link Text | URL |
+### Quick Links (inside Insurance expanded menu)
+
+| Link | URL |
 |---|---|
-| UD Cash Loans | https://uniondigitalbank.io/en/guides-ud-cash-loans |
-| UD Loans | https://uniondigitalbank.io/en/guides-ud-loans |
+| All products | /en/all-products/ |
+| VUL fund prices | /en/insurance/vul-fund-prices/ |
+| File a claim | /en/about-us/how-to-file-a-claim-video/ |
+| Online Payment Portal | https://online.sunlife.com.ph/onlinepay/payment |
+| Tools and services | /en/insurance/tools-and-services/ |
+| Get help | /en/about-us/become-an-empowered-sun-lifer/ |
+| FAQs | /en/about-us/faqs/ |
+| Contact us | /en/about-us/contact-us/ |
+| Learn finance | /en/life-goals/ |
+
+### Insurance Sub-categories
+
+**Insurance to meet your needs:**
+
+| Link | URL |
+|---|---|
+| Income continuation | /en/insurance/income-continuation/ |
+| Education | /en/insurance/education/ |
+| Retirement | /en/insurance/retirement/ |
+| Estate preservation | /en/insurance/estate-preservation/ |
+| Preparing for life milestones | /en/insurance/preparing-for-life-milestones/ |
+| Health protection | /en/insurance/health-protection/ |
+
+**Life insurance:**
+
+| Link | URL |
+|---|---|
+| Overview | /en/insurance/life-insurance/ |
+| Wealth transfer | /en/insurance/life-insurance/wealth-transfer/ |
+| Wealth accumulation | /en/insurance/life-insurance/wealth-accumulation/ |
+| Term insurance | /en/insurance/life-insurance/term-insurance/ |
+
+**Group life insurance:**
+
+| Link | URL |
+|---|---|
+| Overview | /en/insurance/group-insurance/ |
+
+**Health insurance:**
+
+| Link | URL |
+|---|---|
+| Overview | /en/insurance/health-insurance/ |
+
+**Business owners insurance packages:**
+
+| Link | URL |
+|---|---|
+| Overview | /en/insurance/business-owner-insurance-packages/ |
+
+**Investment-linked insurance (VUL):**
+
+| Link | URL |
+|---|---|
+| Overview | /en/insurance/VULs-and-Fund-Options/ |
 
 ---
 
-### Promos Dropdown
+## Investments Navigation
 
-| Link Text | URL |
+**Page URL**: https://www.sunlife.com.ph/en/investments/
+**Page Title**: Investment Products | Sun Life Philippines
+
+| Section | URL |
 |---|---|
-| Kaya Mo Jingle Contest | https://uniondigitalbank.io/en/promo-kaya-mo-jingle-ugc |
-| QRPH Cashback | https://uniondigitalbank.io/en/promo-qrph-cashback |
-| Cashback Kada Bayad | https://uniondigitalbank.io/en/promo-cashback-kada-bayad |
-| Doble Ka-UD | https://uniondigitalbank.io/en/promo-doble-ka-ud |
-| Ipon Mode Challenge On | https://uniondigitalbank.io/en/promo-ipon-mode-challenge-on |
-| Free InstaPay Transfers | https://uniondigitalbank.io/en/uniondigital-free-instapay-promo |
+| Sun Life Prosperity Funds | /en/investments/sun-life-prosperity-funds/ |
+| The Conservative Investor | /en/investments/the-conservative-investor/ |
+| The Moderate Investor | /en/investments/the-moderate-investor/ |
+| The Balanced Investor | /en/investments/the-balanced-investor/ |
+| The Growth Investor | /en/investments/the-growth-investor/ |
+| The Aggressive Investor | /en/investments/the-aggressive-investor/ |
+| Stakeholder relations | /en/investments/stakeholder-relations/ |
+| Our profile and awards | /en/investments/sun-life-prosperity-funds/our-profile-and-awards/ |
+| Our programs | /en/investments/sun-life-prosperity-funds/our-programs-video/ |
+| Fund managers | /en/investments/sun-life-prosperity-funds/sun-life-prosperity-fund-managers/ |
+| Our financials | /en/investments/sun-life-prosperity-funds/our-financials/ |
+| Our broker partners | /en/investments/sun-life-prosperity-funds/our-broker-partners/ |
+| Invest now (external) | https://online.sunlife.com.ph/cdt/esales/isa |
+| Announcements | /en/investments/announcements/ |
 
 ---
 
-### Top-Level Links
+## Life Goals Navigation
 
-| Link Text | URL |
-|---|---|
-| About Us | https://uniondigitalbank.io/en/about-us |
-| Usapang Diskarte | https://uniondigitalbank.io/en/learn |
-| Help Center | https://uniondigitalbank.io/en/faqs |
+**Page URL**: https://www.sunlife.com.ph/en/life-goals/
+**Page Title**: Personal Insurance Lifestyle Articles | Sun Life Philippines
 
 ---
 
-## Product Pages
+## About Us Navigation
 
-### UD Save Account (`/en/products-savings`)
+**Page URL**: https://www.sunlife.com.ph/en/about-us/
+**Page Title**: About Us | Sun Life Philippines
 
-**Page Object**: `src/pages/ud-save-nav.page.js`
-**Locators**: `src/pages/locators/ud-save-nav.locators.js`
-**Page Title**: "UnionDigital Bank | Savings"
-
-| Element | Value |
+| Section | Description |
 |---|---|
-| Hero heading | "UD Save Account" |
-| Sub-heading | "Your all-in-one account para sa 'yong savings and payment" |
-| Feature 1 | "Mag-ipon lang sa account mo and enjoy high interest rates" |
-| Feature 2 | "Goodbye na sa mahabang pila! Pay your bills quickly and conveniently from your phone" |
+| Who we are | Country's first and longest-standing life insurer |
+| Our services | /en/about-us/become-an-empowered-sun-lifer/ |
+| Newsroom | Latest news and press releases |
+| Sun Life Worldwide | Global operations |
+| Building health in Asia | Innovation in health |
+| The Sun Life Foundation | Philanthropy |
+| Where to find us | Office/hub locations |
+| Sustainability | ESG focus |
 
 ---
 
-### UD Time Deposit (`/en/products-time-deposit`)
+## Key Product Pages
 
-**Page Title**: "Time Deposit | UnionDigital Bank"
-**Description**: "Palaguin ang pera with our competitive time deposit rates!"
+### Life Insurance (/en/insurance/life-insurance/)
+**Page Title**: Life insurance | Sun Life Philippines
+
+**Products — Term Insurance:**
+
+| Product | URL |
+|---|---|
+| SUN Healthier Life | /en/insurance/life-insurance/term-insurance/sun-healthier-life/ |
+| Sun LifeAssure | /en/insurance/life-insurance/term-insurance/sun-lifeassure/ |
+| Sun Maiden and Sun Maiden Plus | /en/insurance/life-insurance/term-insurance/sun-maiden-and-sun-maiden-plus/ |
+| Sun First Aid and Sun First Aid Plus | /en/insurance/life-insurance/term-insurance/sun-first-aid/ |
+| SUN Safer Life | /en/insurance/life-insurance/term-insurance/sun-safer-life/ |
+
+**Products — Wealth Transfer:**
+
+| Product | URL |
+|---|---|
+| Sun Life Premier Legacy | /en/insurance/life-insurance/wealth-transfer/sun-life-premier-legacy/ |
+| Sun StartUp | /en/insurance/life-insurance/wealth-transfer/sun-startup/ |
+| SUN Smarter Life Classic | /en/insurance/life-insurance/wealth-transfer/sun-smarter-life-classic/ |
+| Sun Life Save and Protect | /en/insurance/preparing-for-life-milestones/sun-life-save-and-protect/ |
+
+**Products — Wealth Accumulation (VUL):**
+
+| Product | URL |
+|---|---|
+| Sun Life Secure Income | /en/insurance/life-insurance/wealth-accumulation/sun-life-secure-income/ |
+| SUN Smarter Life Elite | /en/insurance/life-insurance/wealth-accumulation/sun-smarter-life-elite/ |
+| Sun Acceler8 | /en/insurance/life-insurance/wealth-accumulation/sun-acceler8/ |
+| Sun Dream Achiever | /en/insurance/life-insurance/wealth-accumulation/sun-dream-achiever/ |
+| Sun Legacy | /en/insurance/life-insurance/wealth-accumulation/sun-legacy/ |
+| Sun Wealth Prime 7 | /en/insurance/life-insurance/wealth-accumulation/sun-wealth-prime/ |
+| Sun FlexiLink | /en/insurance/life-insurance/wealth-accumulation/sun-flexilink/ |
+| Sun FlexiLink1 | /en/insurance/life-insurance/wealth-accumulation/sun-flexilink1/ |
+| Sun FlexiDollar | /en/insurance/life-insurance/wealth-accumulation/sun-flexidollar/ |
+| Sun FlexiDollar1 | /en/insurance/life-insurance/wealth-accumulation/sun-flexidollar1/ |
+| Sun MaxiLink One | /en/insurance/life-insurance/wealth-accumulation/sun-maxilink-one/ |
+| Sun MaxiLink Bright | /en/insurance/life-insurance/wealth-accumulation/sun-maxilink-bright/ |
+| Sun MaxiLink 100 | /en/insurance/life-insurance/wealth-accumulation/sun-maxilink-100/ |
+| Sun MaxiLink Prime | /en/insurance/life-insurance/wealth-accumulation/sun-maxilink-prime/ |
+| Sun MaxiLink Dollar One | /en/insurance/life-insurance/wealth-accumulation/sun-maxilink-dollar-one/ |
 
 ---
 
-## Footer Links
+### Health Insurance (/en/insurance/health-insurance/)
+**Page Title**: Health insurance | Sun Life Philippines
 
-| Link Text | URL |
+| Product | URL |
 |---|---|
-| About Us | https://uniondigitalbank.io/about-us |
-| Help Center | https://uniondigitalbank.io/faqs |
-| Terms & Conditions | https://uniondigitalbank.io/terms-and-conditions |
-| Privacy Statement | https://uniondigitalbank.io/privacy-statement |
-| Privacy Notice | https://uniondigitalbank.io/privacy-policy |
-| Disclosures | https://uniondigitalbank.io/disclosures |
-| Customer Feedback Mechanism | https://uniondigitalbank.io/customer-feedback-mechanism |
+| SUN Cancer Care | /en/insurance/health-insurance/sun-cancer-care/ |
+| SUN Fit and Well | /en/insurance/health-insurance/sun-fit-and-well/ |
+| SUN Senior Care | /en/insurance/health-insurance/sun-senior-care-video/ |
+| Sun ICU Protect | /en/insurance/health-insurance/sun-icu-protect/ |
+| Sun Life OFW Health Protect | /en/insurance/health-insurance/sun-life-ofw-health-protect/ |
+
+---
+
+### Digital Insurance (/en/insurance/digital-insurance/)
+
+| Product | URL |
+|---|---|
+| Life Armor | /en/insurance/digital-insurance/life-armor/ |
+
+---
+
+## Audience-Specific Programs
+
+| Program | URL |
+|---|---|
+| Business Owners Insurance Packages | /en/insurance/business-owners-insurance-packages/ |
+| Shine Pinoy Program for Overseas Filipinos | /en/insurance/shine-pinoy-program/ |
+| Partner for Professionals | /en/insurance/partner-for-professionals/ |
+| Sweldo Power Up for Employees | /en/insurance/sweldo-power-up-for-employees/ |
+
+---
+
+## Online Tools & Calculators
+
+All calculator links are external to https://online.sunlife.com.ph/cdt/
+
+| Tool | URL Pattern |
+|---|---|
+| Investment Calculator | /cdt/eCalcAge/investmentCalculator |
+| Money for Life Planner | /cdt/eplanner |
+| Expense Calculator | /cdt/eCalcAge/expenseCalculator |
+| Inflation Calculator | /cdt/eCalcAge/inflationCalculator |
+| Get a Quote (eSales) | /cdt/esales/isa |
+| Online Payment Portal | https://online.sunlife.com.ph/onlinepay/payment |
+
+---
+
+## Payment Channels
+
+| Channel | URL |
+|---|---|
+| Online Payment Portal | https://online.sunlife.com.ph/onlinepay/payment |
+| Autocredit or Autodebit | /en/about-us/become-an-empowered-sun-lifer/insurance/#accordion-section-4 |
+| Bank Bills Payment | /en/about-us/become-an-empowered-sun-lifer/insurance/#accordion-section-2 |
+| Payment channels overview | /en/about-us/become-an-empowered-sun-lifer/payment-channels/ |
+
+---
+
+## Footer
+
+| Section | URL |
+|---|---|
+| Quick links | — |
+| Products | /en/all-products/ |
+| Careers | — |
+| About us | /en/about-us/ |
+| Contact us | /en/about-us/contact-us/ |
+| Legal | https://www.sunlife.com/sl/pslf-philippines/en/legal/ |
+| Privacy | https://www.sunlife.com/sl/pslf-philippines/en/privacy/ |
+| Security | https://www.sunlife.com/sl/pslf-philippines/en/security/ |
+| Site map | /en/sitemap/ |
+| Physical address | 2/F Sun Life Centre, 5th Avenue corner Rizal Drive, Bonifacio Global City, Taguig City 1634 |
+| Copyright | © 2024 Sun Life Assurance Company of Canada |
+
+**Social Media:**
+
+| Platform | URL |
+|---|---|
+| Twitter/X | https://twitter.com/SunLifePH/ |
+| Facebook | https://www.facebook.com/sunlifeph/ |
+| LinkedIn | https://www.linkedin.com/company/sun-life-financial |
+| Instagram | https://www.instagram.com/SunLifePH/ |
+| YouTube | https://www.youtube.com/user/SunLifePH |
+| TikTok | https://www.tiktok.com/discover/sunlife-insurance |
 
 ---
 
 ## Navigation Locator Notes
 
-- The **navbar logo** uses `<a href="/en">` with `img alt="Navbar logo"`
-- The **Products** nav item is a `div` with class `styles_menu_item_anchor__f62GR` (not an `<a>` tag) — interact via `page.getByText('Products').first()`
-- The **Loan Payment Guides** nav item is also a `div` — interact via `page.getByText('Loan Payment Guides').first()`
-- The **Promos** nav item is also a `div` — interact via `page.getByText('Promos').first()`
-- Dropdown links become visible after clicking the parent nav item (they are `<a>` tags once open)
-- Language toggle button text: `ENG` or `FIL`
-- Cookie/privacy consent: `button` with text "I understand" — appears on first visit
+- **Hamburger menu button**: utton[name='open menu'] — opens dialog[name='Sun Life menu']
+- **Main nav buttons**: utton[name='Insurance'], utton[name='Investments'], utton[name='Life goals'], utton[name='About us'] — each expands a sub-list
+- **Log in link**: link[name='Log in'] inside the menu dialog
+- **Cookie/privacy consent banner**: utton with text "I understand" — appears on first visit
+- **"Talk to an advisor" sticky CTA**: link[name='Talk to an advisor'] linking to #o2o-leadgen anchor
+- **Get a quote combobox**: combobox[name='Select a product'] + utton[name='Get a quote']
+- **Calculators combobox**: combobox[name='Calculators and quizzes'] + utton[name='Go to online tool']
+- **Hero carousel**: group[name='Carousel']; next/prev via utton[name='Next'] / utton[name='Previous']
+- **Chat widget**: embedded iframe — ignore in tests unless explicitly testing chat
 
 ---
 
 ## Environment Notes
 
-- **Timeout recommendation**: `waitUntil: 'domcontentloaded', timeout: 60000`
-- **Cookie consent**: appears on first visit — handle in `beforeEach` try/catch with `getByRole('button', { name: /i understand/i })`
-- **Cold-start**: allow up to 15s for elements to appear after navigation
-- **Language**: default is English (ENG) — tests should run in English locale
-- **Mobile-first**: site has responsive layout; desktop viewport (1280×720) recommended for tests
-- **SPA**: Next.js app; navigation may not trigger full page reload
-
+- **Viewport**: 1280×720 (desktop); menu is hamburger-only at all widths
+- **Timeout recommendation**: waitUntil: 'domcontentloaded', timeout: 60000
+- **Cookie consent**: page.getByRole('button', { name: /i understand/i }) — dismiss in globalSetup storage state
+- **Language**: English only (no language toggle on this site)
+- **Page load strategy**: waitUntil: 'domcontentloaded' — site is server-rendered CMS, not SPA
+- **External links**: calculator and eSales links open in new tab — verify visibility only, not navigation
+- **IC regulatory footer**: every product page ends with Insurance Commission disclaimer text

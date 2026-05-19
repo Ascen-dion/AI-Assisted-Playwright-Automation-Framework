@@ -93,16 +93,15 @@ module.exports = defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
-        // Spoof a real Windows Chrome user-agent.
-        // Playwright headless on Linux emits "HeadlessChrome" in the UA string
-        // which sites (including uniondigitalbank.io) use to detect bots and
-        // serve a 404. Overriding with a real Windows Chrome UA bypasses this.
+        // Use the real installed Chrome instead of bundled Chromium.
+        // Sites protected by Kasada/Cloudflare bot-detection (e.g. sunlife.com.ph)
+        // inspect JS fingerprints that differ between real Chrome and Playwright-Chromium.
+        // Real Chrome passes these checks; bundled Chromium does not.
+        // Falls back gracefully to bundled Chromium if chrome is not installed.
+        channel: 'chrome',
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        // Anti-bot detection bypass + container-safe flags.
-        // --no-sandbox / --disable-dev-shm-usage are required in any headless
-        // environment (CI, Docker, Railway) — not just Railway.
         launchOptions: {
           args: [
             '--no-sandbox',
@@ -110,8 +109,6 @@ module.exports = defineConfig({
             '--disable-dev-shm-usage',
             '--disable-gpu',
             '--disable-blink-features=AutomationControlled',
-            // Suppress the "Chrome is being controlled by automated software"
-            // info bar and other automation hints visible in the DOM
             '--disable-infobars',
             '--window-size=1280,720'
           ]

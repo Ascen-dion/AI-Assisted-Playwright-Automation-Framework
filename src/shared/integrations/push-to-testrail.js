@@ -1,23 +1,25 @@
 /**
- * Push acceptance-criteria-derived test cases to TestRail.
+ * Generic TestRail case pusher — reads testrail-test-cases.json and pushes
+ * any entries that don't yet have a real CID to TestRail.
  *
  * Usage:
- *   node src/integrations/push-to-testrail.js
+ *   node src/shared/integrations/push-to-testrail.js
+ *
+ * Workflow (no one-off scripts needed):
+ *   1. Add a new story to testrail-test-cases.json with "cid": null
+ *   2. Run this script — it creates/finds the case in TestRail and writes
+ *      the real CID back into testrail-test-cases.json automatically
+ *   3. testrail-case-map.json is rebuilt from all entries every run
+ *
+ * Skips entries that already have a real CID (anything other than null or "C0").
+ * Safe to re-run at any time — never creates duplicates.
  *
  * Required env vars (.env):
- *   TESTRAIL_HOST=https://yourcompany.testrail.io
- *   TESTRAIL_USER=you@company.com
- *   TESTRAIL_API_KEY=your-api-key
- *   TESTRAIL_PROJECT_ID=<numeric project id>
- *   TESTRAIL_SUITE_ID=<numeric suite id>
+ *   TESTRAIL_HOST, TESTRAIL_USER, TESTRAIL_API_KEY
+ *   TESTRAIL_PROJECT_ID, TESTRAIL_SUITE_ID, TESTRAIL_SECTION_ID
  *
  * Optional:
- *   TESTRAIL_SECTION_NAME=StarHub Mobile Purchase  (default shown)
- *   JIRA_REF=AU-1                                  (Jira story key for traceability)
- *
- * Output:
- *   Writes src/integrations/testrail-case-map.json  — maps spec test titles → TestRail case IDs
- *   This file is consumed by testrail-reporter.js to post results after each test run.
+ *   JIRA_REF=ED-85   override jiraRef for all cases in this run
  */
 
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../../.env') });
@@ -26,70 +28,99 @@ const path = require('path');
 const { TestRailIntegration } = require('./testrail-integration');
 
 // ── Configuration ──────────────────────────────────────────────────────────
-const PROJECT_ID   = parseInt(process.env.TESTRAIL_PROJECT_ID, 10);
-const SUITE_ID     = parseInt(process.env.TESTRAIL_SUITE_ID, 10);
-// Use TESTRAIL_SECTION_ID from .env if set; push-to-testrail does not need to
-// create/look up sections — just use an existing one.
-const SECTION_ID   = process.env.TESTRAIL_SECTION_ID
+const PROJECT_ID = parseInt(process.env.TESTRAIL_PROJECT_ID, 10);
+const SUITE_ID   = parseInt(process.env.TESTRAIL_SUITE_ID, 10);
+const SECTION_ID = process.env.TESTRAIL_SECTION_ID
   ? parseInt(process.env.TESTRAIL_SECTION_ID, 10)
   : null;
-const JIRA_REF     = process.env.JIRA_REF || '';
+const JIRA_REF   = process.env.JIRA_REF || '';
 
 if (!PROJECT_ID || !SUITE_ID) {
   console.error('❌ TESTRAIL_PROJECT_ID and TESTRAIL_SUITE_ID must be set in .env');
   process.exit(1);
 }
 
-// ── Test case definitions — loaded from testrail-test-cases.json ────────────
-// To add a new story: append an entry to testrail-test-cases.json and re-run this script.
-// The `specTitle` value MUST match the exact string passed to test() in the spec.
-const TEST_CASES_RAW = JSON.parse(
-  fs.readFileSync(path.resolve(__dirname, '../traceability/testrail-test-cases.json'), 'utf8')
-);
+// ── Paths ──────────────────────────────────────────────────────────────────
+const TEST_CASES_PATH = path.resolve(__dirname, '../traceability/testrail-test-cases.json');
+const CASE_MAP_PATH   = path.resolve(__dirname, '../traceability/testrail-case-map.json');
 
-// Map jiraRef from JSON; override with JIRA_REF env var if set for the current run
-const TEST_CASES = TEST_CASES_RAW.map(tc => ({
-  ...tc,
-  refs: JIRA_REF || tc.jiraRef || ''
-}));
+// ── Helpers ─────────────────────────────────────────────────────────────────
+/** Strip [Cxxx] prefix from a test title so it reads cleanly in TestRail. */
+function cleanTitle(title) {
+  return title.replace(/^\[C\d+\]\s*/i, '').trim();
+}
+
+/** Return true if this entry already has a real (non-placeholder) CID. */
+function hasRealCid(cid) {
+  if (!cid) return false;
+  if (cid === 'C0') return false;
+  return /^C\d+$/i.test(String(cid));
+}
 
 // ── Main ────────────────────────────────────────────────────────────────────
 async function main() {
-  const testrail = new TestRailIntegration();
+  const testrail  = new TestRailIntegration();
+  const testCases = JSON.parse(fs.readFileSync(TEST_CASES_PATH, 'utf8'));
 
-  console.log('\n🚀 Pushing 5 test cases to TestRail...');
-  console.log(`   Project: ${PROJECT_ID}  |  Suite: ${SUITE_ID}  |  Section: ${SECTION_ID || '(none — cases go to suite root)'}\n`);
+  const pending = testCases.filter(tc => !hasRealCid(tc.cid));
+  const already = testCases.filter(tc =>  hasRealCid(tc.cid));
 
-  const caseMap = {}; // specTitle → TestRail case ID
+  console.log(`\n🚀 push-to-testrail`);
+  console.log(`   Project: ${PROJECT_ID}  |  Suite: ${SUITE_ID}  |  Section: ${SECTION_ID ?? '—'}`);
+  console.log(`   ${already.length} already have CIDs (skipping) | ${pending.length} to push\n`);
 
-  for (const tc of TEST_CASES) {
-    const existing = await testrail.findTestCaseByTitle(PROJECT_ID, SUITE_ID, tc.title, SECTION_ID);
+  // ── Push pending cases ───────────────────────────────────────────────────
+  for (const tc of pending) {
+    const trTitle = cleanTitle(tc.title);
+    const refs    = JIRA_REF || tc.jiraRef || '';
 
+    // Find-or-create (avoids duplicates on re-runs)
+    const existing = await testrail.findTestCaseByTitle(PROJECT_ID, SUITE_ID, trTitle, SECTION_ID);
     let result;
     if (existing) {
-      console.log(`   ⟳  Updating existing case ${existing.id}: ${tc.title}`);
-      result = await testrail.updateTestCase(existing.id, tc);
+      console.log(`   ⟳  Found existing case ${existing.id}: ${trTitle}`);
+      result = existing;
     } else {
-      result = await testrail.pushTestCase(PROJECT_ID, SUITE_ID, tc, SECTION_ID);
+      result = await testrail.pushTestCase(PROJECT_ID, SUITE_ID, {
+        title:        trTitle,
+        preconditions: `Navigate to the application. Jira: ${refs || 'n/a'}`,
+        steps:        tc.ac || trTitle,
+        expected:     tc.ac || trTitle,
+        refs
+      }, SECTION_ID);
     }
 
-    caseMap[tc.specTitle] = result.id;
+    // Write the real CID back into the entry immediately
+    tc.cid   = `C${result.id}`;
+    tc.title = `[C${result.id}] ${trTitle}`;
+    console.log(`   ✅ C${result.id}  →  ${trTitle}`);
   }
 
-  // Save the case map so the reporter can reference it
-  const mapPath = path.resolve(__dirname, '../traceability/testrail-case-map.json');
+  // ── Write updated testrail-test-cases.json ───────────────────────────────
+  if (pending.length > 0) {
+    fs.writeFileSync(TEST_CASES_PATH, JSON.stringify(testCases, null, 2) + '\n', 'utf8');
+    console.log(`\n💾 Updated ${TEST_CASES_PATH} with real CIDs`);
+    console.log('   ⚠️  Update your spec file test() titles to use the new [Cxxx] prefixes above.');
+  }
+
+  // ── Rebuild testrail-case-map.json from ALL entries ──────────────────────
+  const cases = {};
+  for (const tc of testCases) {
+    if (!hasRealCid(tc.cid)) continue; // skip anything still without a CID
+    cases[tc.cid] = {
+      specTitle: cleanTitle(tc.title),
+      specFile:  tc.specFile || '',
+      jiraRef:   tc.jiraRef  || null,
+      ac:        tc.ac       || ''
+    };
+  }
+
   fs.writeFileSync(
-    mapPath,
-    JSON.stringify({ sectionId: SECTION_ID, cases: caseMap }, null, 2),
+    CASE_MAP_PATH,
+    JSON.stringify({ sectionId: SECTION_ID, cases }, null, 2) + '\n',
     'utf8'
   );
-
-  console.log(`\n✅ Done. Case map written to: ${mapPath}`);
-  console.log('\n📋 TestRail case IDs (update [C0] in the spec with these):');
-  for (const [specTitle, caseId] of Object.entries(caseMap)) {
-    console.log(`   C${caseId}  →  ${specTitle}`);
-  }
-  console.log('');
+  console.log(`\n📋 Rebuilt ${CASE_MAP_PATH}  (${Object.keys(cases).length} entries)\n`);
 }
 
 main().catch(err => {

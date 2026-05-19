@@ -121,7 +121,7 @@ class TestRailReporter {
     if (!this.enabled || this.results.length === 0) return;
 
     const isMobileRun = this.results.some(r => r.isMobile);
-    const runPrefix = process.env.TESTRAIL_RUN_NAME_PREFIX || (isMobileRun ? 'DSG Mobile Automation' : 'UnionDigital Bank Automation');
+    const runPrefix = process.env.TESTRAIL_RUN_NAME_PREFIX || (isMobileRun ? 'DSG Mobile Automation' : 'Sunlife Automation');
     const runName = `${runPrefix} — ${new Date().toISOString().split('T')[0]}`;
     const caseIds = [...new Set(this.results.map(r => r.caseId))];
 

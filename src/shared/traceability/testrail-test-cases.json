@@ -1,114 +1,107 @@
 [
   {
-    "specTitle": "Test Case 1: Navigate to UD Loans Payment Guide page via Loan Payment Guides dropdown",
-    "title": "AC1: Navigate to Loan Payment Guides Page and select UD Loans",
-    "preconditions": "User is on the UnionDigital Bank homepage (https://uniondigitalbank.io/en)",
-    "steps": "1. Navigate to https://uniondigitalbank.io/en\n2. Click on 'Loan Payment Guides' nav item\n3. Click on 'UD Loans' link in the dropdown",
-    "expected": "UD Loans Payment Guide page is displayed at https://uniondigitalbank.io/en/guides-ud-loans",
-    "jiraRef": "UD-LPG-1"
+    "cid": "C1842",
+    "title": "[C1842] Test Case 1: All entered text fields are cleared after clicking Reset",
+    "jiraRef": "ED-85",
+    "ac": "AC1: All entered text fields should be cleared",
+    "specFile": "src/web/tests/purchase/sunlife-file-a-claim.spec.js",
+    "tags": [
+      "@smoke",
+      "@regression"
+    ],
+    "status": "automated"
   },
   {
-    "specTitle": "Test Case 1: Verify '+' expand icon is visible on UD Loans Payment Guide accordion",
-    "title": "ED-74 AC1: Validate Expand Option - '+' icon visible on 'How To Pay Your UD Loans'",
-    "preconditions": "User navigates directly to the UD Loans Payment Guide page (https://uniondigitalbank.io/en/guides-ud-loans)",
-    "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Verify the page heading 'UD LOANS PAYMENT GUIDES' is visible\n3. Locate the accordion item 'How To Pay Your UD Loans'\n4. Verify the accordion button is in collapsed state (aria-expanded='false')\n5. Verify the '+' icon is displayed to the right of 'How To Pay Your UD Loans' text",
-    "expected": "The accordion item 'How To Pay Your UD Loans' is visible and its expand button has aria-expanded='false', confirming the '+' icon is rendered on the right side of the text",
-    "jiraRef": "ED-74"
+    "cid": "C1843",
+    "title": "[C1843] Test Case 2: Date of birth field is cleared after clicking Reset",
+    "jiraRef": "ED-85",
+    "ac": "AC2: Date of birth field should be cleared",
+    "specFile": "src/web/tests/purchase/sunlife-file-a-claim.spec.js",
+    "tags": [
+      "@smoke",
+      "@regression"
+    ],
+    "status": "automated"
   },
   {
-    "specTitle": "Test Case 1: Verify 'Click here to pay via UPAY' link is visible under the UPAY payment section",
-    "title": "ED-76 AC1: Validate UPAY Link - 'Click here to pay via UPAY' link is visible under UPAY section",
-    "preconditions": "User is on the UD Loans Payment Guide page (https://uniondigitalbank.io/en/guides-ud-loans) with payment option details displayed (accordion expanded)",
-    "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Click the 'How To Pay Your UD Loans' accordion button to expand payment options\n3. Scroll to the 'Pay through your other bank accounts or e-wallets via UPAY.' section\n4. Observe the 'Click here to pay via UPAY' link below the UPAY section heading",
-    "expected": "'Click here to pay via UPAY' link is displayed and visible under the 'Pay through your other bank accounts or e-wallets via UPAY.' section",
-    "jiraRef": "ED-76"
+    "cid": "C1844",
+    "title": "[C1844] Test Case 3: Claim Type dropdown resets to default value after clicking Reset",
+    "jiraRef": "ED-85",
+    "ac": "AC3: Claim Type dropdown should reset to default value",
+    "specFile": "src/web/tests/purchase/sunlife-file-a-claim.spec.js",
+    "tags": [
+      "@smoke",
+      "@regression"
+    ],
+    "status": "automated"
   },
   {
-    "specTitle": "Test Case 1: Verify Free UnionBank payment options section is visible",
-    "title": "ED-77 AC1: Verify 'Free UnionBank payment options' section is displayed on Loan Payment page",
-    "preconditions": "User is on the UD Loans Payment Guide page (https://uniondigitalbank.io/en/guides-ud-loans) with the 'How To Pay Your UD Loans' accordion expanded",
-    "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Click the 'How To Pay Your UD Loans' accordion button to expand payment options\n3. Observe the '1. Free UnionBank payment options' section heading in the accordion panel",
-    "expected": "'1. Free UnionBank payment options' section text is visible in the expanded accordion panel",
-    "jiraRef": "ED-77"
+    "cid": "C1845",
+    "title": "[C1845] Test Case 4: Message field is cleared after clicking Reset",
+    "jiraRef": "ED-85",
+    "ac": "AC4: Message field should be cleared",
+    "specFile": "src/web/tests/purchase/sunlife-file-a-claim.spec.js",
+    "tags": [
+      "@smoke",
+      "@regression"
+    ],
+    "status": "automated"
   },
   {
-    "specTitle": "Test Case 2: Verify UPAY payment section is visible on Loan Payment page",
-    "title": "ED-77 AC2: Verify 'Pay through your other bank accounts or e-wallets via UPAY' section is displayed on Loan Payment page",
-    "preconditions": "User is on the UD Loans Payment Guide page (https://uniondigitalbank.io/en/guides-ud-loans) with the 'How To Pay Your UD Loans' accordion expanded",
-    "steps": "1. Navigate to https://uniondigitalbank.io/en/guides-ud-loans\n2. Click the 'How To Pay Your UD Loans' accordion button to expand payment options\n3. Observe the '2. Pay through your other bank accounts or e-wallets via UPAY.' section heading in the accordion panel",
-    "expected": "'2. Pay through your other bank accounts or e-wallets via UPAY.' section text is visible in the expanded accordion panel",
-    "jiraRef": "ED-77"
+    "cid": "C1846",
+    "title": "[C1846] Test Case 5: Privacy Statement checkbox is unchecked after clicking Reset",
+    "jiraRef": "ED-85",
+    "ac": "AC5: Privacy Statement checkbox should become unchecked",
+    "specFile": "src/web/tests/purchase/sunlife-file-a-claim.spec.js",
+    "tags": [
+      "@smoke",
+      "@regression"
+    ],
+    "status": "automated"
   },
   {
-    "specTitle": "Test Case 1: Click PAY VIA UPAY NOW and verify UD Loans payment page is displayed",
-    "title": "ED-78 AC1: Initiate UPAY Payment - clicking PAY VIA UPAY NOW displays UD Loans by UnionDigital Bank Payment Page",
-    "preconditions": "User is on the Loan Payment page (https://loans.uniondigitalbank.io/LoanPayment)",
-    "steps": "1. Navigate to https://loans.uniondigitalbank.io/LoanPayment\n2. Locate the 'PAY VIA UPAY NOW' button under the 'Pay through your other bank accounts or e-wallets via UPAY.' section\n3. Click the 'PAY VIA UPAY NOW' button\n4. Observe the resulting page",
-    "expected": "The URL changes to https://loans.uniondigitalbank.io/LoanPayment/UPay and the heading 'UD Loans by UnionDigital Bank Payment Page' is displayed on the page",
-    "jiraRef": "ED-78"
+    "cid": "C1847",
+    "title": "[C1847] Test Case 6: No entered data remains visible after clicking Reset on fully filled form",
+    "jiraRef": "ED-85",
+    "ac": "AC6: No entered data should remain visible after clicking Reset",
+    "specFile": "src/web/tests/purchase/sunlife-file-a-claim.spec.js",
+    "tags": [
+      "@smoke",
+      "@regression"
+    ],
+    "status": "automated"
   },
   {
-    "specTitle": "Test Case 1: Verify Loan Number and Payment Amount text boxes are displayed on UD Loans Payment Page",
-    "title": "ED-79 AC1: Validate Payment Page Fields - Loan Number and Payment Amount text boxes are displayed",
-    "preconditions": "User is on the UD Loans by UnionDigital Bank Payment Page (https://loans.uniondigitalbank.io/LoanPayment/UPay)",
-    "steps": "1. Navigate directly to https://loans.uniondigitalbank.io/LoanPayment/UPay\n2. Verify the URL is https://loans.uniondigitalbank.io/LoanPayment/UPay\n3. Verify the 'Loan Number' text box is visible\n4. Verify the 'Payment Amount' text box is visible",
-    "expected": "Both 'Loan Number' and 'Payment Amount' text boxes are visible and editable on the 'UD Loans by UnionDigital Bank Payment Page'",
-    "jiraRef": "ED-79"
+    "cid": "C1852",
+    "title": "[C1852] Verify \"Log in\" link is present in the hamburger menu",
+    "jiraRef": null,
+    "ac": "AC1: Log in link is visible in the site navigation on homepage",
+    "specFile": "src/web/tests/nav/sunlife-homepage.spec.js",
+    "tags": [
+      "@smoke"
+    ],
+    "status": "automated"
   },
   {
-    "specTitle": "Test Case 2: Verify UD Loans by UnionDigital Bank Payment Page heading text is displayed",
-    "title": "ED-79 AC2: Validate Payment Page Heading - 'UD Loans by UnionDigital Bank Payment Page' text is displayed",
-    "preconditions": "User is on the UD Loans by UnionDigital Bank Payment Page (https://loans.uniondigitalbank.io/LoanPayment/UPay)",
-    "steps": "1. Navigate directly to https://loans.uniondigitalbank.io/LoanPayment/UPay\n2. Verify the text 'UD Loans by UnionDigital Bank Payment Page' is visible on the page",
-    "expected": "The heading text 'UD Loans by UnionDigital Bank Payment Page' is displayed and visible on the payment page",
-    "jiraRef": "ED-79"
+    "cid": "C1858",
+    "title": "[C1858] Test Case 1: Verify Where to pay link is visible in the utility nav on the homepage",
+    "jiraRef": "ED-86",
+    "ac": "AC1: Where to pay link should be available on the Sun Life homepage",
+    "specFile": "src/web/tests/nav/sunlife-where-to-pay.spec.js",
+    "tags": [
+      "@smoke"
+    ],
+    "status": "automated"
   },
   {
-    "specTitle": "Test Case 1: Navigate to About Us page via top navigation bar",
-    "title": "ED-80 AC1: Navigate to About Us page by clicking About Us tab on top bar",
-    "preconditions": "User is on the UnionDigital Bank homepage (https://uniondigitalbank.io/en)",
-    "steps": "1. Navigate to https://uniondigitalbank.io/en\n2. Click on 'About Us' tab on the top navigation bar\n3. Observe the resulting page URL",
-    "expected": "User is navigated to https://uniondigitalbank.io/en/about-us and the page title contains 'About Us'",
-    "jiraRef": "ED-80"
-  },
-  {
-    "specTitle": "Test Case 2: Verify About Us page displays hero heading",
-    "title": "ED-80 AC2: Verify About Us page displays 'BANKING FOR THE BETTER' hero heading",
-    "preconditions": "User is on the About Us page (https://uniondigitalbank.io/en/about-us)",
-    "steps": "1. Navigate to https://uniondigitalbank.io/en/about-us\n2. Observe the hero heading on the page",
-    "expected": "The heading 'BANKING FOR THE BETTER' is visible on the About Us page",
-    "jiraRef": "ED-80"
-  },
-  {
-    "specTitle": "Test Case 1: App launches and Welcome text is visible on top left",
-    "title": "ED-82 AC1: Verify Welcome text is displayed at the top left after app launch",
-    "preconditions": "Android emulator is booted and com.dcsg.golfgalaxy.qa is installed",
-    "steps": "1. Terminate any existing Golf Galaxy session\n2. Launch com.dcsg.golfgalaxy.qa\n3. Wait for the home screen to fully render\n4. Observe the top-left area of the screen",
-    "expected": "'Welcome' text is visible at the top left of the Golf Galaxy home screen (resource-id: app_user_name_text)",
-    "jiraRef": "ED-82"
-  },
-  {
-    "specTitle": "Test Case 2: Shop tab is visible below Welcome text",
-    "title": "ED-82 AC2: Verify Shop tab is displayed below the Welcome text",
-    "preconditions": "Golf Galaxy app is launched and home screen is visible with Welcome text",
-    "steps": "1. Launch com.dcsg.golfgalaxy.qa\n2. Wait for the home screen to render\n3. Observe the tab bar area directly below the toolbar",
-    "expected": "'Shop' tab (RadioButton) is visible in the tab bar below the Welcome heading",
-    "jiraRef": "ED-82"
-  },
-  {
-    "specTitle": "Test Case 3: Hot Deals tab is visible below Welcome text",
-    "title": "ED-82 AC3: Verify Hot Deals tab is displayed below the Welcome text",
-    "preconditions": "Golf Galaxy app is launched and home screen is visible with Welcome text",
-    "steps": "1. Launch com.dcsg.golfgalaxy.qa\n2. Wait for the home screen to render\n3. Observe the tab bar area directly below the toolbar",
-    "expected": "'Hot Deals' tab (RadioButton) is visible in the tab bar below the Welcome heading",
-    "jiraRef": "ED-82"
-  },
-  {
-    "specTitle": "Test Case 4: Cart button is visible in the bottom navigation bar",
-    "title": "ED-83 AC1: Verify Cart button is visible in the bottom navigation bar after app launch",
-    "preconditions": "Android emulator is booted and com.dcsg.golfgalaxy.qa is installed",
-    "steps": "1. Terminate any existing Golf Galaxy session\n2. Launch com.dcsg.golfgalaxy.qa\n3. Wait for the home screen to fully render\n4. Observe the bottom navigation bar",
-    "expected": "Cart button (content-desc: 'Cart', resource-id: navigation_cart) is visible in the bottom navigation bar",
-    "jiraRef": "ED-83"
+    "cid": "C1859",
+    "title": "[C1859] Test Case 2: Verify Where to pay link points to the payment channels page",
+    "jiraRef": "ED-86",
+    "ac": "AC2: Where to pay link href should point to the payment channels URL",
+    "specFile": "src/web/tests/nav/sunlife-where-to-pay.spec.js",
+    "tags": [
+      "@smoke"
+    ],
+    "status": "automated"
   }
 ]
