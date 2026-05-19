@@ -125,5 +125,27 @@
       "@smoke"
     ],
     "status": "automated"
+  },
+  {
+    "cid": "C1862",
+    "title": "[C1862] Test Case 1: Verify Careers link is visible in the utility nav on the homepage",
+    "jiraRef": "ED-88",
+    "ac": "AC1: Careers link should be visible on the top navigation bar of the Sun Life homepage",
+    "specFile": "src/web/tests/nav/sunlife-careers.spec.js",
+    "tags": [
+      "@smoke"
+    ],
+    "status": "automated"
+  },
+  {
+    "cid": "C1863",
+    "title": "[C1863] Test Case 2: Verify Careers link points to the careers page",
+    "jiraRef": "ED-88",
+    "ac": "AC2: Careers link href should point to the careers URL",
+    "specFile": "src/web/tests/nav/sunlife-careers.spec.js",
+    "tags": [
+      "@smoke"
+    ],
+    "status": "automated"
   }
 ]

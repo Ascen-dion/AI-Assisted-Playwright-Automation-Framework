@@ -66,6 +66,18 @@
       "specFile": "src/web/tests/nav/sunlife-advisor-list.spec.js",
       "jiraRef": "ED-87",
       "ac": "AC2: Advisor list link href should point to the corporate governance URL"
+    },
+    "C1862": {
+      "specTitle": "Test Case 1: Verify Careers link is visible in the utility nav on the homepage",
+      "specFile": "src/web/tests/nav/sunlife-careers.spec.js",
+      "jiraRef": "ED-88",
+      "ac": "AC1: Careers link should be visible on the top navigation bar of the Sun Life homepage"
+    },
+    "C1863": {
+      "specTitle": "Test Case 2: Verify Careers link points to the careers page",
+      "specFile": "src/web/tests/nav/sunlife-careers.spec.js",
+      "jiraRef": "ED-88",
+      "ac": "AC2: Careers link href should point to the careers URL"
     }
   }
 }

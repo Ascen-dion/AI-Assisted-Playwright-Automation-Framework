@@ -43,6 +43,15 @@ class SunLifeHomePage {
   async getAdvisorListLinkHref() {
     return await loc.advisorListLink(this.page).getAttribute('href');
   }
+
+  async isCareersLinkVisible() {
+    await loc.careersLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.careersLink(this.page).isVisible();
+  }
+
+  async getCareersLinkHref() {
+    return await loc.careersLink(this.page).getAttribute('href');
+  }
 }
 
 module.exports = SunLifeHomePage;

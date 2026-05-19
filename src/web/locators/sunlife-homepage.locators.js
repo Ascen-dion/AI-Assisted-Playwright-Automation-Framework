@@ -16,6 +16,7 @@ const locators = {
   howToFileAClaimLink: (page) => page.getByRole('link', { name: 'How to file a claim' }).first(),
   whereToPayLink:      (page) => page.getByRole('link', { name: 'Where to pay' }).first(),
   advisorListLink:     (page) => page.getByRole('link', { name: 'Advisor list' }).first(),
+  careersLink:         (page) => page.getByRole('link', { name: 'Careers' }).first(),
 };
 
 module.exports = locators;
