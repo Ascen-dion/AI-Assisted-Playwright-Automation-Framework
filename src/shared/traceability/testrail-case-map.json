@@ -54,6 +54,18 @@
       "specFile": "src/web/tests/nav/sunlife-where-to-pay.spec.js",
       "jiraRef": "ED-86",
       "ac": "AC2: Where to pay link href should point to the payment channels URL"
+    },
+    "C1860": {
+      "specTitle": "Test Case 1: Verify Advisor list link is visible in the utility nav on the homepage",
+      "specFile": "src/web/tests/nav/sunlife-advisor-list.spec.js",
+      "jiraRef": "ED-87",
+      "ac": "AC1: Advisor list link should be visible on the top navigation bar of the Sun Life homepage"
+    },
+    "C1861": {
+      "specTitle": "Test Case 2: Verify Advisor list link points to the corporate governance page",
+      "specFile": "src/web/tests/nav/sunlife-advisor-list.spec.js",
+      "jiraRef": "ED-87",
+      "ac": "AC2: Advisor list link href should point to the corporate governance URL"
     }
   }
 }

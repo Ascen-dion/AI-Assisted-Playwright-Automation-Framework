@@ -15,6 +15,7 @@ const locators = {
   // ── Utility nav (top bar — always visible, no hamburger required) ─────────
   howToFileAClaimLink: (page) => page.getByRole('link', { name: 'How to file a claim' }).first(),
   whereToPayLink:      (page) => page.getByRole('link', { name: 'Where to pay' }).first(),
+  advisorListLink:     (page) => page.getByRole('link', { name: 'Advisor list' }).first(),
 };
 
 module.exports = locators;

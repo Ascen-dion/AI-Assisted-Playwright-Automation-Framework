@@ -34,6 +34,15 @@ class SunLifeHomePage {
   async getWhereToPayLinkHref() {
     return await loc.whereToPayLink(this.page).getAttribute('href');
   }
+
+  async isAdvisorListLinkVisible() {
+    await loc.advisorListLink(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.advisorListLink(this.page).isVisible();
+  }
+
+  async getAdvisorListLinkHref() {
+    return await loc.advisorListLink(this.page).getAttribute('href');
+  }
 }
 
 module.exports = SunLifeHomePage;
