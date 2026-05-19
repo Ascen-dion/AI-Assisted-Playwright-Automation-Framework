@@ -44,7 +44,7 @@ jobs:
           TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
           TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
           TESTRAIL_SECTION_ID: ${{ secrets.TESTRAIL_SECTION_ID }}
-        run: npx playwright test src/tests/ --config=config/playwright.config.js --project=chromium --grep @smoke
+        run: npx playwright test src/web/tests/ --config=config/playwright.config.js --project=chromium --grep @smoke
 
       - name: Upload Smoke Results
         uses: actions/upload-artifact@v4
@@ -80,7 +80,7 @@ jobs:
         continue-on-error: true
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          HEADLESS: "true"
+          HEADLESS: "false"
           CI: "true"
           TESTRAIL_HOST: ${{ secrets.TESTRAIL_HOST }}
           TESTRAIL_USER: ${{ secrets.TESTRAIL_USER }}
@@ -88,7 +88,7 @@ jobs:
           TESTRAIL_PROJECT_ID: ${{ secrets.TESTRAIL_PROJECT_ID }}
           TESTRAIL_SUITE_ID: ${{ secrets.TESTRAIL_SUITE_ID }}
           TESTRAIL_SECTION_ID: ${{ secrets.TESTRAIL_SECTION_ID }}
-        run: npx playwright test src/tests/ --config=config/playwright.config.js --project=chromium --grep @regression
+        run: npx playwright test src/web/tests/ --config=config/playwright.config.js --project=chromium --grep @regression
 
       - name: Generate test report
         if: always()

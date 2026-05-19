@@ -21,10 +21,10 @@ test.describe('[UI] Sun Life PH Homepage — navigation smoke', { tag: ['@smoke'
     homePage = new SunLifeHomePage(page);
     await homePage.goto();
     try {
-      const cookieBtn = page.getByRole('button', { name: /i understand/i }).first();
-      await cookieBtn.waitFor({ state: 'visible', timeout: 10000 });
-      await cookieBtn.click();
-      await cookieBtn.waitFor({ state: 'hidden', timeout: 5000 });
+      const closeBtn = page.getByRole('button', { name: 'Close' }).first();
+      await closeBtn.waitFor({ state: 'visible', timeout: 10000 });
+      await closeBtn.click();
+      await closeBtn.waitFor({ state: 'hidden', timeout: 5000 });
     } catch {}
   });
 
