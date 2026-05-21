@@ -147,5 +147,27 @@
       "@smoke"
     ],
     "status": "automated"
+  },
+  {
+    "cid": "C1981",
+    "title": "[C1981] Test Case 1: Verify Sun Cares link is visible in the utility nav on the homepage",
+    "jiraRef": "ED-89",
+    "ac": "AC1: Sun Cares link should be visible on the top navigation bar of the Sun Life homepage",
+    "specFile": "src/web/tests/nav/sunlife-sun-cares.spec.js",
+    "tags": [
+      "@smoke"
+    ],
+    "status": "automated"
+  },
+  {
+    "cid": "C1982",
+    "title": "[C1982] Test Case 2: Verify Sun Cares link points to the Sun Cares page",
+    "jiraRef": "ED-89",
+    "ac": "AC2: Sun Cares link href should point to the Sun Cares URL",
+    "specFile": "src/web/tests/nav/sunlife-sun-cares.spec.js",
+    "tags": [
+      "@smoke"
+    ],
+    "status": "automated"
   }
 ]

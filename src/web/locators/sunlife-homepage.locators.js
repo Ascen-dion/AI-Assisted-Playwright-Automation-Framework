@@ -17,6 +17,7 @@ const locators = {
   whereToPayLink:      (page) => page.getByRole('link', { name: 'Where to pay' }).first(),
   advisorListLink:     (page) => page.getByRole('link', { name: 'Advisor list' }).first(),
   careersLink:         (page) => page.getByRole('link', { name: 'Careers' }).first(),
+  sunCaresLink:        (page) => page.getByRole('link', { name: 'Sun Cares' }).first(),
 };
 
 module.exports = locators;

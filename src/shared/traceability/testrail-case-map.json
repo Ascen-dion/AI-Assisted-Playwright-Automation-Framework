@@ -78,6 +78,18 @@
       "specFile": "src/web/tests/nav/sunlife-careers.spec.js",
       "jiraRef": "ED-88",
       "ac": "AC2: Careers link href should point to the careers URL"
+    },
+    "C1981": {
+      "specTitle": "Test Case 1: Verify Sun Cares link is visible in the utility nav on the homepage",
+      "specFile": "src/web/tests/nav/sunlife-sun-cares.spec.js",
+      "jiraRef": "ED-89",
+      "ac": "AC1: Sun Cares link should be visible on the top navigation bar of the Sun Life homepage"
+    },
+    "C1982": {
+      "specTitle": "Test Case 2: Verify Sun Cares link points to the Sun Cares page",
+      "specFile": "src/web/tests/nav/sunlife-sun-cares.spec.js",
+      "jiraRef": "ED-89",
+      "ac": "AC2: Sun Cares link href should point to the Sun Cares URL"
     }
   }
 }

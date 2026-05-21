@@ -37,6 +37,7 @@ module.exports = {
       paymentChannels:    'https://www.sunlife.com.ph/en/about-us/become-an-empowered-sun-lifer/payment-channels/',
       advisorList:        'https://www.sunlife.com.ph/en/about-us/corporate-governance/',
       careers:            'https://www.sunlife.com.ph/en/about-us/careers/',
+      sunCares:           'https://www.sunlife.com.ph/en/about-us/sun-cares/',
       onlinePayment:      'https://online.sunlife.com.ph/onlinepay/payment',
       login:              'https://mobile.sunlife.com.ph/slocpicp/index.html#/',
       businessOwners:     'https://www.sunlife.com.ph/en/insurance/business-owners-insurance-packages/',
@@ -61,6 +62,7 @@ module.exports = {
       paymentChannels:    /\/en\/about-us\/become-an-empowered-sun-lifer\/payment-channels\//,
       advisorList:        /\/en\/about-us\/corporate-governance\//,
       careers:            /\/en\/about-us\/careers\//,
+      sunCares:           /\/en\/about-us\/sun-cares\//,
     },
 
     // Page titles
