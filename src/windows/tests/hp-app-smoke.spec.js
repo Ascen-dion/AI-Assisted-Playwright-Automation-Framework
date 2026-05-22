@@ -78,7 +78,14 @@ describe('HP App — Smoke Tests', () => {
 
   // ─── My Notebook section ─────────────────────────────────────────────────
 
-  it('[TC-WIN-HP-005] should display the notebook model name in the My Notebook section', async () => {
+  it('[TC-WIN-HP-005] should display the notebook model name in the My Notebook section', async function () {
+    // The My Notebook section renders device-specific hardware data.
+    // On CI runners (Azure VMs) this data is unavailable — skip rather than fail.
+    if (process.env.CI) {
+      console.warn('[TC-WIN-HP-005] Skipped in CI — My Notebook section requires real HP hardware data.');
+      return this.skip();
+    }
+
     await browser.step('Check My Notebook heading visibility via UIAutomation (AutomationId: pcdevicedetails__device-name)');
     const isVisible = await hpApp.isMyNotebookVisible();
 
@@ -90,7 +97,14 @@ describe('HP App — Smoke Tests', () => {
     expect(isVisible).toBe(true);
   });
 
-  it('[TC-WIN-HP-006] should display the battery/charging status', async () => {
+  it('[TC-WIN-HP-006] should display the battery/charging status', async function () {
+    // Battery / charging status requires real HP hardware data.
+    // On CI runners (Azure VMs) this data is unavailable — skip rather than fail.
+    if (process.env.CI) {
+      console.warn('[TC-WIN-HP-006] Skipped in CI — battery status requires real HP hardware data.');
+      return this.skip();
+    }
+
     await browser.step('Find battery/charging status element (XPath: contains @Name with Charging|Battery)');
     const batteryEl = await hpApp.getBatteryStatusElement();
 
