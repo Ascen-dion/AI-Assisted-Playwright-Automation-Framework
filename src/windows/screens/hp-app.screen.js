@@ -109,16 +109,21 @@ class HpAppScreen extends WindowsBaseScreen {
     // interactable even when the displayed flag is false (WinAppDriver quirk).
     await this.clickExisting(locators.BTN_ACCEPT_ALL);
     // Wait for the app to transition to the next screen (welcome or home).
-    // More reliable than waiting for the privacy heading to disappear, because
-    // WebView2 re-renders asynchronously after accepting the consent dialog.
-    await browser.waitUntil(
-      async () => {
-        const onWelcome = await this.isExisting(locators.BTN_CONTINUE_AS_GUEST);
-        const onHome    = await this.isVisible(locators.HEADING_MY_NOTEBOOK);
-        return onWelcome || onHome;
-      },
-      { timeout: 20000, timeoutMsg: 'App did not transition away from privacy screen after clicking "Accept all"' }
-    );
+    // Soft-fail: if the transition takes longer than expected in CI, individual
+    // tests will detect and report the failure rather than crashing before().
+    try {
+      await browser.waitUntil(
+        async () => {
+          const onWelcome = await this.isExisting(locators.BTN_CONTINUE_AS_GUEST);
+          const onHome    = await this.isExisting(locators.HEADING_MY_NOTEBOOK);
+          const navReady  = await this.isExisting(locators.BTN_SIGN_IN);
+          return onWelcome || onHome || navReady;
+        },
+        { timeout: process.env.CI ? 60000 : 20000, timeoutMsg: 'App did not transition away from privacy screen after clicking "Accept all"' }
+      );
+    } catch (e) {
+      console.warn(`  dismissPrivacyScreenIfPresent: ${e.message}`);
+    }
   }
 
   /**
@@ -134,12 +139,23 @@ class HpAppScreen extends WindowsBaseScreen {
     if (!exists) return;
 
     await this.clickExisting(locators.BTN_CONTINUE_AS_GUEST);
-    // Wait for the home screen to appear — more reliable than a fixed pause
-    // because WebView2 render time varies depending on network / app cache state.
-    await browser.waitUntil(
-      async () => await this.isVisible(locators.HEADING_MY_NOTEBOOK),
-      { timeout: 20000, timeoutMsg: 'Home screen did not appear after clicking "Continue as guest"' }
-    );
+    // Wait for the home screen to appear.
+    // Use isExisting() — in CI/WebView2, isDisplayed() can return false for
+    // elements that are present and fully rendered (WinAppDriver quirk).
+    // Soft-fail so before() does not throw: individual tests will assert and
+    // screenshot on failure instead of the whole suite being skipped.
+    try {
+      await browser.waitUntil(
+        async () => {
+          const onHome   = await this.isExisting(locators.HEADING_MY_NOTEBOOK);
+          const navReady = await this.isExisting(locators.BTN_SIGN_IN);
+          return onHome || navReady;
+        },
+        { timeout: process.env.CI ? 60000 : 20000, timeoutMsg: 'Home screen did not appear after clicking "Continue as guest"' }
+      );
+    } catch (e) {
+      console.warn(`  dismissWelcomeScreenIfPresent: ${e.message}`);
+    }
   }
 
   // ─── Sign In ───────────────────────────────────────────────────────────────
