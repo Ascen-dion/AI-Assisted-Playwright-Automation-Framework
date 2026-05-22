@@ -205,7 +205,9 @@ class HpAppScreen extends WindowsBaseScreen {
    * @returns {Promise<boolean>}
    */
   async isMyNotebookVisible() {
-    return this.isVisible(locators.HEADING_MY_NOTEBOOK);
+    // Use isExisting() — WebView2 elements always report isDisplayed()=false
+    // via WinAppDriver even when fully rendered and interactive.
+    return this.isExisting(locators.HEADING_MY_NOTEBOOK);
   }
 
   /**
@@ -231,8 +233,10 @@ class HpAppScreen extends WindowsBaseScreen {
   async getBatteryStatusElement() {
     try {
       const el = await $(locators.LABEL_BATTERY_STATUS);
-      const displayed = await el.isDisplayed();
-      return displayed ? el : null;
+      // Use isExisting() — WebView2 elements always report isDisplayed()=false
+      // via WinAppDriver even when fully rendered and interactive.
+      const exists = await el.isExisting();
+      return exists ? el : null;
     } catch {
       return null;
     }
