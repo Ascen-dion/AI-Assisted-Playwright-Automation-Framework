@@ -80,6 +80,34 @@ class WindowsBaseScreen {
   }
 
   /**
+   * Check if an element exists in the UIAutomation tree (regardless of displayed state).
+   * Use this for WebView2-hosted elements where isDisplayed() incorrectly returns false
+   * even when the element is visible and interactive on screen (WinAppDriver quirk).
+   * @param {string} locator
+   * @returns {Promise<boolean>}
+   */
+  async isExisting(locator) {
+    try {
+      const el = await $(locator);
+      return el.isExisting();
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Click an element that exists in the UIAutomation tree without waiting for
+   * isDisplayed() to be true. Required for WebView2 elements in CI where the
+   * displayed flag is always false even for interactive buttons.
+   * @param {string} locator
+   */
+  async clickExisting(locator) {
+    const el = await $(locator);
+    await el.waitForExist({ timeout: 10000 });
+    await el.click();
+  }
+
+  /**
    * Take a screenshot and save to the given path.
    * @param {string} filePath
    */

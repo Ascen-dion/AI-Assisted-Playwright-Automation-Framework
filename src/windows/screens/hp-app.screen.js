@@ -51,8 +51,8 @@ class HpAppScreen extends WindowsBaseScreen {
     try {
       await browser.waitUntil(
         async () => {
-          const onPrivacy  = await this.isVisible(locators.BTN_ACCEPT_ALL);
-          const onWelcome  = await this.isVisible(locators.BTN_CONTINUE_AS_GUEST);
+          const onPrivacy  = await this.isExisting(locators.BTN_ACCEPT_ALL);
+          const onWelcome  = await this.isExisting(locators.BTN_CONTINUE_AS_GUEST);
           const onHome     = await this.isVisible(locators.HEADING_MY_NOTEBOOK);
           const navReady   = await this.isVisible(locators.BTN_SIGN_IN);
           return onPrivacy || onWelcome || onHome || navReady;
@@ -97,16 +97,23 @@ class HpAppScreen extends WindowsBaseScreen {
   async dismissPrivacyScreenIfPresent() {
     // Detect by the Accept All button's stable AutomationId — more reliable than
     // the heading text, which may take extra time to render inside the React MFE.
-    const isVisible = await this.isVisible(locators.BTN_ACCEPT_ALL);
-    if (!isVisible) return;
+    //
+    // NOTE: In CI / WebView2, isDisplayed() incorrectly returns false for this
+    // button even when the privacy dialog is clearly visible on screen. We use
+    // isExisting() instead so the element only needs to be in the UIAutomation
+    // tree, not marked as displayed, to be detected.
+    const exists = await this.isExisting(locators.BTN_ACCEPT_ALL);
+    if (!exists) return;
 
-    await this.click(locators.BTN_ACCEPT_ALL);
+    // Click directly without waitForDisplayed — WebView2 elements can be
+    // interactable even when the displayed flag is false (WinAppDriver quirk).
+    await this.clickExisting(locators.BTN_ACCEPT_ALL);
     // Wait for the app to transition to the next screen (welcome or home).
     // More reliable than waiting for the privacy heading to disappear, because
     // WebView2 re-renders asynchronously after accepting the consent dialog.
     await browser.waitUntil(
       async () => {
-        const onWelcome = await this.isVisible(locators.BTN_CONTINUE_AS_GUEST);
+        const onWelcome = await this.isExisting(locators.BTN_CONTINUE_AS_GUEST);
         const onHome    = await this.isVisible(locators.HEADING_MY_NOTEBOOK);
         return onWelcome || onHome;
       },
@@ -121,10 +128,12 @@ class HpAppScreen extends WindowsBaseScreen {
    */
   async dismissWelcomeScreenIfPresent() {
     // Detect by the stable AutomationId: WelcomeScreen.WelcomeScreenView.ContinueAsGuestButton
-    const isVisible = await this.isVisible(locators.BTN_CONTINUE_AS_GUEST);
-    if (!isVisible) return;
+    // Use isExisting() for the same reason as dismissPrivacyScreenIfPresent — WebView2
+    // elements may not report as displayed even when they are interactive.
+    const exists = await this.isExisting(locators.BTN_CONTINUE_AS_GUEST);
+    if (!exists) return;
 
-    await this.click(locators.BTN_CONTINUE_AS_GUEST);
+    await this.clickExisting(locators.BTN_CONTINUE_AS_GUEST);
     // Wait for the home screen to appear — more reliable than a fixed pause
     // because WebView2 render time varies depending on network / app cache state.
     await browser.waitUntil(
