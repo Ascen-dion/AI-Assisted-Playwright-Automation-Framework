@@ -1,0 +1,178 @@
+name: PR Review Agent
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main, master, poc_windows_web_mobile]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  # ── Job 1: GitHub Copilot AI Code Review ─────────────────────────────────
+  copilot-review:
+    name: Copilot Code Review
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Request Copilot Code Review
+        uses: github/copilot-code-review@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Custom guidelines focused on this test automation framework
+          custom_instructions: |
+            You are reviewing a Playwright + WebdriverIO test automation framework.
+            Apply these strict conventions when reviewing:
+
+            ## POM Structure Rules
+            - Locators MUST live in: src/web/locators/<name>.locators.js
+            - Page objects MUST live in: src/web/pages/<name>.page.js
+            - Test specs MUST live in: src/web/tests/nav/ or src/web/tests/application/
+            - Mobile tests use src/mobile/screens/ and src/mobile/tests/
+            - Mac tests use src/mac/screens/ and src/mac/tests/
+            - Windows tests use src/windows/screens/ and src/windows/tests/
+            - Raw selectors must NEVER appear inside spec files
+
+            ## Naming Conventions
+            - Locator files: <feature>.locators.js
+            - Page object files: <feature>.page.js
+            - Spec files: <feature>.spec.js
+            - Test titles MUST include a TestRail case ID: [C12345] Test description
+
+            ## Test Data
+            - All hardcoded URLs and assertion strings MUST come from src/shared/data/test-data.js
+            - Never hardcode strings in test specs directly
+
+            ## Test Quality
+            - No assertions inside page objects — assertions belong in specs only
+            - All page objects must have a goto() method
+            - Prefer semantic locators (role, label, text) over CSS/XPath
+            - Each test should be independent — no shared mutable state between tests
+
+            ## CI/CD
+            - Tests tagged @smoke must complete within 15 minutes
+            - Tests tagged @regression are allowed up to 60 minutes
+            - New tests must be tagged with either @smoke or @regression
+
+  # ── Job 2: Framework Convention Check ────────────────────────────────────
+  framework-conventions:
+    name: Framework Convention Check
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          git diff --name-only origin/${{ github.base_ref }}...HEAD > /tmp/changed-files.txt
+          echo "Changed files:"
+          cat /tmp/changed-files.txt
+
+      - name: Run framework convention checks
+        id: convention-check
+        run: node .github/scripts/check-pr-conventions.js /tmp/changed-files.txt
+        continue-on-error: true
+
+      - name: Post convention check results
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const reportPath = '/tmp/convention-report.json';
+            let report = { violations: [], warnings: [], passed: [] };
+
+            if (fs.existsSync(reportPath)) {
+              report = JSON.parse(fs.readFileSync(reportPath, 'utf8'));
+            }
+
+            const hasViolations = report.violations.length > 0;
+            const hasWarnings = report.warnings.length > 0;
+
+            let body = '## 🤖 PR Review Agent — Framework Convention Check\n\n';
+
+            if (!hasViolations && !hasWarnings) {
+              body += '✅ **All framework conventions passed!** No issues found.\n\n';
+            }
+
+            if (hasViolations) {
+              body += `### ❌ Violations (${report.violations.length})\n`;
+              body += '_These must be fixed before merging:_\n\n';
+              report.violations.forEach(v => {
+                body += `- **${v.file}** (line ${v.line || 'N/A'}): ${v.message}\n`;
+              });
+              body += '\n';
+            }
+
+            if (hasWarnings) {
+              body += `### ⚠️ Warnings (${report.warnings.length})\n`;
+              body += '_Review recommended:_\n\n';
+              report.warnings.forEach(w => {
+                body += `- **${w.file}**: ${w.message}\n`;
+              });
+              body += '\n';
+            }
+
+            if (report.passed.length > 0) {
+              body += `<details>\n<summary>✅ Passed checks (${report.passed.length})</summary>\n\n`;
+              report.passed.forEach(p => { body += `- ${p}\n`; });
+              body += '\n</details>\n';
+            }
+
+            body += '\n---\n_Reviewed by [PR Review Agent](.github/workflows/pr-review.yml) · ';
+            body += `[Framework conventions](context/ui&api/framework.md)_`;
+
+            // Find and update existing bot comment, or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('PR Review Agent — Framework Convention Check')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+            // Fail the job if there are hard violations
+            if (hasViolations) {
+              core.setFailed(`Framework convention violations found: ${report.violations.length}`);
+            }
