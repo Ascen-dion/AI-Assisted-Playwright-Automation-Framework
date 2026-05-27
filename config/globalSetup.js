@@ -19,7 +19,7 @@ const fs = require('fs');
 
 const HOMEPAGE = process.env.BASE_URL
   ? `${process.env.BASE_URL}`
-  : 'https://uniondigitalbank.io/en';
+  : 'https://www.medtronic.com/in-en/index.html';
 
 const STORAGE_STATE_PATH = path.resolve(__dirname, '../playwright/.auth/storageState.json');
 
@@ -53,9 +53,9 @@ module.exports = async function globalSetup() {
   try {
     await page.goto(HOMEPAGE, { waitUntil: 'networkidle', timeout: 60000 });
 
-    // Dismiss cookie/privacy consent banner ("I understand" button on UnionDigital Bank)
+    // Dismiss cookie/privacy consent banner ("Okay" button on Medtronic)
     try {
-      await page.getByRole('button', { name: /i understand/i }).first().click({ timeout: 8000 });
+      await page.getByRole('button', { name: /okay|i understand/i }).first().click({ timeout: 8000 });
       console.log('[globalSetup] Cookie consent dismissed');
     } catch {
       console.log('[globalSetup] No cookie consent banner found — skipping');

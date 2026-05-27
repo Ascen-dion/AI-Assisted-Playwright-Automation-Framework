@@ -1,0 +1,170 @@
+[
+  {
+    "specTitle": "Test Case 1: Verify homepage loads and displays the hero CTA",
+    "title": "Medtronic Homepage: Verify homepage loads and hero 'See how' CTA is visible",
+    "preconditions": "User navigates to Medtronic India homepage (https://www.medtronic.com/in-en/index.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/index.html\n2. Verify the page URL contains 'in-en/index.html'\n3. Verify the page title contains 'Medtronic'\n4. Verify the 'See how' CTA link is visible on the hero banner",
+    "expected": "The homepage loads with correct URL and title. The 'See how' CTA link is visible on the hero banner.",
+    "jiraRef": "MDT-HP"
+  },
+  {
+    "specTitle": "Test Case 2: Verify MEIC section heading is visible on homepage",
+    "title": "Medtronic Homepage: Verify MEIC section heading is visible",
+    "preconditions": "User is on the Medtronic India homepage (https://www.medtronic.com/in-en/index.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/index.html\n2. Scroll to the MEIC section\n3. Verify the heading 'Medtronic Engineering & Innovation Center' is visible",
+    "expected": "The MEIC section heading 'Medtronic Engineering & Innovation Center' is visible on the homepage.",
+    "jiraRef": "MDT-HP"
+  },
+  {
+    "specTitle": "Test Case 3: Verify Healthcare Professionals section is visible",
+    "title": "Medtronic Homepage: Verify Healthcare Professionals section heading is visible",
+    "preconditions": "User is on the Medtronic India homepage (https://www.medtronic.com/in-en/index.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/index.html\n2. Scroll to the Healthcare Professionals section\n3. Verify the heading 'Creating connections to optimize healthcare systems' is visible",
+    "expected": "The Healthcare Professionals section heading is visible on the homepage.",
+    "jiraRef": "MDT-HP"
+  },
+  {
+    "specTitle": "Test Case 4: Verify Impact section is visible on homepage",
+    "title": "Medtronic Homepage: Verify Impact section heading 'Impact with purpose' is visible",
+    "preconditions": "User is on the Medtronic India homepage (https://www.medtronic.com/in-en/index.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/index.html\n2. Scroll to the Impact section\n3. Verify the heading 'Impact with purpose' is visible",
+    "expected": "The Impact section heading 'Impact with purpose' is visible on the homepage.",
+    "jiraRef": "MDT-HP"
+  },
+  {
+    "specTitle": "Test Case 5: Verify Careers section is visible on homepage",
+    "title": "Medtronic Homepage: Verify Careers section heading is visible",
+    "preconditions": "User is on the Medtronic India homepage (https://www.medtronic.com/in-en/index.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/index.html\n2. Scroll to the Careers section\n3. Verify the heading 'Join the team that powers the extraordinary' is visible",
+    "expected": "The Careers section heading 'Join the team that powers the extraordinary' is visible on the homepage.",
+    "jiraRef": "MDT-HP"
+  },
+  {
+    "specTitle": "Test Case 6: Verify footer sections are visible",
+    "title": "Medtronic Homepage: Verify footer section headers are visible",
+    "preconditions": "User is on the Medtronic India homepage (https://www.medtronic.com/in-en/index.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/index.html\n2. Scroll to the footer\n3. Verify 'PATIENTS AND CAREGIVERS' section header is visible\n4. Verify 'OUR COMPANY' section header is visible\n5. Verify 'OUR IMPACT' section header is visible",
+    "expected": "All three footer section headers are visible: PATIENTS AND CAREGIVERS, OUR COMPANY, OUR IMPACT.",
+    "jiraRef": "MDT-HP"
+  },
+  {
+    "specTitle": "Test Case 7: Navigate to Our Company page via hero \"See how\" CTA",
+    "title": "Medtronic Homepage Navigation: Click 'See how' CTA navigates to Our Company page",
+    "preconditions": "User is on the Medtronic India homepage (https://www.medtronic.com/in-en/index.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/index.html\n2. Click the 'See how' CTA link on the hero banner\n3. Verify the URL contains 'our-company'",
+    "expected": "User is navigated to the Our Company page with URL containing 'our-company.html'.",
+    "jiraRef": "MDT-HP"
+  },
+  {
+    "specTitle": "Test Case 8: Navigate to MEIC page via \"Learn more\" CTA",
+    "title": "Medtronic Homepage Navigation: Click MEIC 'Learn more' navigates to MEIC page",
+    "preconditions": "User is on the Medtronic India homepage (https://www.medtronic.com/in-en/index.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/index.html\n2. Click the 'Learn more' CTA in the MEIC section\n3. Verify the URL contains 'medtronic-engineering-innovation-center'",
+    "expected": "User is navigated to the MEIC page with URL containing 'medtronic-engineering-innovation-center'.",
+    "jiraRef": "MDT-HP"
+  },
+  {
+    "specTitle": "Test Case 9: Navigate to Careers page via \"Join us\" CTA",
+    "title": "Medtronic Homepage Navigation: Click 'Join us' CTA navigates to Careers page",
+    "preconditions": "User is on the Medtronic India homepage (https://www.medtronic.com/in-en/index.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/index.html\n2. Click the 'Join us' CTA in the Careers section\n3. Verify the URL contains 'careers'",
+    "expected": "User is navigated to the Careers page with URL containing 'our-company/careers'.",
+    "jiraRef": "MDT-HP"
+  },
+  {
+    "specTitle": "Test Case 1: Verify Patients page loads and FIND YOUR CONDITION CTA is visible",
+    "title": "Medtronic Patients: Verify page loads and FIND YOUR CONDITION CTA is visible",
+    "preconditions": "User navigates to Medtronic India Patients page (https://www.medtronic.com/in-en/patients.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/patients.html\n2. Verify the URL contains 'patients.html'\n3. Verify the 'FIND YOUR CONDITION' CTA link is visible",
+    "expected": "The Patients page loads and the 'FIND YOUR CONDITION' CTA link is visible.",
+    "jiraRef": "MDT-PT"
+  },
+  {
+    "specTitle": "Test Case 2: Verify SELECT OPTIONS treatment CTA is visible",
+    "title": "Medtronic Patients: Verify SELECT OPTIONS treatment CTA is visible",
+    "preconditions": "User is on the Patients page (https://www.medtronic.com/in-en/patients.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/patients.html\n2. Scroll to the treatment section\n3. Verify the 'SELECT OPTIONS' CTA link is visible",
+    "expected": "The 'SELECT OPTIONS' treatment CTA link is visible on the Patients page.",
+    "jiraRef": "MDT-PT"
+  },
+  {
+    "specTitle": "Test Case 3: Verify CONTACT PATIENT SERVICES CTA is visible",
+    "title": "Medtronic Patients: Verify CONTACT PATIENT SERVICES CTA is visible",
+    "preconditions": "User is on the Patients page (https://www.medtronic.com/in-en/patients.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/patients.html\n2. Scroll to the patient services section\n3. Verify the 'CONTACT PATIENT SERVICES' CTA link is visible",
+    "expected": "The 'CONTACT PATIENT SERVICES' CTA link is visible on the Patients page.",
+    "jiraRef": "MDT-PT"
+  },
+  {
+    "specTitle": "Test Case 4: Verify Response Care section is visible",
+    "title": "Medtronic Patients: Verify Response Care section heading is visible",
+    "preconditions": "User is on the Patients page (https://www.medtronic.com/in-en/patients.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/patients.html\n2. Scroll to the Response Care section\n3. Verify the 'RESPONSE CARE' heading is visible",
+    "expected": "The Response Care section heading is visible on the Patients page.",
+    "jiraRef": "MDT-PT"
+  },
+  {
+    "specTitle": "Test Case 5: Verify Stay Heart Safe section is visible",
+    "title": "Medtronic Patients: Verify Stay Heart Safe section heading is visible",
+    "preconditions": "User is on the Patients page (https://www.medtronic.com/in-en/patients.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/patients.html\n2. Scroll to the Stay Heart Safe section\n3. Verify the 'STAY HEART SAFE' heading is visible",
+    "expected": "The Stay Heart Safe section heading is visible on the Patients page.",
+    "jiraRef": "MDT-PT"
+  },
+  {
+    "specTitle": "Test Case 6: Navigate to Conditions page via FIND YOUR CONDITION CTA",
+    "title": "Medtronic Patients Navigation: Click FIND YOUR CONDITION navigates to Conditions page",
+    "preconditions": "User is on the Patients page (https://www.medtronic.com/in-en/patients.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/patients.html\n2. Click the 'FIND YOUR CONDITION' CTA link\n3. Verify the URL contains 'patients/conditions'",
+    "expected": "User is navigated to the Conditions page with URL containing 'patients/conditions'.",
+    "jiraRef": "MDT-PT"
+  },
+  {
+    "specTitle": "Test Case 7: Navigate to Treatments page via SELECT OPTIONS CTA",
+    "title": "Medtronic Patients Navigation: Click SELECT OPTIONS navigates to Treatments page",
+    "preconditions": "User is on the Patients page (https://www.medtronic.com/in-en/patients.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/patients.html\n2. Click the 'SELECT OPTIONS' CTA link\n3. Verify the URL contains 'patients/treatments-therapies'",
+    "expected": "User is navigated to the Treatments & Therapies page with URL containing 'patients/treatments-therapies'.",
+    "jiraRef": "MDT-PT"
+  },
+  {
+    "specTitle": "Test Case 1: Verify Our Company page loads successfully",
+    "title": "Medtronic Our Company: Verify page loads with correct URL and title",
+    "preconditions": "User navigates to Medtronic India Our Company page (https://www.medtronic.com/in-en/our-company.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/our-company.html\n2. Verify the URL contains 'our-company.html'\n3. Verify the page title contains 'Medtronic'",
+    "expected": "The Our Company page loads with correct URL and title containing 'Medtronic'.",
+    "jiraRef": "MDT-OC"
+  },
+  {
+    "specTitle": "Test Case 2: Navigate to Mission page from Our Company",
+    "title": "Medtronic Our Company Navigation: Click Mission link navigates to Mission page",
+    "preconditions": "User is on the Our Company page (https://www.medtronic.com/in-en/our-company.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/our-company.html\n2. Click the 'Mission' link\n3. Verify the URL contains 'our-company/mission'",
+    "expected": "User is navigated to the Mission page with URL containing 'our-company/mission'.",
+    "jiraRef": "MDT-OC"
+  },
+  {
+    "specTitle": "Test Case 3: Navigate to Key Facts page from Our Company",
+    "title": "Medtronic Our Company Navigation: Click Key Facts link navigates to Key Facts page",
+    "preconditions": "User is on the Our Company page (https://www.medtronic.com/in-en/our-company.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/our-company.html\n2. Click the 'Key Facts' link\n3. Verify the URL contains 'our-company/key-facts'",
+    "expected": "User is navigated to the Key Facts page with URL containing 'our-company/key-facts'.",
+    "jiraRef": "MDT-OC"
+  },
+  {
+    "specTitle": "Test Case 4: Navigate to History page from Our Company",
+    "title": "Medtronic Our Company Navigation: Click History link navigates to History page",
+    "preconditions": "User is on the Our Company page (https://www.medtronic.com/in-en/our-company.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/our-company.html\n2. Click the 'History' link\n3. Verify the URL contains 'our-company/history'",
+    "expected": "User is navigated to the History page with URL containing 'our-company/history'.",
+    "jiraRef": "MDT-OC"
+  },
+  {
+    "specTitle": "Test Case 5: Navigate to Medtronic in India page from Our Company",
+    "title": "Medtronic Our Company Navigation: Click Medtronic in India navigates to India page",
+    "preconditions": "User is on the Our Company page (https://www.medtronic.com/in-en/our-company.html)",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/our-company.html\n2. Click the 'Medtronic in India' link\n3. Verify the URL contains 'our-company/india.html'",
+    "expected": "User is navigated to the Medtronic in India page with URL containing 'our-company/india.html'.",
+    "jiraRef": "MDT-OC"
+  }
+]
