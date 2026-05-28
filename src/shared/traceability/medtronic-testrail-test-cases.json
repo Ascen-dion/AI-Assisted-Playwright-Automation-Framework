@@ -166,5 +166,93 @@
     "steps": "1. Navigate to https://www.medtronic.com/in-en/our-company.html\n2. Click the 'Medtronic in India' link\n3. Verify the URL contains 'our-company/india.html'",
     "expected": "User is navigated to the Medtronic in India page with URL containing 'our-company/india.html'.",
     "jiraRef": "MDT-OC"
+  },
+  {
+    "specTitle": "Test Case 1: Verify Our Impact page loads successfully",
+    "title": "Medtronic Our Impact: Verify page loads successfully",
+    "jiraRef": "MED-6",
+    "preconditions": "Browser is open. Medtronic India site is accessible.",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/our-impact.html\n2. Verify the page URL contains 'our-impact.html'\n3. Verify the page title contains 'Medtronic'",
+    "expected": "Page URL matches /our-impact.html/ and title contains 'Medtronic'"
+  },
+  {
+    "specTitle": "Test Case 2: Navigate to Health Equity page from Our Impact",
+    "title": "Medtronic Our Impact: Navigate to Health Equity page",
+    "jiraRef": "MED-6",
+    "preconditions": "Browser is on the Medtronic India Our Impact page (https://www.medtronic.com/in-en/our-impact.html)",
+    "steps": "1. Navigate to Our Impact page\n2. Click the 'Health Equity' link\n3. Verify URL contains 'health-equity'",
+    "expected": "URL matches /our-impact/health-equity/"
+  },
+  {
+    "specTitle": "Test Case 3: Navigate to Inclusion Diversity Equity page from Our Impact",
+    "title": "Medtronic Our Impact: Navigate to Inclusion Diversity Equity page",
+    "jiraRef": "MED-6",
+    "preconditions": "Browser is on the Medtronic India Our Impact page",
+    "steps": "1. Navigate to Our Impact page\n2. Click the 'Inclusion, Diversity & Equity' link\n3. Verify URL contains 'inclusion-diversity-equity'",
+    "expected": "URL matches /inclusion-diversity-equity/"
+  },
+  {
+    "specTitle": "Test Case 4: Navigate to Protecting Our Planet page from Our Impact",
+    "title": "Medtronic Our Impact: Navigate to Protecting Our Planet page",
+    "jiraRef": "MED-6",
+    "preconditions": "Browser is on the Medtronic India Our Impact page",
+    "steps": "1. Navigate to Our Impact page\n2. Click the 'Planet' link\n3. Verify URL contains 'protecting-our-planet'",
+    "expected": "URL matches /protecting-our-planet/"
+  },
+  {
+    "specTitle": "Test Case 5: Navigate to Communities page from Our Impact",
+    "title": "Medtronic Our Impact: Navigate to Communities page",
+    "jiraRef": "MED-6",
+    "preconditions": "Browser is on the Medtronic India Our Impact page",
+    "steps": "1. Navigate to Our Impact page\n2. Click the 'Communities' link\n3. Verify URL contains 'our-impact/communities'",
+    "expected": "URL matches /our-impact/communities/"
+  },
+  {
+    "specTitle": "Test Case 1: Navigate to Privacy Statement page via footer link",
+    "title": "Medtronic Footer: Navigate to Privacy Statement page",
+    "jiraRef": "MED-7",
+    "preconditions": "Browser is on the Medtronic India homepage (https://www.medtronic.com/in-en/index.html)",
+    "steps": "1. Navigate to homepage\n2. Scroll to footer\n3. Click 'Privacy Statement' link\n4. Verify URL contains 'privacy-statement'",
+    "expected": "URL matches /privacy-statement/"
+  },
+  {
+    "specTitle": "Test Case 2: Navigate to Terms of Use page via footer link",
+    "title": "Medtronic Footer: Navigate to Terms of Use page",
+    "jiraRef": "MED-7",
+    "preconditions": "Browser is on the Medtronic India homepage",
+    "steps": "1. Navigate to homepage\n2. Scroll to footer\n3. Click 'Terms of Use' link\n4. Verify URL contains 'terms-of-use'",
+    "expected": "URL matches /terms-of-use/"
+  },
+  {
+    "specTitle": "Test Case 3: Navigate to Contact Us page via footer link",
+    "title": "Medtronic Footer: Navigate to Contact Us page",
+    "jiraRef": "MED-7",
+    "preconditions": "Browser is on the Medtronic India homepage",
+    "steps": "1. Navigate to homepage\n2. Scroll to footer\n3. Click 'Contact' link\n4. Verify URL contains 'contact-us'",
+    "expected": "URL matches /contact-us/"
+  },
+  {
+    "specTitle": "Test Case 1: Verify Healthcare Professionals page loads successfully",
+    "title": "Medtronic HCP: Verify Healthcare Professionals page loads",
+    "jiraRef": "MED-8",
+    "preconditions": "Browser is open. Medtronic India site is accessible.",
+    "steps": "1. Navigate to https://www.medtronic.com/in-en/healthcare-professionals.html\n2. Verify URL contains 'healthcare-professionals'\n3. Verify page title contains 'Medtronic'",
+    "expected": "URL matches /healthcare-professionals/ and title contains 'Medtronic'"
+  },
+  {
+    "specTitle": "Test Case 2: Verify main heading is visible on HCP page",
+    "title": "Medtronic HCP: Verify main heading is visible",
+    "jiraRef": "MED-8",
+    "preconditions": "Browser is on the Healthcare Professionals page (https://www.medtronic.com/in-en/healthcare-professionals.html)",
+    "steps": "1. Navigate to Healthcare Professionals page\n2. Check that the main heading (h1 or h2) is visible on the page",
+    "expected": "Main heading is visible"
+  },
+  {
+    "specTitle": "Test Case 3: Verify therapies or products section content is visible",
+    "title": "Medtronic HCP: Verify therapies or products section is visible",
+    "jiraRef": "MED-8",
+    "preconditions": "Browser is on the Healthcare Professionals page",
+    "steps": "1. Navigate to Healthcare Professionals page\n2. Check that therapies/products section text content is visible on the page",
+    "expected": "Therapies/Products section is visible"
   }
 ]

@@ -1,14 +1,13 @@
 /**
- * Push Medtronic India test cases to TestRail.
+ * Push all Medtronic India test cases to TestRail.
  *
  * Usage:
  *   node src/shared/traceability/push-medtronic-to-testrail.js
  *
- * Creates a "Medtronic India" section (or reuses if it already exists),
- * pushes all 21 test cases, and writes the case map to
- * src/shared/traceability/testrail-case-map.json.
- *
- * Then updates spec files to embed real [Cxxx] IDs in test titles.
+ * Reads all 32 Medtronic test case definitions from
+ * medtronic-testrail-test-cases.json, pushes them to the configured
+ * TestRail section, updates the case map, and embeds real [Cxxx] IDs
+ * in spec file test titles.
  */
 
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../../.env') });
@@ -27,16 +26,19 @@ if (!PROJECT_ID || !SUITE_ID) {
   process.exit(1);
 }
 
-// Load Medtronic test case definitions
+// Load all Medtronic test case definitions (32 cases)
 const TEST_CASES = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, 'medtronic-testrail-test-cases.json'), 'utf8')
 );
 
-// Spec files to update with real case IDs
+// All Medtronic spec files to update with real case IDs
 const SPEC_FILES = [
   path.resolve(__dirname, '../../web/tests/nav/medtronic-homepage.spec.js'),
   path.resolve(__dirname, '../../web/tests/nav/medtronic-patients.spec.js'),
   path.resolve(__dirname, '../../web/tests/nav/medtronic-our-company.spec.js'),
+  path.resolve(__dirname, '../../web/tests/nav/medtronic-our-impact.spec.js'),
+  path.resolve(__dirname, '../../web/tests/nav/medtronic-footer.spec.js'),
+  path.resolve(__dirname, '../../web/tests/nav/medtronic-hcp.spec.js'),
 ];
 
 async function main() {
