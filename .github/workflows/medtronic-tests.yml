@@ -112,6 +112,34 @@ jobs:
             playwright-report/
           retention-days: 14
 
+      - name: 📧 Prepare email content
+        if: always()
+        run: node scripts/generate-email.js
+        env:
+          REPORT_TITLE:       'Medtronic India Smoke Tests'
+          GITHUB_SERVER_URL:  ${{ github.server_url }}
+          GITHUB_REPOSITORY:  ${{ github.repository }}
+          GITHUB_RUN_ID:      ${{ github.run_id }}
+          GITHUB_RUN_NUMBER:  ${{ github.run_number }}
+          GITHUB_REF_NAME:    ${{ github.ref_name }}
+          GITHUB_ACTOR:       ${{ github.actor }}
+          GITHUB_SHA:         ${{ github.sha }}
+
+      - name: 📧 Send Email Notification
+        if: always()
+        continue-on-error: true
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: |
+            [Medtronic Smoke] ${{ job.status == 'success' && '✅ PASSED' || '❌ FAILED' }} — Run #${{ github.run_number }}
+          to: ${{ secrets.EMAIL_TO }}
+          from: Medtronic Automation <${{ secrets.EMAIL_USERNAME }}>
+          html_body: file://email-body.html
+
   # ── Regression: full suite — PRs, nightly, manual ──────────────────────────
   regression:
     name: 🏥 Regression Tests (@regression)
@@ -190,7 +218,7 @@ jobs:
         if: always()
         run: node scripts/generate-email.js
         env:
-          REPORT_TITLE:      'Medtronic India Automation'
+          REPORT_TITLE:       'Medtronic India Regression Tests'
           GITHUB_SERVER_URL:  ${{ github.server_url }}
           GITHUB_REPOSITORY:  ${{ github.repository }}
           GITHUB_RUN_ID:      ${{ github.run_id }}
@@ -198,6 +226,21 @@ jobs:
           GITHUB_REF_NAME:    ${{ github.ref_name }}
           GITHUB_ACTOR:       ${{ github.actor }}
           GITHUB_SHA:         ${{ github.sha }}
+
+      - name: 📧 Send Email Notification
+        if: always()
+        continue-on-error: true
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: |
+            [Medtronic Regression] ${{ job.status == 'success' && '✅ PASSED' || '❌ FAILED' }} — Run #${{ github.run_number }}
+          to: ${{ secrets.EMAIL_TO }}
+          from: Medtronic Automation <${{ secrets.EMAIL_USERNAME }}>
+          html_body: file://email-body.html
 
   # ── Targeted: run a specific Medtronic feature spec ────────────────────────
   targeted:
