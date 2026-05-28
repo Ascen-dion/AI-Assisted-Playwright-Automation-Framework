@@ -1,7 +1,7 @@
 {
-  "sectionId": 45,
-  "jiraProject": "MED",
-  "jiraBoardUrl": "https://ascendionconfluence.atlassian.net/jira/software/projects/MED/boards/406",
+  "sectionId": 46,
+  "jiraProject": "EX",
+  "jiraBoardUrl": "https://ascendionconfluence.atlassian.net/jira/software/projects/EX/boards/439",
   "cases": {
     "Test Case 1: Navigate to UD Loans Payment Guide page via Loan Payment Guides dropdown": 127,
     "Test Case 1: Verify '+' expand icon is visible on UD Loans Payment Guide accordion": 128,
@@ -53,6 +53,20 @@
     "Test Case 11: Verify Patients & Caregivers menu item is displayed in header": 82,
     "Test Case 12: Verify Our Company menu item is displayed in header": 83,
     "Test Case 13: Verify Our Impact menu item is displayed in header": 84,
-    "Test Case 14: Verify Careers section is displayed on the homepage": 85
+    "Test Case 14: Verify Careers section is displayed on the homepage": 85,
+    "Test Case 1: Verify homepage loads and displays the hero heading": 86,
+    "Test Case 2: Verify Credit Score tab is visible on hero section": 87,
+    "Test Case 3: Verify BFF section is visible on homepage": 88,
+    "Test Case 4: Verify \"How can we help?\" section is visible": 89,
+    "Test Case 5: Verify footer sections are visible": 90,
+    "Test Case 6: Navigate to Security Freeze page": 91,
+    "Test Case 7: Navigate to Disputes page": 92,
+    "Test Case 8: Navigate to Fraud Alert page": 93,
+    "Test Case 9: Verify Credit menu item is displayed in header": 94,
+    "Test Case 10: Verify Protection menu item is displayed in header": 95,
+    "Test Case 11: Verify Money menu item is displayed in header": 96,
+    "Test Case 12: Verify Credit Cards menu item is displayed in header": 97,
+    "Test Case 13: Verify Loans menu item is displayed in header": 98,
+    "Test Case 14: Verify Insurance menu item is displayed in header": 99
   }
 }

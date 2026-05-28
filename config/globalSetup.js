@@ -19,7 +19,7 @@ const fs = require('fs');
 
 const HOMEPAGE = process.env.BASE_URL
   ? `${process.env.BASE_URL}`
-  : 'https://www.medtronic.com/in-en/index.html';
+  : 'https://www.experian.com/';
 
 const STORAGE_STATE_PATH = path.resolve(__dirname, '../playwright/.auth/storageState.json');
 
@@ -53,9 +53,9 @@ module.exports = async function globalSetup() {
   try {
     await page.goto(HOMEPAGE, { waitUntil: 'networkidle', timeout: 60000 });
 
-    // Dismiss cookie/privacy consent banner ("Okay" button on Medtronic)
+    // Dismiss cookie/privacy consent banner
     try {
-      await page.getByRole('button', { name: /okay|i understand/i }).first().click({ timeout: 8000 });
+      await page.getByRole('button', { name: /okay|accept all cookies|i understand/i }).first().click({ timeout: 8000 });
       console.log('[globalSetup] Cookie consent dismissed');
     } catch {
       console.log('[globalSetup] No cookie consent banner found — skipping');

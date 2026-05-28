@@ -174,6 +174,7 @@ class TestRailReporter {
   _detectRunName() {
     // Pattern → run name prefix. Order matters: first match wins.
     const RUN_NAME_RULES = [
+      { pattern: /experian/i,             name: 'Experian Automation' },
       { pattern: /medtronic/i,            name: 'Medtronic India Automation' },
       { pattern: /ud-|uniondigital/i,     name: 'UnionDigital Bank Automation' },
       { pattern: /golfgalaxy|dsg/i,       name: 'DSG Mobile Automation' },

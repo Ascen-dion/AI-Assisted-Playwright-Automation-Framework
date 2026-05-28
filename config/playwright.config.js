@@ -58,7 +58,7 @@ module.exports = defineConfig({
 
   use: {
     // Base URL — override via BASE_URL env var for staging runs
-    baseURL: process.env.BASE_URL || 'https://www.medtronic.com',
+    baseURL: process.env.BASE_URL || 'https://www.experian.com',
 
     // Use saved cookie-consent state so no test needs to dismiss the banner itself
     storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,

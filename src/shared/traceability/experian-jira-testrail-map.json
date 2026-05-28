@@ -1,0 +1,95 @@
+[
+  {
+    "jiraKey": "EX-1",
+    "summary": "EXP: Verify Experian Homepage sections and content",
+    "testCases": [
+      {
+        "specTitle": "Test Case 1: Verify homepage loads and displays the hero heading",
+        "caseId": "C86"
+      },
+      {
+        "specTitle": "Test Case 2: Verify Credit Score tab is visible on hero section",
+        "caseId": "C87"
+      },
+      {
+        "specTitle": "Test Case 3: Verify BFF section is visible on homepage",
+        "caseId": "C88"
+      },
+      {
+        "specTitle": "Test Case 4: Verify \"How can we help?\" section is visible",
+        "caseId": "C89"
+      },
+      {
+        "specTitle": "Test Case 5: Verify footer sections are visible",
+        "caseId": "C90"
+      }
+    ],
+    "labels": [
+      "experian",
+      "homepage",
+      "smoke"
+    ],
+    "isNew": true
+  },
+  {
+    "jiraKey": "EX-2",
+    "summary": "EXP: Homepage navigation to Credit Support pages",
+    "testCases": [
+      {
+        "specTitle": "Test Case 6: Navigate to Security Freeze page",
+        "caseId": "C91"
+      },
+      {
+        "specTitle": "Test Case 7: Navigate to Disputes page",
+        "caseId": "C92"
+      },
+      {
+        "specTitle": "Test Case 8: Navigate to Fraud Alert page",
+        "caseId": "C93"
+      }
+    ],
+    "labels": [
+      "experian",
+      "homepage",
+      "navigation",
+      "regression"
+    ],
+    "isNew": true
+  },
+  {
+    "jiraKey": "EX-3",
+    "summary": "EXP: Verify header navigation menu items are visible",
+    "testCases": [
+      {
+        "specTitle": "Test Case 9: Verify Credit menu item is displayed in header",
+        "caseId": "C94"
+      },
+      {
+        "specTitle": "Test Case 10: Verify Protection menu item is displayed in header",
+        "caseId": "C95"
+      },
+      {
+        "specTitle": "Test Case 11: Verify Money menu item is displayed in header",
+        "caseId": "C96"
+      },
+      {
+        "specTitle": "Test Case 12: Verify Credit Cards menu item is displayed in header",
+        "caseId": "C97"
+      },
+      {
+        "specTitle": "Test Case 13: Verify Loans menu item is displayed in header",
+        "caseId": "C98"
+      },
+      {
+        "specTitle": "Test Case 14: Verify Insurance menu item is displayed in header",
+        "caseId": "C99"
+      }
+    ],
+    "labels": [
+      "experian",
+      "navigation",
+      "smoke"
+    ],
+    "isNew": true
+  }
+]

@@ -1,0 +1,114 @@
+[
+  {
+    "specTitle": "Test Case 1: Verify homepage loads and displays the hero heading",
+    "title": "Experian Homepage: Verify homepage loads and hero heading is visible",
+    "preconditions": "User navigates to Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Verify the page URL matches experian.com\n3. Verify the page title contains 'Experian'\n4. Verify the hero heading 'Reach your credit and money goals' is visible",
+    "expected": "The homepage loads with correct URL and title. The hero heading is visible.",
+    "jiraRef": "EXP-HP"
+  },
+  {
+    "specTitle": "Test Case 2: Verify Credit Score tab is visible on hero section",
+    "title": "Experian Homepage: Verify Credit Score tab is visible in hero tabs",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Locate the hero tab list\n3. Verify the 'Get a credit report & FICO Score' tab is visible",
+    "expected": "The Credit Score tab is visible in the hero section tablist.",
+    "jiraRef": "EXP-HP"
+  },
+  {
+    "specTitle": "Test Case 3: Verify BFF section is visible on homepage",
+    "title": "Experian Homepage: Verify Big Financial Friend section is visible",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Scroll to the BFF section\n3. Verify the heading 'Say hi to your Big Financial Friend' is visible",
+    "expected": "The BFF section heading is visible on the homepage.",
+    "jiraRef": "EXP-HP"
+  },
+  {
+    "specTitle": "Test Case 4: Verify \"How can we help?\" section is visible",
+    "title": "Experian Homepage: Verify 'How can we help?' section is visible",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Scroll to the 'How can we help?' section\n3. Verify the heading is visible",
+    "expected": "The 'How can we help?' section heading is visible on the homepage.",
+    "jiraRef": "EXP-HP"
+  },
+  {
+    "specTitle": "Test Case 5: Verify footer sections are visible",
+    "title": "Experian Homepage: Verify footer section headers are visible",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Scroll to the footer\n3. Verify 'Support' section header is visible\n4. Verify 'Education & advice' section header is visible\n5. Verify 'Credit resources' section header is visible\n6. Verify 'Experian for businesses' section header is visible",
+    "expected": "All four footer section headers are visible.",
+    "jiraRef": "EXP-HP"
+  },
+  {
+    "specTitle": "Test Case 6: Navigate to Security Freeze page",
+    "title": "Experian Homepage: Navigate to Security Freeze via credit support card",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Scroll to 'How can we help?' section\n3. Click on the 'Security freeze' card link\n4. Verify navigation to the Security Freeze page",
+    "expected": "User is navigated to the Security Freeze page (URL contains /help/credit-freeze/).",
+    "jiraRef": "EXP-HP"
+  },
+  {
+    "specTitle": "Test Case 7: Navigate to Disputes page",
+    "title": "Experian Homepage: Navigate to Disputes via credit support card",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Scroll to 'How can we help?' section\n3. Click on the 'Disputes' card link\n4. Verify navigation to the Disputes page",
+    "expected": "User is navigated to the Disputes page (URL contains /help/dispute-credit/).",
+    "jiraRef": "EXP-HP"
+  },
+  {
+    "specTitle": "Test Case 8: Navigate to Fraud Alert page",
+    "title": "Experian Homepage: Navigate to Fraud Alert via credit support card",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Scroll to 'How can we help?' section\n3. Click on the 'Fraud alert' card link\n4. Verify navigation to the Fraud Alert page",
+    "expected": "User is navigated to the Fraud Alert page (URL contains /help/fraud-alert/).",
+    "jiraRef": "EXP-HP"
+  },
+  {
+    "specTitle": "Test Case 9: Verify Credit menu item is displayed in header",
+    "title": "Experian Homepage: Verify Credit navigation menu item is visible",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Locate the header navigation\n3. Verify the 'Credit' menu button is visible",
+    "expected": "The 'Credit' menu button is visible in the header navigation.",
+    "jiraRef": "EXP-NAV"
+  },
+  {
+    "specTitle": "Test Case 10: Verify Protection menu item is displayed in header",
+    "title": "Experian Homepage: Verify Protection navigation menu item is visible",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Locate the header navigation\n3. Verify the 'Protection' menu button is visible",
+    "expected": "The 'Protection' menu button is visible in the header navigation.",
+    "jiraRef": "EXP-NAV"
+  },
+  {
+    "specTitle": "Test Case 11: Verify Money menu item is displayed in header",
+    "title": "Experian Homepage: Verify Money navigation menu item is visible",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Locate the header navigation\n3. Verify the 'Money' menu button is visible",
+    "expected": "The 'Money' menu button is visible in the header navigation.",
+    "jiraRef": "EXP-NAV"
+  },
+  {
+    "specTitle": "Test Case 12: Verify Credit Cards menu item is displayed in header",
+    "title": "Experian Homepage: Verify Credit Cards navigation menu item is visible",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Locate the header navigation\n3. Verify the 'Credit Cards' menu button is visible",
+    "expected": "The 'Credit Cards' menu button is visible in the header navigation.",
+    "jiraRef": "EXP-NAV"
+  },
+  {
+    "specTitle": "Test Case 13: Verify Loans menu item is displayed in header",
+    "title": "Experian Homepage: Verify Loans navigation menu item is visible",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Locate the header navigation\n3. Verify the 'Loans' menu button is visible",
+    "expected": "The 'Loans' menu button is visible in the header navigation.",
+    "jiraRef": "EXP-NAV"
+  },
+  {
+    "specTitle": "Test Case 14: Verify Insurance menu item is displayed in header",
+    "title": "Experian Homepage: Verify Insurance navigation menu item is visible",
+    "preconditions": "User is on the Experian homepage (https://www.experian.com/)",
+    "steps": "1. Navigate to https://www.experian.com/\n2. Locate the header navigation\n3. Verify the 'Insurance' menu button is visible",
+    "expected": "The 'Insurance' menu button is visible in the header navigation.",
+    "jiraRef": "EXP-NAV"
+  }
+]
