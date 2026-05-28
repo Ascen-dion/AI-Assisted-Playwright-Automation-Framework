@@ -11,7 +11,6 @@ The framework covers **Web (Playwright), API, iOS/Android (MobileWright), macOS 
 All automation is driven through **GitHub Copilot Chat** — select the agent for the platform you want to automate and describe the requirement in plain English:
 
 ```
-@medtronic-automation-agent  Create smoke tests for the Medtronic India Patients page
 @mac-app-agent  Generate smoke tests for HP Smart that verify all navigation items are visible
 @windows-app-agent  Extend the myHP tests to verify the battery status section
 @starhub-automation-agent  Automate AC1 from JIRA-123: user opens Products dropdown and clicks "UD Save"
@@ -26,7 +25,6 @@ No manual scripts, no UI to navigate — the agent reads context, discovers real
 
 | Agent | Platform | Purpose |
 |---|---|---|
-| `medtronic-automation-agent` | Web (Playwright) | Brownfield web tests for Medtronic India (medtronic.com/in-en/) |
 | `starhub-automation-agent` | Web + API (Playwright) | Brownfield web/API test generation with TestRail traceability |
 | `ud-automation-agent` | Web + API (UnionDigital Bank) | Brownfield web/API tests for UnionDigital Bank Philippines |
 | `mobile-brownfield-automation-agent` | iOS + Android (MobileWright) | Native mobile app test generation |
@@ -70,49 +68,6 @@ npx playwright test src/tests/ --config=config/playwright.config.js --grep "@reg
 > **PowerShell note:** quote the grep value — unquoted `@smoke` is treated as a PowerShell splat variable.
 
 CI: `.github/workflows/playwright.yml`
-
-#### Medtronic India — Web Test Suite
-
-**Target:** https://www.medtronic.com/in-en/index.html
-**Agent:** `medtronic-automation-agent`
-**Context:** `context/ui&api/medtronic-application.md`, `medtronic-domain.md`, `medtronic-framework.md`
-**Test Data:** `src/shared/data/medtronic-test-data.js`
-**TestRail:** Cases C47–C67 (Project 2, Suite 6, Section 42)
-
-| Spec File | Tests | Tags | Coverage |
-|---|---|---|---|
-| `medtronic-homepage.spec.js` | 9 (C47–C55) | `@smoke`, `@regression`, `@medtronic` | Hero, MEIC, HCP, Impact, Careers, Footer, Navigation |
-| `medtronic-patients.spec.js` | 7 (C56–C62) | `@smoke`, `@regression`, `@medtronic` | CTAs, Response Care, Heart Safe, Conditions/Treatments nav |
-| `medtronic-our-company.spec.js` | 5 (C63–C67) | `@smoke`, `@regression`, `@medtronic` | Page load, Mission, Key Facts, History, India page nav |
-
-```bash
-# Run all Medtronic tests
-npx playwright test --grep "@medtronic" --config=config/playwright.config.js
-
-# Smoke only
-npx playwright test --grep "@medtronic" --grep "@smoke" --config=config/playwright.config.js
-
-# Single spec
-npx playwright test src/web/tests/nav/medtronic-homepage.spec.js --config=config/playwright.config.js
-
-# Push test cases to TestRail
-node src/shared/traceability/push-medtronic-to-testrail.js
-```
-
-**POM structure:**
-```
-src/web/locators/medtronic-homepage.locators.js      → selectors
-src/web/locators/medtronic-patients.locators.js
-src/web/locators/medtronic-our-company.locators.js
-src/web/pages/medtronic-homepage.page.js             → page objects
-src/web/pages/medtronic-patients.page.js
-src/web/pages/medtronic-our-company.page.js
-src/web/tests/nav/medtronic-homepage.spec.js          → specs
-src/web/tests/nav/medtronic-patients.spec.js
-src/web/tests/nav/medtronic-our-company.spec.js
-```
-
----
 
 ### iOS & Android — MobileWright
 
@@ -218,7 +173,6 @@ context/
 
 ```
 .github/agents/
-  medtronic-automation.agent.md               Medtronic India web automation agent
   mac-app-agent.agent.md                      macOS automation (WDIO + mac2 driver)
   windows-app-agent.agent.md                  Windows automation (WDIO + WinAppDriver)
   starhub-automation-agent.agent.md           Web/API brownfield agent

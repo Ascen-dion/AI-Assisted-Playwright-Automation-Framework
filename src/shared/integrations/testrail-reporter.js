@@ -169,13 +169,12 @@ class TestRailReporter {
    * every result's sourceFile) to a human-readable run name. The first
    * match wins. Add new projects here; no other code changes needed.
    *
-   * @returns {string}  Run name prefix (e.g. "Medtronic India Automation")
+   * @returns {string}  Run name prefix (e.g. "Experian Automation")
    */
   _detectRunName() {
     // Pattern → run name prefix. Order matters: first match wins.
     const RUN_NAME_RULES = [
       { pattern: /experian/i,             name: 'Experian Automation' },
-      { pattern: /medtronic/i,            name: 'Medtronic India Automation' },
       { pattern: /ud-|uniondigital/i,     name: 'UnionDigital Bank Automation' },
       { pattern: /golfgalaxy|dsg/i,       name: 'DSG Mobile Automation' },
       { pattern: /hp-smart.*mac|[\\\/]mac[\\\/]/i, name: 'HP Smart macOS Smoke' },
