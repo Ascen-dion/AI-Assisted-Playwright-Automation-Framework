@@ -74,6 +74,24 @@ const locators = {
   /** Footer "OUR IMPACT" section header */
   footerImpactSection: (page) =>
     page.getByText('OUR IMPACT', { exact: false }).first(),
+
+  // ── Header Navigation Menu Items ────────────────────────────────────────
+
+  /** "Healthcare Professionals" link in the top-level header navigation */
+  navHealthcareProfessionals: (page) =>
+    page.getByRole('navigation').getByRole('link', { name: 'Healthcare Professionals' }),
+
+  /** "Patients & Caregivers" link in the top-level header navigation */
+  navPatientsAndCaregivers: (page) =>
+    page.getByRole('navigation').getByRole('link', { name: 'Patients & Caregivers' }),
+
+  /** "Our Company" link in the top-level header navigation */
+  navOurCompany: (page) =>
+    page.getByRole('navigation').getByRole('link', { name: 'Our Company' }),
+
+  /** "Our Impact" link in the top-level header navigation */
+  navOurImpact: (page) =>
+    page.getByRole('navigation').getByRole('link', { name: 'Our Impact' }),
 };
 
 module.exports = locators;

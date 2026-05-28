@@ -10,6 +10,9 @@
  *  3. Creates a TestRail test run for this execution.
  *  4. Posts pass/fail/skip results for each mapped case.
  *
+ * Run naming is auto-detected from source file paths. Override with
+ * TESTRAIL_RUN_NAME_PREFIX env var when needed.
+ *
  * Wired into config/playwright.config.js as a custom reporter.
  * Only runs when TESTRAIL_PROJECT_ID + TESTRAIL_SUITE_ID are set in the environment.
  */
@@ -120,8 +123,7 @@ class TestRailReporter {
   async onEnd(result) {
     if (!this.enabled || this.results.length === 0) return;
 
-    const isMobileRun = this.results.some(r => r.isMobile);
-    const runPrefix = process.env.TESTRAIL_RUN_NAME_PREFIX || (isMobileRun ? 'DSG Mobile Automation' : 'UnionDigital Bank Automation');
+    const runPrefix = process.env.TESTRAIL_RUN_NAME_PREFIX || this._detectRunName();
     const runName = `${runPrefix} — ${new Date().toISOString().split('T')[0]}`;
     const caseIds = [...new Set(this.results.map(r => r.caseId))];
 
@@ -158,6 +160,50 @@ class TestRailReporter {
     } catch (err) {
       console.error('[TestRail Reporter] ❌ Failed to post results:', err.message);
     }
+  }
+
+  /**
+   * Auto-detect the run name from source file paths and platform directories.
+   *
+   * Detection is pattern-based — each entry maps a regex (tested against
+   * every result's sourceFile) to a human-readable run name. The first
+   * match wins. Add new projects here; no other code changes needed.
+   *
+   * @returns {string}  Run name prefix (e.g. "Medtronic India Automation")
+   */
+  _detectRunName() {
+    // Pattern → run name prefix. Order matters: first match wins.
+    const RUN_NAME_RULES = [
+      { pattern: /medtronic/i,            name: 'Medtronic India Automation' },
+      { pattern: /ud-|uniondigital/i,     name: 'UnionDigital Bank Automation' },
+      { pattern: /golfgalaxy|dsg/i,       name: 'DSG Mobile Automation' },
+      { pattern: /hp-smart.*mac|[\\\/]mac[\\\/]/i, name: 'HP Smart macOS Smoke' },
+      { pattern: /hp-app.*windows|notepad|[\\\/]windows[\\\/]/i, name: 'HP Windows App Smoke' },
+      { pattern: /[\\\/]mobile[\\\/]/i,   name: 'Mobile Automation' },
+    ];
+
+    const files = this.results.map(r => r.sourceFile);
+
+    for (const rule of RUN_NAME_RULES) {
+      if (files.some(f => rule.pattern.test(f))) {
+        return rule.name;
+      }
+    }
+
+    // Fallback: derive from the most common spec filename prefix
+    const prefixCounts = {};
+    for (const f of files) {
+      const base = path.basename(f, path.extname(f)).replace(/\.spec$/, '');
+      const prefix = base.split('-')[0];
+      if (prefix) prefixCounts[prefix] = (prefixCounts[prefix] || 0) + 1;
+    }
+    const topPrefix = Object.entries(prefixCounts).sort((a, b) => b[1] - a[1])[0];
+    if (topPrefix) {
+      const label = topPrefix[0].charAt(0).toUpperCase() + topPrefix[0].slice(1);
+      return `${label} Automation`;
+    }
+
+    return 'Automation';
   }
 }
 

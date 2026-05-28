@@ -116,6 +116,14 @@ module.exports = {
     buttonText:             'Okay',
   },
 
+  // ── Header navigation menu labels ─────────────────────────────────────────
+  nav: {
+    healthcareProfessionals: 'Healthcare Professionals',
+    patientsAndCaregivers:   'Patients & Caregivers',
+    ourCompany:              'Our Company',
+    ourImpact:               'Our Impact',
+  },
+
   // ── Page titles ───────────────────────────────────────────────────────────
   pageTitles: {
     homepage:               /Medtronic/,

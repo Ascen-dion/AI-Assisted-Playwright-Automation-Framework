@@ -1,5 +1,7 @@
 {
   "sectionId": 45,
+  "jiraProject": "MED",
+  "jiraBoardUrl": "https://ascendionconfluence.atlassian.net/jira/software/projects/MED/boards/406",
   "cases": {
     "Test Case 1: Navigate to UD Loans Payment Guide page via Loan Payment Guides dropdown": 127,
     "Test Case 1: Verify '+' expand icon is visible on UD Loans Payment Guide accordion": 128,
@@ -46,6 +48,11 @@
     "Test Case 3: Navigate to Contact Us page via footer link": 77,
     "Test Case 1: Verify Healthcare Professionals page loads successfully": 78,
     "Test Case 2: Verify main heading is visible on HCP page": 79,
-    "Test Case 3: Verify therapies or products section content is visible": 80
+    "Test Case 3: Verify therapies or products section content is visible": 80,
+    "Test Case 10: Verify Healthcare Professionals menu item is displayed in header": 81,
+    "Test Case 11: Verify Patients & Caregivers menu item is displayed in header": 82,
+    "Test Case 12: Verify Our Company menu item is displayed in header": 83,
+    "Test Case 13: Verify Our Impact menu item is displayed in header": 84,
+    "Test Case 14: Verify Careers section is displayed on the homepage": 85
   }
 }

@@ -93,6 +93,44 @@ class MedtronicHomePage extends BasePage {
     return await loc.impactHeading(this.page).isVisible();
   }
 
+  // ── Header Navigation Menu ────────────────────────────────────────────
+
+  /**
+   * Returns whether the Healthcare Professionals nav menu link is visible.
+   * @returns {Promise<boolean>}
+   */
+  async isNavHealthcareProfessionalsVisible() {
+    await loc.navHealthcareProfessionals(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.navHealthcareProfessionals(this.page).isVisible();
+  }
+
+  /**
+   * Returns whether the Patients & Caregivers nav menu link is visible.
+   * @returns {Promise<boolean>}
+   */
+  async isNavPatientsAndCaregiversVisible() {
+    await loc.navPatientsAndCaregivers(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.navPatientsAndCaregivers(this.page).isVisible();
+  }
+
+  /**
+   * Returns whether the Our Company nav menu link is visible.
+   * @returns {Promise<boolean>}
+   */
+  async isNavOurCompanyVisible() {
+    await loc.navOurCompany(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.navOurCompany(this.page).isVisible();
+  }
+
+  /**
+   * Returns whether the Our Impact nav menu link is visible.
+   * @returns {Promise<boolean>}
+   */
+  async isNavOurImpactVisible() {
+    await loc.navOurImpact(this.page).waitFor({ state: 'visible', timeout: 15000 });
+    return await loc.navOurImpact(this.page).isVisible();
+  }
+
   // ── Careers Section ───────────────────────────────────────────────────
 
   /**
