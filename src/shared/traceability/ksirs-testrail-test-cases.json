@@ -1,0 +1,42 @@
+[
+  {
+    "specTitle": "Test Case 1: Verify Admission Application Form Loads with All Required Fields",
+    "title": "AC1: Verify Admission Application Form loads with all required fields and Next button",
+    "preconditions": "User has access to the internet and a browser. No previous session data.",
+    "steps": "1. Navigate to https://corp49.myclassboard.com/ApplicationForm_Custom/3268E71E-BD48-4243-BEBA-0B28912E91C2/1/0\n2. Wait for the page to fully load\n3. Verify the page heading 'Application' is visible\n4. Verify the school name 'Ksirs International School' is visible\n5. Verify the Academic Year dropdown is visible\n6. Verify the Country Code dropdown is visible\n7. Verify the Primary phone number input field is visible\n8. Verify the Student DOB input field is visible\n9. Verify the Board dropdown is visible\n10. Verify the Grade Seeking Admission dropdown is visible\n11. Verify the Next button is visible",
+    "expected": "The page title is 'Application Form'. The heading 'Application' and school name 'Ksirs International School' are displayed. All required form fields (Academic Year, Country Code, Primary phone number, Student DOB, Board, Grade Seeking Admission) and the Next button are visible on the page.",
+    "jiraRef": "KSIRS-1"
+  },
+  {
+    "specTitle": "Test Case 2: Verify Validation Message Displayed When Mandatory Phone Field is Empty",
+    "title": "AC2: Verify validation message displayed when mandatory phone number field is blank on Next click",
+    "preconditions": "User is on the Ksirs Admission Application Form page at https://corp49.myclassboard.com/ApplicationForm_Custom/3268E71E-BD48-4243-BEBA-0B28912E91C2/1/0",
+    "steps": "1. Navigate to the admission application form page\n2. Leave the Primary phone number field blank\n3. Click the Next button\n4. Observe the page response",
+    "expected": "A validation dialog is displayed with the message 'Please Enter Mobile No'. The form submission is prevented and the user remains on the same page.",
+    "jiraRef": "KSIRS-1"
+  },
+  {
+    "specTitle": "Test Case 3: Verify Valid Data Entry is Accepted Without Validation Errors",
+    "title": "AC3: Verify valid data entry in all mandatory fields shows no validation errors",
+    "preconditions": "User is on the Ksirs Admission Application Form page at https://corp49.myclassboard.com/ApplicationForm_Custom/3268E71E-BD48-4243-BEBA-0B28912E91C2/1/0",
+    "steps": "1. Navigate to the admission application form page\n2. Select '2026-2027' from the Academic Year dropdown\n3. Enter '9876543210' in the Primary phone number field\n4. Set '01/01/2015' in the Student DOB field\n5. Select 'CIE' from the Board dropdown\n6. Select 'Grade I' from the Grade Seeking Admission dropdown\n7. Observe the form state — verify no validation error messages are shown",
+    "expected": "All form fields accept the entered values without displaying validation error messages. The phone number, DOB, Board, and Grade fields show the entered/selected values.",
+    "jiraRef": "KSIRS-1"
+  },
+  {
+    "specTitle": "Test Case 4: Verify Next Button Triggers Data Save After Valid Form Completion",
+    "title": "AC4: Verify Next button triggers application data save after all mandatory fields are completed",
+    "preconditions": "User is on the Ksirs Admission Application Form page with all mandatory fields completed with valid data.",
+    "steps": "1. Navigate to the admission application form page\n2. Select '2026-2027' from the Academic Year dropdown\n3. Enter '9876543210' in the Primary phone number field\n4. Set '01/01/2015' in the Student DOB field\n5. Select 'CIE' from the Board dropdown\n6. Select 'Grade I' from the Grade Seeking Admission dropdown\n7. Click the Next button\n8. Observe the system response — a Loading indicator should appear",
+    "expected": "After clicking the Next button with all valid data, the system displays a 'Loading...' indicator, confirming the application data is being saved/processed. No error dialog is shown.",
+    "jiraRef": "KSIRS-1"
+  },
+  {
+    "specTitle": "Test Case 5: Verify Navigation to Next Step After Successful Form Completion",
+    "title": "AC5: Verify system navigates to next step (OTP verification) after successful Next button click",
+    "preconditions": "User is on the Ksirs Admission Application Form page with all mandatory fields completed with valid data.",
+    "steps": "1. Navigate to the admission application form page\n2. Complete all mandatory fields: Academic Year = '2026-2027', Phone = '9876543210', DOB = '01/01/2015', Board = 'CIE', Grade = 'Grade I'\n3. Click the Next button\n4. Wait for the system to process\n5. Observe the resulting page/modal state",
+    "expected": "The system processes the form data and advances to the Terms & Conditions step on the same page. The Terms & Conditions heading, the 'I accept the above terms and conditions' checkbox, and a Next button are displayed, confirming successful progression past the initial form step.",
+    "jiraRef": "KSIRS-1"
+  }
+]

@@ -106,4 +106,27 @@ module.exports = {
     aboutUs:              /About Us.*UnionDigital Bank/,
   },
 
+  // ── Ksirs International School — Admission Application Form ──────────────
+  ksirs: {
+    formUrl:     'https://corp49.myclassboard.com/ApplicationForm_Custom/3268E71E-BD48-4243-BEBA-0B28912E91C2/1/0',
+    urlPattern:  /corp49\.myclassboard\.com\/ApplicationForm_Custom\/3268E71E-BD48-4243-BEBA-0B28912E91C2/,
+    pageTitle:   /Application Form/,
+    heading:     'Application',
+    schoolName:  'Ksirs International School',
+
+    // Valid test data for Step 1 form completion
+    validFormData: {
+      academicYear: '2026-2027',
+      phoneNumber:  '9876543210',
+      dob:          '01/01/2015',    // DD/MM/YYYY — set via JavaScript (field is readonly)
+      board:        'CIE',
+      grade:        'Grade I',
+    },
+
+    // Validation messages (SweetAlert2 dialog headings)
+    validationMessages: {
+      mobileRequired: 'Please Enter Mobile No',
+    },
+  },
+
 };

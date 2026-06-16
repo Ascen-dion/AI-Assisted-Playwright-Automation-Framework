@@ -1,5 +1,5 @@
 {
-  "sectionId": 45,
+  "sectionId": 77,
   "jiraProject": "MED",
   "jiraBoardUrl": "https://ascendionconfluence.atlassian.net/jira/software/projects/MED/boards/406",
   "cases": {
@@ -53,6 +53,11 @@
     "Test Case 11: Verify Patients & Caregivers menu item is displayed in header": 82,
     "Test Case 12: Verify Our Company menu item is displayed in header": 83,
     "Test Case 13: Verify Our Impact menu item is displayed in header": 84,
-    "Test Case 14: Verify Careers section is displayed on the homepage": 85
+    "Test Case 14: Verify Careers section is displayed on the homepage": 85,
+    "Test Case 1: Verify Admission Application Form Loads with All Required Fields": 1284,
+    "Test Case 2: Verify Validation Message Displayed When Mandatory Phone Field is Empty": 1285,
+    "Test Case 3: Verify Valid Data Entry is Accepted Without Validation Errors": 1286,
+    "Test Case 4: Verify Next Button Triggers Data Save After Valid Form Completion": 1287,
+    "Test Case 5: Verify Navigation to Next Step After Successful Form Completion": 1288
   }
 }
