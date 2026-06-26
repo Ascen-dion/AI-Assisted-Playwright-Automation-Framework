@@ -14,6 +14,9 @@
     "Test Case 1: App launches and Welcome text is visible on top left": 127,
     "Test Case 2: Shop tab is visible below Welcome text": 128,
     "Test Case 3: Hot Deals tab is visible below Welcome text": 129,
-    "Test Case 4: Cart button is visible in the bottom navigation bar": 130
+    "Test Case 4: Cart button is visible in the bottom navigation bar": 130,
+    "User navigates to Agent Builder page": 140,
+    "User creates agent using suggested prompt": 141,
+    "User enters custom agent prompt": 142
   }
 }
