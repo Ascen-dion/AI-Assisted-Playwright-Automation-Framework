@@ -110,5 +110,69 @@
     "steps": "1. Terminate any existing Golf Galaxy session\n2. Launch com.dcsg.golfgalaxy.qa\n3. Wait for the home screen to fully render\n4. Observe the bottom navigation bar",
     "expected": "Cart button (content-desc: 'Cart', resource-id: navigation_cart) is visible in the bottom navigation bar",
     "jiraRef": "ED-83"
+  },
+  {
+    "specTitle": "Test Case 1: Agent Builder page loads successfully",
+    "title": "AVVA-SMOKE AC1: Verify Agent Builder page loads with canvas and key elements visible",
+    "preconditions": "User is authenticated via Microsoft SSO (storageState configured). AVVA Console is accessible at https://int-ai.aava.ai/",
+    "steps": "1. Navigate to https://int-ai.aava.ai/launchpad/build/agent\n2. Wait for page to fully load (networkidle state)\n3. Verify agent canvas element is visible\n4. Verify page title contains 'Agent Builder'\n5. Verify page URL matches expected pattern",
+    "expected": "Agent Builder page loads successfully. Canvas is visible and interactive. Page title is 'AVVA - Agent Builder'. URL is https://int-ai.aava.ai/launchpad/build/agent",
+    "jiraRef": "AVVA-SMOKE"
+  },
+  {
+    "specTitle": "Test Case 2: User creates agent with minimal configuration",
+    "title": "AVVA-SMOKE AC2: Verify user can create agent with name and single tool selection",
+    "preconditions": "User is on Agent Builder page (https://int-ai.aava.ai/launchpad/build/agent)",
+    "steps": "1. Enter unique agent name in agent name input field\n2. Select 'browser' tool from tool palette\n3. Click 'Save Agent' button\n4. Wait for save operation to complete\n5. Observe success notification",
+    "expected": "Agent is saved successfully. Success toast notification displays 'Agent saved successfully'. User is redirected to agent detail page with URL pattern /agents/{id}",
+    "jiraRef": "AVVA-SMOKE"
+  },
+  {
+    "specTitle": "Test Case 3: Validation error shown for empty agent name",
+    "title": "AVVA-SMOKE AC3: Verify validation error displays when agent name is empty",
+    "preconditions": "User is on Agent Builder page with a new agent form",
+    "steps": "1. Leave agent name field empty (clear any existing text)\n2. Click 'Save Agent' button\n3. Observe validation error message",
+    "expected": "Validation error message displays 'Name is required'. Form does not submit. Agent is not saved. User remains on Agent Builder page",
+    "jiraRef": "AVVA-SMOKE"
+  },
+  {
+    "specTitle": "Test Case 4: User selects multiple tools successfully",
+    "title": "AVVA-SMOKE AC4: Verify user can select multiple tools from tool palette",
+    "preconditions": "User is on Agent Builder page with a new agent form",
+    "steps": "1. Enter unique agent name\n2. Select 'browser' tool checkbox\n3. Select 'vscode-runCommand' tool checkbox\n4. Select 'edit-createFile' tool checkbox\n5. Verify all three tools show as selected (checked state)",
+    "expected": "All three tools ('browser', 'vscode-runCommand', 'edit-createFile') are successfully selected and display checked state. Tool palette allows multiple selections",
+    "jiraRef": "AVVA-SMOKE"
+  },
+  {
+    "specTitle": "Test Case 5: User selects model from dropdown",
+    "title": "AVVA-SMOKE AC5: Verify user can configure agent model from dropdown",
+    "preconditions": "User is on Agent Builder page with a new agent form",
+    "steps": "1. Enter unique agent name\n2. Open model selection dropdown\n3. Select 'Claude Sonnet 4.6' model\n4. Select at least one tool ('browser')\n5. Click 'Save Agent' button\n6. Observe success notification",
+    "expected": "Model 'Claude Sonnet 4.6' is selected successfully. Agent saves with selected model configuration. Success toast notification displays 'Agent saved successfully'",
+    "jiraRef": "AVVA-SMOKE"
+  },
+  {
+    "specTitle": "Test Case 6: Agent canvas is visible and interactive",
+    "title": "AVVA-SMOKE AC6: Verify agent canvas is visible and accepts interactions",
+    "preconditions": "User is on Agent Builder page (https://int-ai.aava.ai/launchpad/build/agent)",
+    "steps": "1. Navigate to Agent Builder page\n2. Wait for canvas element to load\n3. Verify canvas is visible and not obscured\n4. Verify canvas accepts focus/interaction\n5. Verify tool palette is adjacent to canvas",
+    "expected": "Agent canvas is fully visible and interactive. Canvas element is in a ready state. Tool palette is visible and positioned correctly. Canvas displays placeholder or initial state appropriately",
+    "jiraRef": "AVVA-SMOKE"
+  },
+  {
+    "specTitle": "Test Case 7: Save button functionality",
+    "title": "AVVA-SMOKE AC7: Verify Save Agent button triggers save operation",
+    "preconditions": "User is on Agent Builder page with agent configuration filled",
+    "steps": "1. Enter unique agent name\n2. Select 'browser' tool\n3. Click 'Save Agent' button\n4. Observe loading indicator appears\n5. Wait for save operation to complete\n6. Observe page transition or notification",
+    "expected": "Save Agent button is clickable and enabled. Clicking triggers save operation. Loading spinner appears briefly. Save completes successfully. Success notification or redirect occurs",
+    "jiraRef": "AVVA-SMOKE"
+  },
+  {
+    "specTitle": "Test Case 8: Toast notification on successful save",
+    "title": "AVVA-SMOKE AC8: Verify success toast notification displays after agent save",
+    "preconditions": "User has filled agent form with valid configuration",
+    "steps": "1. Enter unique agent name\n2. Select 'browser' tool\n3. Click 'Save Agent' button\n4. Wait for save operation to complete\n5. Observe toast notification area",
+    "expected": "Success toast notification appears with message 'Agent saved successfully'. Toast is visible for 3-5 seconds. Toast auto-dismisses or has close button. Toast styling indicates success (green color/checkmark icon)",
+    "jiraRef": "AVVA-SMOKE"
   }
 ]

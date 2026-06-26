@@ -4,6 +4,7 @@ const fs = require('fs');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const STORAGE_STATE = path.resolve(__dirname, '../playwright/.auth/storageState.json');
+const AVVA_STORAGE_STATE = path.resolve(__dirname, '../playwright/.auth/avva-storageState.json');
 
 /**
  * Playwright configuration with AI framework settings
@@ -61,7 +62,10 @@ module.exports = defineConfig({
     baseURL: process.env.BASE_URL || 'https://uniondigitalbank.io',
 
     // Use saved cookie-consent state so no test needs to dismiss the banner itself
-    storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,
+    // For AVVA tests (@avva tag), use AVVA storageState with authToken
+    storageState: process.env.AVVA_TEST 
+      ? (fs.existsSync(AVVA_STORAGE_STATE) ? AVVA_STORAGE_STATE : undefined)
+      : (fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined),
 
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
