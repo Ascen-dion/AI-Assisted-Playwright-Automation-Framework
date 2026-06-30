@@ -23,27 +23,27 @@ test.describe('[UI] Medtronic India Our Impact', { tag: ['@regression', '@medtro
     await impactPage.goto();
   });
 
-  test('[C70] Test Case 1: Verify Our Impact page loads successfully', async ({ page }) => {
+  test('[C278] Test Case 1: Verify Our Impact page loads successfully', async ({ page }) => {
     await expect(page).toHaveURL(TD.urlPatterns.ourImpact, { timeout: 15000 });
     await expect(page).toHaveTitle(TD.pageTitles.ourImpact, { timeout: 15000 });
   });
 
-  test('[C71] Test Case 2: Navigate to Health Equity page from Our Impact', async ({ page }) => {
+  test('[C279] Test Case 2: Navigate to Health Equity page from Our Impact', async ({ page }) => {
     await impactPage.clickHealthEquity();
     await expect(page).toHaveURL(TD.urlPatterns.healthEquity, { timeout: 15000 });
   });
 
-  test('[C72] Test Case 3: Navigate to Inclusion Diversity Equity page from Our Impact', async ({ page }) => {
+  test('[C280] Test Case 3: Navigate to Inclusion Diversity Equity page from Our Impact', async ({ page }) => {
     await impactPage.clickInclusionDiversity();
     await expect(page).toHaveURL(/inclusion.*diversity|diversity.*inclusion/i, { timeout: 15000 });
   });
 
-  test('[C73] Test Case 4: Navigate to Protecting Our Planet page from Our Impact', async ({ page }) => {
+  test('[C281] Test Case 4: Navigate to Protecting Our Planet page from Our Impact', async ({ page }) => {
     await impactPage.clickPlanet();
     await expect(page).toHaveURL(TD.urlPatterns.planet, { timeout: 15000 });
   });
 
-  test('[C74] Test Case 5: Navigate to Communities page from Our Impact', async ({ page }) => {
+  test('[C282] Test Case 5: Navigate to Communities page from Our Impact', async ({ page }) => {
     await impactPage.clickCommunities();
     await expect(page).toHaveURL(TD.urlPatterns.communities, { timeout: 15000 });
   });

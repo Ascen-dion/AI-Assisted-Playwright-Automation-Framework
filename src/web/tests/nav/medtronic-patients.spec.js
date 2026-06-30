@@ -24,7 +24,7 @@ test.describe('[UI] Medtronic Patients & Caregivers', { tag: ['@smoke', '@medtro
     await patientsPage.goto();
   });
 
-  test('[C56] Test Case 1: Verify Patients page loads and FIND YOUR CONDITION CTA is visible', async ({ page }) => {
+  test('[C266] Test Case 1: Verify Patients page loads and FIND YOUR CONDITION CTA is visible', async ({ page }) => {
     // Assert — correct page loaded
     await expect(page).toHaveURL(TD.urlPatterns.patients, { timeout: 15000 });
 
@@ -33,25 +33,25 @@ test.describe('[UI] Medtronic Patients & Caregivers', { tag: ['@smoke', '@medtro
     expect(findConditionVisible).toBe(true);
   });
 
-  test('[C57] Test Case 2: Verify SELECT OPTIONS treatment CTA is visible', async ({ page }) => {
+  test('[C267] Test Case 2: Verify SELECT OPTIONS treatment CTA is visible', async ({ page }) => {
     // Assert — SELECT OPTIONS CTA is visible
     const selectOptionsVisible = await patientsPage.isSelectOptionsVisible();
     expect(selectOptionsVisible).toBe(true);
   });
 
-  test('[C58] Test Case 3: Verify CONTACT PATIENT SERVICES CTA is visible', async ({ page }) => {
+  test('[C268] Test Case 3: Verify CONTACT PATIENT SERVICES CTA is visible', async ({ page }) => {
     // Assert — CONTACT PATIENT SERVICES CTA is visible
     const contactServicesVisible = await patientsPage.isContactPatientServicesVisible();
     expect(contactServicesVisible).toBe(true);
   });
 
-  test('[C59] Test Case 4: Verify Response Care section is visible', async ({ page }) => {
+  test('[C269] Test Case 4: Verify Response Care section is visible', async ({ page }) => {
     // Assert — Response Care section heading is visible
     const responseCareVisible = await patientsPage.isResponseCareVisible();
     expect(responseCareVisible).toBe(true);
   });
 
-  test('[C60] Test Case 5: Verify Stay Heart Safe section is visible', async ({ page }) => {
+  test('[C270] Test Case 5: Verify Stay Heart Safe section is visible', async ({ page }) => {
     // Assert — Stay Heart Safe section heading is visible
     const heartSafeVisible = await patientsPage.isHeartSafeVisible();
     expect(heartSafeVisible).toBe(true);
@@ -66,7 +66,7 @@ test.describe('[UI] Medtronic Patients Navigation', { tag: ['@regression', '@med
     await patientsPage.goto();
   });
 
-  test('[C61] Test Case 6: Navigate to Conditions page via FIND YOUR CONDITION CTA', async ({ page }) => {
+  test('[C271] Test Case 6: Navigate to Conditions page via FIND YOUR CONDITION CTA', async ({ page }) => {
     // Act — click FIND YOUR CONDITION
     await patientsPage.clickFindCondition();
 
@@ -74,7 +74,7 @@ test.describe('[UI] Medtronic Patients Navigation', { tag: ['@regression', '@med
     await expect(page).toHaveURL(TD.urlPatterns.patientsConditions, { timeout: 15000 });
   });
 
-  test('[C62] Test Case 7: Navigate to Treatments page via SELECT OPTIONS CTA', async ({ page }) => {
+  test('[C272] Test Case 7: Navigate to Treatments page via SELECT OPTIONS CTA', async ({ page }) => {
     // Act — click SELECT OPTIONS
     await patientsPage.clickSelectOptions();
 

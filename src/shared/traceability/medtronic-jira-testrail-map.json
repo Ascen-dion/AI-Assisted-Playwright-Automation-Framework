@@ -1,55 +1,54 @@
 [
   {
-    "jiraKey": "MED-1",
+    "jiraKey": "MED-25",
     "summary": "MED: Verify Medtronic India Homepage sections and content",
     "testCases": [
       {
         "specTitle": "Test Case 1: Verify homepage loads and displays the hero CTA",
-        "caseId": "C47"
+        "caseId": "C257"
       },
       {
         "specTitle": "Test Case 2: Verify MEIC section heading is visible on homepage",
-        "caseId": "C48"
+        "caseId": "C258"
       },
       {
         "specTitle": "Test Case 3: Verify Healthcare Professionals section is visible",
-        "caseId": "C49"
+        "caseId": "C259"
       },
       {
         "specTitle": "Test Case 4: Verify Impact section is visible on homepage",
-        "caseId": "C50"
+        "caseId": "C260"
       },
       {
         "specTitle": "Test Case 5: Verify Careers section is visible on homepage",
-        "caseId": "C51"
+        "caseId": "C261"
       },
       {
         "specTitle": "Test Case 6: Verify footer sections are visible",
-        "caseId": "C52"
+        "caseId": "C262"
       }
     ],
     "labels": [
       "medtronic",
       "homepage",
       "smoke"
-    ],
-    "isNew": false
+    ]
   },
   {
-    "jiraKey": "MED-2",
+    "jiraKey": "MED-26",
     "summary": "MED: Homepage navigation to Our Company, MEIC, and Careers pages",
     "testCases": [
       {
         "specTitle": "Test Case 7: Navigate to Our Company page via hero \"See how\" CTA",
-        "caseId": "C53"
+        "caseId": "C263"
       },
       {
         "specTitle": "Test Case 8: Navigate to MEIC page via \"Learn more\" CTA",
-        "caseId": "C54"
+        "caseId": "C264"
       },
       {
         "specTitle": "Test Case 9: Navigate to Careers page via \"Join us\" CTA",
-        "caseId": "C55"
+        "caseId": "C265"
       }
     ],
     "labels": [
@@ -57,52 +56,50 @@
       "homepage",
       "navigation",
       "regression"
-    ],
-    "isNew": false
+    ]
   },
   {
-    "jiraKey": "MED-3",
+    "jiraKey": "MED-27",
     "summary": "MED: Verify Patients & Caregivers page sections and CTAs",
     "testCases": [
       {
         "specTitle": "Test Case 1: Verify Patients page loads and FIND YOUR CONDITION CTA is visible",
-        "caseId": "C56"
+        "caseId": "C266"
       },
       {
         "specTitle": "Test Case 2: Verify SELECT OPTIONS treatment CTA is visible",
-        "caseId": "C57"
+        "caseId": "C267"
       },
       {
         "specTitle": "Test Case 3: Verify CONTACT PATIENT SERVICES CTA is visible",
-        "caseId": "C58"
+        "caseId": "C268"
       },
       {
         "specTitle": "Test Case 4: Verify Response Care section is visible",
-        "caseId": "C59"
+        "caseId": "C269"
       },
       {
         "specTitle": "Test Case 5: Verify Stay Heart Safe section is visible",
-        "caseId": "C60"
+        "caseId": "C270"
       }
     ],
     "labels": [
       "medtronic",
       "patients",
       "smoke"
-    ],
-    "isNew": false
+    ]
   },
   {
-    "jiraKey": "MED-4",
+    "jiraKey": "MED-28",
     "summary": "MED: Patients page navigation to Conditions and Treatments pages",
     "testCases": [
       {
         "specTitle": "Test Case 6: Navigate to Conditions page via FIND YOUR CONDITION CTA",
-        "caseId": "C61"
+        "caseId": "C271"
       },
       {
         "specTitle": "Test Case 7: Navigate to Treatments page via SELECT OPTIONS CTA",
-        "caseId": "C62"
+        "caseId": "C272"
       }
     ],
     "labels": [
@@ -110,32 +107,31 @@
       "patients",
       "navigation",
       "regression"
-    ],
-    "isNew": false
+    ]
   },
   {
-    "jiraKey": "MED-5",
+    "jiraKey": "MED-29",
     "summary": "MED: Verify Our Company page loads and sub-page navigation",
     "testCases": [
       {
         "specTitle": "Test Case 1: Verify Our Company page loads successfully",
-        "caseId": "C63"
+        "caseId": "C273"
       },
       {
         "specTitle": "Test Case 2: Navigate to Mission page from Our Company",
-        "caseId": "C64"
+        "caseId": "C274"
       },
       {
         "specTitle": "Test Case 3: Navigate to Key Facts page from Our Company",
-        "caseId": "C65"
+        "caseId": "C275"
       },
       {
         "specTitle": "Test Case 4: Navigate to History page from Our Company",
-        "caseId": "C66"
+        "caseId": "C276"
       },
       {
         "specTitle": "Test Case 5: Navigate to Medtronic in India page from Our Company",
-        "caseId": "C67"
+        "caseId": "C277"
       }
     ],
     "labels": [
@@ -143,42 +139,114 @@
       "our-company",
       "navigation",
       "regression"
-    ],
-    "isNew": false
+    ]
   },
   {
-    "jiraKey": "MED-6",
+    "jiraKey": "MED-30",
     "summary": "MED: Verify Our Impact page loads and sub-page navigation",
-    "testCases": [],
+    "testCases": [
+      {
+        "specTitle": "Test Case 1: Verify Our Impact page loads successfully",
+        "caseId": "C278"
+      },
+      {
+        "specTitle": "Test Case 2: Navigate to Health Equity page from Our Impact",
+        "caseId": "C279"
+      },
+      {
+        "specTitle": "Test Case 3: Navigate to Inclusion Diversity Equity page from Our Impact",
+        "caseId": "C280"
+      },
+      {
+        "specTitle": "Test Case 4: Navigate to Protecting Our Planet page from Our Impact",
+        "caseId": "C281"
+      },
+      {
+        "specTitle": "Test Case 5: Navigate to Communities page from Our Impact",
+        "caseId": "C282"
+      }
+    ],
     "labels": [
       "medtronic",
       "our-impact",
-      "navigation",
-      "new-coverage"
-    ],
-    "isNew": true
+      "navigation"
+    ]
   },
   {
-    "jiraKey": "MED-7",
+    "jiraKey": "MED-31",
     "summary": "MED: Verify footer legal links navigation (Privacy, Terms, Contact)",
-    "testCases": [],
+    "testCases": [
+      {
+        "specTitle": "Test Case 1: Navigate to Privacy Statement page via footer link",
+        "caseId": "C283"
+      },
+      {
+        "specTitle": "Test Case 2: Navigate to Terms of Use page via footer link",
+        "caseId": "C284"
+      },
+      {
+        "specTitle": "Test Case 3: Navigate to Contact Us page via footer link",
+        "caseId": "C285"
+      }
+    ],
     "labels": [
       "medtronic",
       "footer",
-      "navigation",
-      "new-coverage"
-    ],
-    "isNew": true
+      "navigation"
+    ]
   },
   {
-    "jiraKey": "MED-8",
+    "jiraKey": "MED-32",
     "summary": "MED: Verify Healthcare Professionals page loads and content",
-    "testCases": [],
+    "testCases": [
+      {
+        "specTitle": "Test Case 1: Verify Healthcare Professionals page loads successfully",
+        "caseId": "C286"
+      },
+      {
+        "specTitle": "Test Case 2: Verify main heading is visible on HCP page",
+        "caseId": "C287"
+      },
+      {
+        "specTitle": "Test Case 3: Verify therapies or products section content is visible",
+        "caseId": "C288"
+      }
+    ],
     "labels": [
       "medtronic",
-      "healthcare-professionals",
-      "new-coverage"
+      "healthcare-professionals"
+    ]
+  },
+  {
+    "jiraKey": "MED-33",
+    "summary": "MED: Verify header navigation menu items are displayed",
+    "testCases": [
+      {
+        "specTitle": "Test Case 10: Verify Healthcare Professionals menu item is displayed in header",
+        "caseId": "C289"
+      },
+      {
+        "specTitle": "Test Case 11: Verify Patients & Caregivers menu item is displayed in header",
+        "caseId": "C290"
+      },
+      {
+        "specTitle": "Test Case 12: Verify Our Company menu item is displayed in header",
+        "caseId": "C291"
+      },
+      {
+        "specTitle": "Test Case 13: Verify Our Impact menu item is displayed in header",
+        "caseId": "C292"
+      },
+      {
+        "specTitle": "Test Case 14: Verify Careers section is displayed on the homepage",
+        "caseId": "C293"
+      }
     ],
-    "isNew": true
+    "labels": [
+      "medtronic",
+      "navigation",
+      "header",
+      "smoke"
+    ]
   }
 ]

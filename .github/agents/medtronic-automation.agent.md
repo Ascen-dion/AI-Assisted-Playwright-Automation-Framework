@@ -115,7 +115,7 @@ src/web/tests/nav/medtronic-*    → existing spec files
 
 ### 2.2 — Check for existing TestRail cases
 
-Check `src/shared/traceability/testrail-case-map.json` for existing case IDs.
+Check `src/shared/traceability/medtronic-jira-testrail-map.json` for existing case IDs and JIRA mappings.
 
 ---
 

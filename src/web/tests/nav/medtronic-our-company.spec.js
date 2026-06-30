@@ -22,7 +22,7 @@ test.describe('[UI] Medtronic Our Company', { tag: ['@smoke', '@medtronic'] }, (
     await companyPage.goto();
   });
 
-  test('[C63] Test Case 1: Verify Our Company page loads successfully', async ({ page }) => {
+  test('[C273] Test Case 1: Verify Our Company page loads successfully', async ({ page }) => {
     // Assert — correct page loaded
     await expect(page).toHaveURL(TD.urlPatterns.ourCompany, { timeout: 15000 });
     await expect(page).toHaveTitle(TD.pageTitles.ourCompany, { timeout: 15000 });
@@ -37,7 +37,7 @@ test.describe('[UI] Medtronic Our Company Navigation', { tag: ['@regression', '@
     await companyPage.goto();
   });
 
-  test('[C64] Test Case 2: Navigate to Mission page from Our Company', async ({ page }) => {
+  test('[C274] Test Case 2: Navigate to Mission page from Our Company', async ({ page }) => {
     // Act — click Mission link
     await companyPage.clickMission();
 
@@ -45,7 +45,7 @@ test.describe('[UI] Medtronic Our Company Navigation', { tag: ['@regression', '@
     await expect(page).toHaveURL(TD.urlPatterns.mission, { timeout: 15000 });
   });
 
-  test('[C65] Test Case 3: Navigate to Key Facts page from Our Company', async ({ page }) => {
+  test('[C275] Test Case 3: Navigate to Key Facts page from Our Company', async ({ page }) => {
     // Act — click Key Facts link
     await companyPage.clickKeyFacts();
 
@@ -53,7 +53,7 @@ test.describe('[UI] Medtronic Our Company Navigation', { tag: ['@regression', '@
     await expect(page).toHaveURL(TD.urlPatterns.keyFacts, { timeout: 15000 });
   });
 
-  test('[C66] Test Case 4: Navigate to History page from Our Company', async ({ page }) => {
+  test('[C276] Test Case 4: Navigate to History page from Our Company', async ({ page }) => {
     // Act — click History link
     await companyPage.clickHistory();
 
@@ -61,7 +61,7 @@ test.describe('[UI] Medtronic Our Company Navigation', { tag: ['@regression', '@
     await expect(page).toHaveURL(TD.urlPatterns.history, { timeout: 15000 });
   });
 
-  test('[C67] Test Case 5: Navigate to Medtronic in India page from Our Company', async ({ page }) => {
+  test('[C277] Test Case 5: Navigate to Medtronic in India page from Our Company', async ({ page }) => {
     // Act — click Medtronic in India link
     await companyPage.clickMedtronicIndia();
 

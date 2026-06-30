@@ -196,6 +196,29 @@ So that I can explore Medtronic's offerings for my practice.
     ],
     labels: ['medtronic', 'healthcare-professionals'],
   },
+  {
+    summary: 'MED: Verify header navigation menu items are displayed',
+    description: `As a user visiting the Medtronic India website,
+I want to see all main navigation menu items in the header,
+So that I can quickly access different sections of the website.
+
+*Acceptance Criteria:*
+* AC1: "Healthcare Professionals" menu item is visible in the header navigation
+* AC2: "Patients & Caregivers" menu item is visible in the header navigation
+* AC3: "Our Company" menu item is visible in the header navigation
+* AC4: "Our Impact" menu item is visible in the header navigation
+* AC5: "Careers" section is displayed on the homepage
+
+*Target URL:* https://www.medtronic.com/in-en/index.html`,
+    testCases: [
+      { specTitle: 'Test Case 10: Verify Healthcare Professionals menu item is displayed in header', caseId: 'C81' },
+      { specTitle: 'Test Case 11: Verify Patients & Caregivers menu item is displayed in header', caseId: 'C82' },
+      { specTitle: 'Test Case 12: Verify Our Company menu item is displayed in header', caseId: 'C83' },
+      { specTitle: 'Test Case 13: Verify Our Impact menu item is displayed in header', caseId: 'C84' },
+      { specTitle: 'Test Case 14: Verify Careers section is displayed on the homepage', caseId: 'C85' },
+    ],
+    labels: ['medtronic', 'navigation', 'header', 'smoke'],
+  },
 ];
 
 async function searchExistingIssues() {
