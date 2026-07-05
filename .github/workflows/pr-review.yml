@@ -11,62 +11,62 @@ permissions:
   issues: write
 
 jobs:
-  # ── Job 1: GitHub Copilot AI Code Review ─────────────────────────────────
-  copilot-review:
-    name: Copilot Code Review
+  # GitHub currently provides Copilot review from PR UI, not via a public Action.
+  # This job posts a reminder so reviewers know how to request it.
+  copilot-review-guidance:
+    name: Copilot Review Guidance
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Post Copilot review guidance
+        uses: actions/github-script@v7
         with:
-          fetch-depth: 0
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const body = [
+              '## Copilot Review',
+              '',
+              'Automatic Copilot review via `github/copilot-code-review` is not available as a public GitHub Action.',
+              'To request AI review in this PR, use the GitHub UI:',
+              '1. Open the PR',
+              '2. Click **Reviewers**',
+              '3. Select **Copilot** (if enabled for your org/repo)',
+            ].join('\n');
 
-      - name: Request Copilot Code Review
-        uses: github/copilot-code-review@v1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Custom guidelines focused on this test automation framework
-          custom_instructions: |
-            You are reviewing a Playwright + WebdriverIO test automation framework.
-            Apply these strict conventions when reviewing:
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
 
-            ## POM Structure Rules
-            - Locators MUST live in: src/web/locators/<name>.locators.js
-            - Page objects MUST live in: src/web/pages/<name>.page.js
-            - Test specs MUST live in: src/web/tests/nav/ or src/web/tests/application/
-            - Mobile tests use src/mobile/screens/ and src/mobile/tests/
-            - Mac tests use src/mac/screens/ and src/mac/tests/
-            - Windows tests use src/windows/screens/ and src/windows/tests/
-            - Raw selectors must NEVER appear inside spec files
+            const existing = comments.find(c =>
+              c.user.type === 'Bot' && c.body.includes('## Copilot Review')
+            );
 
-            ## Naming Conventions
-            - Locator files: <feature>.locators.js
-            - Page object files: <feature>.page.js
-            - Spec files: <feature>.spec.js
-            - Test titles MUST include a TestRail case ID: [C12345] Test description
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
 
-            ## Test Data
-            - All hardcoded URLs and assertion strings MUST come from src/shared/data/test-data.js
-            - Never hardcode strings in test specs directly
-
-            ## Test Quality
-            - No assertions inside page objects — assertions belong in specs only
-            - All page objects must have a goto() method
-            - Prefer semantic locators (role, label, text) over CSS/XPath
-            - Each test should be independent — no shared mutable state between tests
-
-            ## CI/CD
-            - Tests tagged @smoke must complete within 15 minutes
-            - Tests tagged @regression are allowed up to 60 minutes
-            - New tests must be tagged with either @smoke or @regression
-
-  # ── Job 2: Framework Convention Check ────────────────────────────────────
   framework-conventions:
     name: Framework Convention Check
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
+    env:
+      CHANGED_FILES_PATH: /tmp/changed-files.txt
+      CONVENTION_REPORT_PATH: /tmp/convention-report.json
 
     steps:
       - name: Checkout code
@@ -78,31 +78,38 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-          cache: 'npm'
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
+      - name: Ensure base branch is available
+        run: git fetch origin ${{ github.base_ref }} --depth=1
+
       - name: Get changed files
         id: changed-files
         run: |
-          git diff --name-only origin/${{ github.base_ref }}...HEAD > /tmp/changed-files.txt
+          git diff --name-only origin/${{ github.base_ref }}...HEAD > "$CHANGED_FILES_PATH"
           echo "Changed files:"
-          cat /tmp/changed-files.txt
+          cat "$CHANGED_FILES_PATH"
 
       - name: Run framework convention checks
         id: convention-check
-        run: node .github/scripts/check-pr-conventions.js /tmp/changed-files.txt
+        run: node .github/scripts/check-pr-conventions.js "$CHANGED_FILES_PATH"
+        env:
+          CONVENTION_REPORT_PATH: ${{ env.CONVENTION_REPORT_PATH }}
         continue-on-error: true
 
       - name: Post convention check results
         uses: actions/github-script@v7
         if: always()
+        env:
+          CONVENTION_REPORT_PATH: ${{ env.CONVENTION_REPORT_PATH }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const fs = require('fs');
-            const reportPath = '/tmp/convention-report.json';
+            const reportPath = process.env.CONVENTION_REPORT_PATH || '/tmp/convention-report.json';
             let report = { violations: [], warnings: [], passed: [] };
 
             if (fs.existsSync(reportPath)) {
@@ -138,14 +145,14 @@ jobs:
 
             if (report.passed.length > 0) {
               body += `<details>\n<summary>✅ Passed checks (${report.passed.length})</summary>\n\n`;
-              report.passed.forEach(p => { body += `- ${p}\n`; });
+              report.passed.forEach(p => {
+                body += `- ${p}\n`;
+              });
               body += '\n</details>\n';
             }
 
-            body += '\n---\n_Reviewed by [PR Review Agent](.github/workflows/pr-review.yml) · ';
-            body += `[Framework conventions](context/ui&api/framework.md)_`;
+            body += '\n---\n_Reviewed by PR Review Agent workflow_';
 
-            // Find and update existing bot comment, or create new one
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -172,7 +179,6 @@ jobs:
               });
             }
 
-            // Fail the job if there are hard violations
             if (hasViolations) {
               core.setFailed(`Framework convention violations found: ${report.violations.length}`);
             }
