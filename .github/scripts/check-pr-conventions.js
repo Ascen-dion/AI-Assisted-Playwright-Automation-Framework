@@ -6,12 +6,19 @@
 
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 
 const changedFilesPath = process.argv[2];
 if (!changedFilesPath || !fs.existsSync(changedFilesPath)) {
   console.error('Usage: node check-pr-conventions.js <changed-files.txt>');
   process.exit(1);
 }
+
+const reportPath = process.env.CONVENTION_REPORT_PATH
+  ? path.resolve(process.env.CONVENTION_REPORT_PATH)
+  : path.join(os.tmpdir(), 'convention-report.json');
+
+fs.mkdirSync(path.dirname(reportPath), { recursive: true });
 
 const changedFiles = fs
   .readFileSync(changedFilesPath, 'utf8')
@@ -158,12 +165,13 @@ for (const file of changedFiles) {
 
 // ── Summarise ────────────────────────────────────────────────────────────────
 const report = { violations, warnings, passed };
-fs.writeFileSync('/tmp/convention-report.json', JSON.stringify(report, null, 2));
+fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
 console.log(`\n📋 Convention Check Summary`);
 console.log(`  ❌ Violations : ${violations.length}`);
 console.log(`  ⚠️  Warnings  : ${warnings.length}`);
 console.log(`  ✅ Passed     : ${passed.length}`);
+console.log(`  📄 Report     : ${reportPath}`);
 
 if (violations.length > 0) {
   console.log('\n❌ Violations:');
