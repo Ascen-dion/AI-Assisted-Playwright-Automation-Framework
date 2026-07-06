@@ -7,18 +7,24 @@
  *   const { test, expect } = require('../fixtures');
  *
  * Benefits over raw @playwright/test:
+ *  - ✅ AUTOMATIC SELF-HEALING: Tries multiple selector strategies in real-time during test execution
  *  - Healing queue: on test failure, failed selector context is appended to
  *    test-results/healing-queue.json for batch AI repair via `npm run heal`
- *  - healingAttempts: number of extra locator strategies to try before failing (default: 2)
+ *  - Healing history: learns from successful healings and reuses them
  *  - Existing page objects continue to work unchanged — no POM edits required
  *
- * Self-healing batch repair:
+ * Configuration (.env):
+ *  - AUTO_HEALING_ENABLED=true   (default: true)  - Enable automatic healing during tests
+ *  - AUTO_HEALING_USE_AI=false   (default: false) - Use real-time AI healing (expensive)
+ *  - AUTO_HEALING_MAX_ATTEMPTS=3 (default: 3)     - Max fallback attempts per selector
+ *
+ * Offline batch repair (for complex failures):
  *  After a test run with failures, run:
  *    node src/helpers/self-healing.js --queue test-results/healing-queue.json
  *  This feeds failures to the AI engine which generates replacement selectors.
  */
 
-const { test: base, expect } = require('@playwright/test');
+const { test: autoHealingTest, expect } = require('./auto-healing');
 const path = require('path');
 const fs = require('fs');
 
@@ -59,19 +65,10 @@ function enqueueForHealing(testTitle, testFile, errors) {
   }
 }
 
-exports.test = base.extend({
-  /**
-   * Overrides the built-in `page` fixture.
-   * After the test completes, if the test failed, its error context is
-   * appended to the healing queue for offline AI batch repair.
-   */
-  page: async ({ page }, use, testInfo) => {
-    await use(page);
-
-    if (testInfo.status === 'failed' && testInfo.errors?.length > 0) {
-      enqueueForHealing(testInfo.title, testInfo.file, testInfo.errors);
-    }
-  }
-});
+/**
+ * Export the auto-healing test fixture
+ * This provides automatic selector healing during test execution
+ */
+exports.test = autoHealingTest;
 
 exports.expect = expect;

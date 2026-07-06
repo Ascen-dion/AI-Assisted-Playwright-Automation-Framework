@@ -118,5 +118,53 @@
     "steps": "1. Verify the \"Proceed to checkout\" button is visible on the Review Order page.\n2. Click the \"Proceed to checkout\" button.",
     "expected": "The Proceed to checkout button is visible and enabled.\nClickng the button initiates the checkout/authentication flow — browser navigates away from the Review Order page.",
     "jiraRef": "AU-13"
+  },
+  {
+    "specTitle": "AC1: Navigate to Mobile Devices Listing via Mobile dropdown",
+    "title": "Galaxy A57 5G Purchase - AC1: Navigate to Mobile Devices Listing",
+    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
+    "steps": "1. User launches the StarHub website at https://www.starhub.com/personal.html.\n2. Click the \"Mobile\" navigation tab to open the dropdown megamenu.\n3. Click \"All Phones\" in the dropdown.",
+    "expected": "System displays a list of available mobile devices.\nBrowser navigates to consumer.starhub.com/personal/store/mobile/devices.\n\"Mobile Devices\" heading is visible.\nDevice listing shows at least one item (count text matches /\\d+ items/).",
+    "jiraRef": "STAR-1"
+  },
+  {
+    "specTitle": "AC2: Select Samsung Galaxy A57 5G from device listing",
+    "title": "Galaxy A57 5G Purchase - AC2: Select Samsung Galaxy A57 5G",
+    "preconditions": "User is on the \"All Phones\" listing page at consumer.starhub.com/personal/store/mobile/devices.\nNo prior session / not logged in.",
+    "steps": "1. User is on the \"All Phones\" listing page.\n2. Locate the \"Samsung Galaxy A57 5G\" device card.\n3. Click on the device card to select it.",
+    "expected": "Device details page should be displayed.\nBrowser navigates to a URL containing \"galaxy-a57-5g\".\n\"Samsung Galaxy A57 5G\" breadcrumb or product title is visible on the product detail page.",
+    "jiraRef": "STAR-1"
+  },
+  {
+    "specTitle": "AC3: Verify default device configuration (Colour, Storage, Payment)",
+    "title": "Galaxy A57 5G Purchase - AC3: Verify Default Device Configuration",
+    "preconditions": "User is on the Samsung Galaxy A57 5G product detail page.\nNo prior configuration selections have been made.",
+    "steps": "1. User is on the Samsung Galaxy A57 5G details page.\n2. Observe the Colour label and selected colour swatch.\n3. Observe the Storage label and selected storage option.\n4. Observe the Payment option selector.",
+    "expected": "Following default selections should be applied:\n- Colour should be set to Black (or Awesome Navy per live app default)\n- Storage should be set to 256 GB\n- Payment option should be set to 24-month installment\nAll selected options should be clearly visible on the page.\nColour label shows \"Colour: [colour name]\".\nStorage label shows \"Storage: 256GB\" and 256GB chip is visible.\nPayment option shows \"24-month\" as active selection.",
+    "jiraRef": "STAR-1"
+  },
+  {
+    "specTitle": "AC4: Proceed to next step by clicking Next button",
+    "title": "Galaxy A57 5G Purchase - AC4: Proceed to Next Step",
+    "preconditions": "User is on the Galaxy A57 5G PDP.\nDefault or selected configuration is applied.\nUser is NOT logged in.",
+    "steps": "1. User has reviewed or selected device configuration on the Galaxy A57 5G details page.\n2. Click the \"Next\" button in the purchase section.",
+    "expected": "System should initiate the next step in the purchase journey.\nThe next step is confirmed by the appearance of the login/sign-up authentication gate popup.\nUser remains on the same URL (no full-page redirect until authentication).",
+    "jiraRef": "STAR-1"
+  },
+  {
+    "specTitle": "AC5: Verify login/sign-up popup for unauthenticated users",
+    "title": "Galaxy A57 5G Purchase - AC5: Display Login / Sign-Up Popup",
+    "preconditions": "User is on the Galaxy A57 5G PDP and is NOT logged in.\nUser has clicked the \"Next\" button.",
+    "steps": "1. User clicks on \"Next\" without being logged in.\n2. Observe the popup window that appears.\n3. Verify the popup message content.\n4. Verify the presence of login and sign-up buttons.",
+    "expected": "A popup window should be displayed (overlay modal is visible).\nThe popup should contain the message: \"Please log in or create an account to continue with your purchase\".\nThe following options should be visible:\n- \"Log in with Hub ID\" button\n- \"Don't have an account? Sign up here\" button",
+    "jiraRef": "STAR-1"
+  },
+  {
+    "specTitle": "End-to-End: Complete Galaxy A57 5G purchase journey",
+    "title": "Galaxy A57 5G Purchase - E2E: Complete Purchase Journey",
+    "preconditions": "User has launched https://www.starhub.com/personal.html in a browser.\nNo prior session / not logged in.",
+    "steps": "1. Navigate from homepage → Mobile → All Phones.\n2. Select Samsung Galaxy A57 5G from listing.\n3. Verify default configuration (colour, storage, payment).\n4. Click Next button.\n5. Verify login/sign-up popup appears with all required elements.",
+    "expected": "Complete end-to-end flow executes successfully:\n- All Phones listing page loads with devices\n- Galaxy A57 5G PDP loads with correct defaults\n- Next button triggers authentication gate\n- Login popup displays with both login and sign-up options\nAll 5 acceptance criteria (AC1-AC5) are validated in sequence.",
+    "jiraRef": "STAR-1"
   }
 ]
