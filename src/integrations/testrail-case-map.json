@@ -21,6 +21,9 @@
     "AC3: Verify default device configuration (Colour, Storage, Payment)": 311,
     "AC4: Proceed to next step by clicking Next button": 312,
     "AC5: Verify login/sign-up popup for unauthenticated users": 313,
-    "End-to-End: Complete Galaxy A57 5G purchase journey": 314
+    "End-to-End: Complete Galaxy A57 5G purchase journey": 314,
+    "Test Case 1: Verify successful navigation to mobile devices listing page from StarHub homepage": 626,
+    "Test Case 2: Verify user can select Samsung Galaxy A57 5G from All Phones listing and view device details": 627,
+    "Test Case 3: Verify default device configuration displays correct colour, storage, and payment option on Samsung Galaxy A57 5G details page": 628
   }
 }
