@@ -25,6 +25,7 @@ No manual scripts, no UI to navigate — the agent reads context, discovers real
 
 | Agent | Platform | Purpose |
 |---|---|---|
+| `salesforce-automation-agent` | Web (Salesforce Lightning) | Lead conversion, Quote validation, Approval workflows with JIRA/TestRail integration |
 | `starhub-automation-agent` | Web + API (Playwright) | Brownfield web/API test generation with TestRail traceability |
 | `ud-automation-agent` | Web + API (UnionDigital Bank) | Brownfield web/API tests for UnionDigital Bank Philippines |
 | `mobile-brownfield-automation-agent` | iOS + Android (MobileWright) | Native mobile app test generation |
@@ -132,6 +133,66 @@ CI: `.github/workflows/windows-hp-app-tests.yml` — runs on `windows-latest`
 
 ---
 
+### Salesforce Lightning — Playwright
+
+**Config:** `playwright.config.js`  
+**Context:** `context/ui&api/`  
+**Tests:** `src/web/salesforce/tests/`  
+**Pages:** `src/web/salesforce/pages/`  
+**Locators:** `src/web/salesforce/locators/`  
+**Agent:** `@salesforce-automation-agent` (`.github/agents/salesforce-automation.agent.md`)
+
+```bash
+# Run all Salesforce tests
+npx playwright test src/web/salesforce/tests
+
+# Run specific scenario
+npx playwright test src/web/salesforce/tests/salesforce-s1-lead-conversion.spec.js
+npx playwright test src/web/salesforce/tests/salesforce-s2-quote-validation.spec.js
+npx playwright test src/web/salesforce/tests/salesforce-s3-quote-approval.spec.js
+npx playwright test src/web/salesforce/tests/salesforce-s4-two-level-approval.spec.js
+
+# Generate JSON report for TestRail sync
+npx playwright test src/web/salesforce/tests --reporter=json
+
+# Sync results to TestRail and JIRA
+node src/web/salesforce/scripts/sync-test-results.js
+```
+
+**Current target:** Salesforce Lightning (https://as1783480463162.lightning.force.com)
+
+**Test Coverage:**
+- ✅ **DZ-1:** Lead Creation and Conversion to Opportunity (4 tests, C001-C004)
+- ✅ **DZ-2:** Quote Validation Rules - Discount & Quantity (5 tests, C005-C009)
+- ✅ **DZ-3:** Single-Level Quote Approval Process (4 tests, C010-C013)
+- ✅ **DZ-4:** Two-Level Quote Approval Process (7 tests, C014-C020)
+
+**Integration:**
+- 4 JIRA user stories created in project DZ
+- 20 TestRail test cases with detailed steps (Section 9)
+- Complete traceability: JIRA ↔ TestRail ↔ Playwright
+- Automated result sync to TestRail and JIRA
+
+**Key Features:**
+- Shadow DOM navigation for Lightning Web Components
+- Multi-user approval workflow testing (L1/L2 approvers)
+- Validation rule testing (discount justification, quantity checks)
+- Complete audit trail tracking
+- Page Object Model with robust locator strategies
+
+**Documentation:**
+- [INTEGRATION_GUIDE.md](src/web/salesforce/INTEGRATION_GUIDE.md) - Complete workflow
+- [INTEGRATION_COMPLETE.md](src/web/salesforce/INTEGRATION_COMPLETE.md) - Project summary
+- [salesforce-test-mapping.json](src/web/salesforce/salesforce-test-mapping.json) - Traceability matrix
+
+**Prerequisites:**
+- Salesforce org with appropriate licenses and permissions
+- User accounts for approvers (SALESFORCE_APPROVER1, SALESFORCE_APPROVER2)
+- Valid approval processes configured for Quote discounts (>20%, >50%)
+- Validation rules for Quote discount justification and quantity
+
+---
+
 ## CI/CD Workflows
 
 | Workflow | Platform | Runner | Schedule |
@@ -175,6 +236,7 @@ context/
 
 ```
 .claude/agents/
+  salesforce-automation-agent.agent.md        Salesforce Lightning automation with JIRA/TestRail integration
   mac-app-agent.agent.md                      macOS automation (WDIO + mac2 driver)
   windows-app-agent.agent.md                  Windows automation (WDIO + WinAppDriver)
   starhub-automation-agent.agent.md           Web/API brownfield agent
@@ -192,6 +254,13 @@ context/
 ```text
 src/
   web/                    Playwright web tests and page objects
+    salesforce/           Salesforce Lightning automation
+      tests/              Test specifications (20 tests across 4 scenarios)
+      pages/              Page Object Model classes (Login, Home, Lead, Opportunity, Quote)
+      locators/           Locator files with shadow DOM support
+      scripts/            Integration scripts (JIRA, TestRail, sync)
+      *.md                Documentation (INTEGRATION_GUIDE, INTEGRATION_COMPLETE)
+      *.json              Mapping files (jira-mapping, testrail-mapping, test-mapping)
   tests/                  UnionDigital Bank Playwright specs
   pages/                  UnionDigital Bank POM page objects + locators
   mobile/                 MobileWright tests, screens, locators (Android/iOS)

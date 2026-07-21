@@ -1,0 +1,265 @@
+{
+  "projectName": "Salesforce Lightning Automation",
+  "version": "1.0.0",
+  "lastUpdated": "2026-07-20",
+  "configuration": {
+    "jira": {
+      "url": "${JIRA_URL}",
+      "projectKey": "${JIRA_PROJECT_KEY}",
+      "email": "${JIRA_EMAIL}"
+    },
+    "testRail": {
+      "url": "${TESTRAIL_URL}",
+      "projectId": "${TESTRAIL_PROJECT_ID}",
+      "suiteId": "${TESTRAIL_SUITE_ID}",
+      "sectionId": "${TESTRAIL_SECTION_ID}"
+    },
+    "salesforce": {
+      "orgUrl": "${SALESFORCE_ORG_URL}",
+      "username": "${SALESFORCE_USERNAME}"
+    }
+  },
+  "scenarios": [
+    {
+      "scenarioId": "S1",
+      "scenarioName": "Create a Lead and Convert to Opportunity",
+      "jiraStoryKey": "DZ-1",
+      "testScriptPath": "src/web/salesforce/tests/salesforce-s1-lead-conversion.spec.js",
+      "acceptanceCriteria": [
+        {
+          "acId": "AC1",
+          "title": "Create a New Lead",
+          "testRailCaseId": "C001",
+          "testMethod": "[C001][AC1] Should create a new Lead successfully",
+          "priority": "Critical",
+          "status": "Ready for Execution",
+          "testRailId": 844,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/844"
+        },
+        {
+          "acId": "AC2",
+          "title": "Validate Mandatory Fields During Lead Creation",
+          "testRailCaseId": "C002",
+          "testMethod": "[C002][AC2] Should validate mandatory fields during Lead creation",
+          "priority": "High",
+          "status": "Ready for Execution",
+          "testRailId": 845,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/845"
+        },
+        {
+          "acId": "AC3",
+          "title": "Convert Lead to Opportunity",
+          "testRailCaseId": "C003",
+          "testMethod": "[C003][AC3] Should convert Lead to Opportunity successfully",
+          "priority": "Critical",
+          "status": "Ready for Execution",
+          "testRailId": 846,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/846"
+        },
+        {
+          "acId": "AC4",
+          "title": "Verify Opportunity Creation After Lead Conversion",
+          "testRailCaseId": "C004",
+          "testMethod": "[C004][AC4] Should verify Opportunity creation after Lead conversion",
+          "priority": "High",
+          "status": "Ready for Execution",
+          "testRailId": 847,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/847"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S2",
+      "scenarioName": "Create a Quote with Validation Rules",
+      "jiraStoryKey": "DZ-2",
+      "testScriptPath": "src/web/salesforce/tests/salesforce-s2-quote-validation.spec.js",
+      "acceptanceCriteria": [
+        {
+          "acId": "AC5",
+          "title": "Create a Quote Successfully",
+          "testRailCaseId": "C005",
+          "testMethod": "[C005][AC5] Should create a Quote successfully with valid data",
+          "priority": "Critical",
+          "status": "Ready for Execution",
+          "testRailId": 848,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/848"
+        },
+        {
+          "acId": "AC6",
+          "title": "Prevent Saving Quote When Discount Exceeds 15% Without Justification",
+          "testRailCaseId": "C006",
+          "testMethod": "[C006][AC6] Should prevent saving Quote when discount >15% without justification",
+          "priority": "Critical",
+          "status": "Ready for Execution",
+          "testRailId": 849,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/849"
+        },
+        {
+          "acId": "AC7",
+          "title": "Allow Saving Quote When Discount Exceeds 15% With Justification",
+          "testRailCaseId": "C007",
+          "testMethod": "[C007][AC7] Should allow saving Quote when discount >15% with justification",
+          "priority": "High",
+          "status": "Ready for Execution",
+          "testRailId": 850,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/850"
+        },
+        {
+          "acId": "AC8",
+          "title": "Prevent Saving Quote When Quantity is Zero or Negative",
+          "testRailCaseId": "C008",
+          "testMethod": "[C008][AC8] Should prevent saving Quote when quantity is zero or negative",
+          "priority": "Critical",
+          "status": "Ready for Execution",
+          "testRailId": 851,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/851"
+        },
+        {
+          "acId": "AC9",
+          "title": "Allow Saving Quote with Valid Quantity",
+          "testRailCaseId": "C009",
+          "testMethod": "[C009][AC9] Should allow saving Quote with valid quantity",
+          "priority": "High",
+          "status": "Ready for Execution",
+          "testRailId": 852,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/852"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S3",
+      "scenarioName": "Create a Quote with Approval Process",
+      "jiraStoryKey": "DZ-3",
+      "testScriptPath": "src/web/salesforce/tests/salesforce-s3-quote-approval.spec.js",
+      "acceptanceCriteria": [
+        {
+          "acId": "AC10",
+          "title": "Submit Quote for Approval",
+          "testRailCaseId": "C010",
+          "testMethod": "[C010][AC10] Should submit Quote for approval when discount >20%",
+          "priority": "Critical",
+          "status": "Ready for Execution",
+          "testRailId": 853,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/853"
+        },
+        {
+          "acId": "AC11",
+          "title": "Manager Approves Quote",
+          "testRailCaseId": "C011",
+          "testMethod": "[C011][AC11] Should allow manager to approve Quote",
+          "priority": "Critical",
+          "status": "Ready for Execution",
+          "testRailId": 854,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/854"
+        },
+        {
+          "acId": "AC12",
+          "title": "Manager Rejects Quote",
+          "testRailCaseId": "C012",
+          "testMethod": "[C012][AC12] Should allow manager to reject Quote",
+          "priority": "High",
+          "status": "Ready for Execution",
+          "testRailId": 855,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/855"
+        },
+        {
+          "acId": "AC13",
+          "title": "Quote Does Not Require Approval for Discounts Up to 20%",
+          "testRailCaseId": "C013",
+          "testMethod": "[C013][AC13] Should not require approval for discounts ≤20%",
+          "priority": "High",
+          "status": "Ready for Execution",
+          "testRailId": 856,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/856"
+        }
+      ]
+    },
+    {
+      "scenarioId": "S4",
+      "scenarioName": "Create a Quote with Two-Level Approval Process",
+      "jiraStoryKey": "DZ-4",
+      "testScriptPath": "src/web/salesforce/tests/salesforce-s4-two-level-approval.spec.js",
+      "acceptanceCriteria": [
+        {
+          "acId": "AC14",
+          "title": "Submit Quote for First-Level Approval",
+          "testRailCaseId": "C014",
+          "testMethod": "[C014][AC14] Should submit Quote for first-level approval when discount >50%",
+          "priority": "Critical",
+          "status": "Ready for Execution",
+          "testRailId": 857,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/857"
+        },
+        {
+          "acId": "AC15",
+          "title": "First-Level Manager Approves the Quote",
+          "testRailCaseId": "C015",
+          "testMethod": "[C015][AC15] Should route to Level 2 when Level 1 manager approves",
+          "priority": "Critical",
+          "status": "Ready for Execution",
+          "testRailId": 858,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/858"
+        },
+        {
+          "acId": "AC16",
+          "title": "First-Level Manager Rejects the Quote",
+          "testRailCaseId": "C016",
+          "testMethod": "[C016][AC16] Should route to Level 2 when Level 1 manager rejects",
+          "priority": "High",
+          "status": "Ready for Execution",
+          "testRailId": 859,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/859"
+        },
+        {
+          "acId": "AC17",
+          "title": "Second-Level Manager Approves the Quote",
+          "testRailCaseId": "C017",
+          "testMethod": "[C017][AC17] Should finalize approval when Level 2 manager approves",
+          "priority": "Critical",
+          "status": "Ready for Execution",
+          "testRailId": 860,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/860"
+        },
+        {
+          "acId": "AC18",
+          "title": "Second-Level Manager Rejects the Quote",
+          "testRailCaseId": "C018",
+          "testMethod": "[C018][AC18] Should finalize rejection when Level 2 manager rejects",
+          "priority": "High",
+          "status": "Ready for Execution",
+          "testRailId": 861,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/861"
+        },
+        {
+          "acId": "AC19",
+          "title": "Approval History Tracking",
+          "testRailCaseId": "C019",
+          "testMethod": "[C019][AC19] Should maintain complete approval history",
+          "priority": "High",
+          "status": "Ready for Execution",
+          "testRailId": 862,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/862"
+        },
+        {
+          "acId": "AC20",
+          "title": "Quote Does Not Require Two-Level Approval for Discounts of 50% or Less",
+          "testRailCaseId": "C020",
+          "testMethod": "[C020][AC20] Should not require two-level approval for discounts ≤50%",
+          "priority": "High",
+          "status": "Ready for Execution",
+          "testRailId": 863,
+          "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/863"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "totalScenarios": 4,
+    "totalAcceptanceCriteria": 20,
+    "testScriptsCreated": 20,
+    "jiraStoriesCreated": 4,
+    "testRailCasesPending": 0,
+    "automationCoverage": "100%",
+    "testRailCasesCreated": 20
+  }
+}

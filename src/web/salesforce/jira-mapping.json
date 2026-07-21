@@ -1,0 +1,26 @@
+[
+  {
+    "scenarioId": "S1",
+    "jiraKey": "DZ-1",
+    "jiraUrl": "https://aavademo.atlassian.net/browse/DZ-1",
+    "title": "[Salesforce] Create a Lead and Convert to Opportunity"
+  },
+  {
+    "scenarioId": "S2",
+    "jiraKey": "DZ-2",
+    "jiraUrl": "https://aavademo.atlassian.net/browse/DZ-2",
+    "title": "[Salesforce] Create a Quote with Validation Rules"
+  },
+  {
+    "scenarioId": "S3",
+    "jiraKey": "DZ-3",
+    "jiraUrl": "https://aavademo.atlassian.net/browse/DZ-3",
+    "title": "[Salesforce] Create a Quote with Approval Process"
+  },
+  {
+    "scenarioId": "S4",
+    "jiraKey": "DZ-4",
+    "jiraUrl": "https://aavademo.atlassian.net/browse/DZ-4",
+    "title": "[Salesforce] Create a Quote with Two-Level Approval Process"
+  }
+]

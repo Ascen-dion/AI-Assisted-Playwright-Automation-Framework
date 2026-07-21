@@ -1,0 +1,182 @@
+[
+  {
+    "caseId": "C001",
+    "testRailId": 844,
+    "scenarioId": "S1",
+    "acId": "AC1",
+    "jiraKey": "DZ-1",
+    "title": "Create a New Lead",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/844"
+  },
+  {
+    "caseId": "C002",
+    "testRailId": 845,
+    "scenarioId": "S1",
+    "acId": "AC2",
+    "jiraKey": "DZ-1",
+    "title": "Validate Mandatory Fields During Lead Creation",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/845"
+  },
+  {
+    "caseId": "C003",
+    "testRailId": 846,
+    "scenarioId": "S1",
+    "acId": "AC3",
+    "jiraKey": "DZ-1",
+    "title": "Convert Lead to Opportunity",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/846"
+  },
+  {
+    "caseId": "C004",
+    "testRailId": 847,
+    "scenarioId": "S1",
+    "acId": "AC4",
+    "jiraKey": "DZ-1",
+    "title": "Verify Opportunity Creation After Lead Conversion",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/847"
+  },
+  {
+    "caseId": "C005",
+    "testRailId": 848,
+    "scenarioId": "S2",
+    "acId": "AC5",
+    "jiraKey": "DZ-2",
+    "title": "Create a Quote Successfully",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/848"
+  },
+  {
+    "caseId": "C006",
+    "testRailId": 849,
+    "scenarioId": "S2",
+    "acId": "AC6",
+    "jiraKey": "DZ-2",
+    "title": "Prevent Saving Quote When Discount Exceeds 15% Without Justification",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/849"
+  },
+  {
+    "caseId": "C007",
+    "testRailId": 850,
+    "scenarioId": "S2",
+    "acId": "AC7",
+    "jiraKey": "DZ-2",
+    "title": "Allow Saving Quote When Discount Exceeds 15% With Justification",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/850"
+  },
+  {
+    "caseId": "C008",
+    "testRailId": 851,
+    "scenarioId": "S2",
+    "acId": "AC8",
+    "jiraKey": "DZ-2",
+    "title": "Prevent Saving Quote When Quantity is Zero or Negative",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/851"
+  },
+  {
+    "caseId": "C009",
+    "testRailId": 852,
+    "scenarioId": "S2",
+    "acId": "AC9",
+    "jiraKey": "DZ-2",
+    "title": "Allow Saving Quote with Valid Quantity",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/852"
+  },
+  {
+    "caseId": "C010",
+    "testRailId": 853,
+    "scenarioId": "S3",
+    "acId": "AC10",
+    "jiraKey": "DZ-3",
+    "title": "Submit Quote for Approval",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/853"
+  },
+  {
+    "caseId": "C011",
+    "testRailId": 854,
+    "scenarioId": "S3",
+    "acId": "AC11",
+    "jiraKey": "DZ-3",
+    "title": "Manager Approves Quote",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/854"
+  },
+  {
+    "caseId": "C012",
+    "testRailId": 855,
+    "scenarioId": "S3",
+    "acId": "AC12",
+    "jiraKey": "DZ-3",
+    "title": "Manager Rejects Quote",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/855"
+  },
+  {
+    "caseId": "C013",
+    "testRailId": 856,
+    "scenarioId": "S3",
+    "acId": "AC13",
+    "jiraKey": "DZ-3",
+    "title": "Quote Does Not Require Approval for Discounts Up to 20%",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/856"
+  },
+  {
+    "caseId": "C014",
+    "testRailId": 857,
+    "scenarioId": "S4",
+    "acId": "AC14",
+    "jiraKey": "DZ-4",
+    "title": "Submit Quote for First-Level Approval",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/857"
+  },
+  {
+    "caseId": "C015",
+    "testRailId": 858,
+    "scenarioId": "S4",
+    "acId": "AC15",
+    "jiraKey": "DZ-4",
+    "title": "First-Level Manager Approves the Quote",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/858"
+  },
+  {
+    "caseId": "C016",
+    "testRailId": 859,
+    "scenarioId": "S4",
+    "acId": "AC16",
+    "jiraKey": "DZ-4",
+    "title": "First-Level Manager Rejects the Quote",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/859"
+  },
+  {
+    "caseId": "C017",
+    "testRailId": 860,
+    "scenarioId": "S4",
+    "acId": "AC17",
+    "jiraKey": "DZ-4",
+    "title": "Second-Level Manager Approves the Quote",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/860"
+  },
+  {
+    "caseId": "C018",
+    "testRailId": 861,
+    "scenarioId": "S4",
+    "acId": "AC18",
+    "jiraKey": "DZ-4",
+    "title": "Second-Level Manager Rejects the Quote",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/861"
+  },
+  {
+    "caseId": "C019",
+    "testRailId": 862,
+    "scenarioId": "S4",
+    "acId": "AC19",
+    "jiraKey": "DZ-4",
+    "title": "Approval History Tracking",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/862"
+  },
+  {
+    "caseId": "C020",
+    "testRailId": 863,
+    "scenarioId": "S4",
+    "acId": "AC20",
+    "jiraKey": "DZ-4",
+    "title": "Quote Does Not Require Two-Level Approval for Discounts of 50% or Less",
+    "testRailUrl": "https://aava-testrail.avateam.io/index.php?/cases/view/863"
+  }
+]

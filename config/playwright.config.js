@@ -12,7 +12,7 @@ module.exports = defineConfig({
   // Global setup: dismisses cookie consent once and saves storage state
   globalSetup: require.resolve('./globalSetup.js'),
 
-  testDir: path.resolve(__dirname, '../src/web/tests'),  // Absolute path from config location
+  testDir: path.resolve(__dirname, '../src/web'),  // Absolute path from config location - includes both tests and salesforce subdirectories
   
   // Maximum time one test can run.
   // CI runners (ubuntu-latest) connect to uniondigitalbank.io from US East;
