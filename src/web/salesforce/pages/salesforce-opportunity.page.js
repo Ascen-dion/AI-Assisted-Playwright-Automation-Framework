@@ -42,7 +42,15 @@ class SalesforceOpportunityPage extends SalesforceRecordBasePage {
       await this.fillLightningInput('Amount', oppData.amount.toString());
     }
     if (oppData.closeDate) {
-      await this.fillLightningInput('CloseDate', oppData.closeDate);
+      // Convert date format from YYYY-MM-DD to MM/DD/YYYY for Salesforce
+      let formattedDate = oppData.closeDate;
+      if (oppData.closeDate.includes('-')) {
+        const parts = oppData.closeDate.split('-');
+        if (parts.length === 3) {
+          formattedDate = `${parts[1]}/${parts[2]}/${parts[0]}`;
+        }
+      }
+      await this.fillLightningInput('CloseDate', formattedDate);
     }
     if (oppData.stage) {
       await this.selectComboboxOption('StageName', oppData.stage);
@@ -111,8 +119,19 @@ class SalesforceOpportunityPage extends SalesforceRecordBasePage {
    * @param {object} quoteData - Quote data
    */
   async createQuote(quoteData) {
-    // Click "New Quote" button in Related List
-    await this.page.locator('a[title="New Quote"], button:has-text("New Quote")').first().click();
+    // First, navigate to the Quotes tab in the related list
+    console.log('Navigating to Quotes tab...');
+    const quotesTab = this.page.locator('a[data-tab-name="Quotes"], a:has-text("Quotes")').first();
+    await quotesTab.waitFor({ state: 'visible', timeout: 10000 });
+    await quotesTab.click();
+    await this.page.waitForTimeout(2000);
+    
+    // Click "New Quote" button - it could be a button or anchor with role="button"
+    console.log('Clicking New Quote button...');
+    const newQuoteButton = this.page.locator('[role="button"]:has-text("New Quote"), button:has-text("New Quote"), a:has-text("New Quote")').first();
+    await newQuoteButton.waitFor({ state: 'visible', timeout: 10000 });
+    await newQuoteButton.scrollIntoViewIfNeeded();
+    await newQuoteButton.click();
     await this.waitForPageLoad();
 
     // Fill Quote fields
@@ -123,7 +142,18 @@ class SalesforceOpportunityPage extends SalesforceRecordBasePage {
       await this.fillLightningInput('ExpirationDate', quoteData.expirationDate);
     }
 
-    await this.clickSave();
+    // Wait for any "Syncing" to complete - the form syncs lookup fields
+    console.log('Waiting for form sync to complete...');
+    await this.page.waitForTimeout(5000); // Give time for syncing to finish
+    
+    // Click Save button - try multiple selectors
+    console.log('Clicking Save button in modal...');
+    const modalSaveButton = this.page.locator('button:has-text("Save")').last(); // Use last() to get the Save button, not Cancel
+    await modalSaveButton.waitFor({ state: 'visible', timeout: 10000 });
+    await modalSaveButton.scrollIntoViewIfNeeded();
+    await modalSaveButton.click();
+    
+    await this.waitForPageLoad();
   }
 
   /**

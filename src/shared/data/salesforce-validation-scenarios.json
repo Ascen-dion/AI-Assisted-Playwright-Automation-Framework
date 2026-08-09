@@ -1,0 +1,178 @@
+{
+  "quoteLineItemValidations": [
+    {
+      "id": "C006-1",
+      "testCase": "C006",
+      "scenario": "Discount >15% without justification",
+      "description": "Should reject Quote Line Item when discount exceeds 15% without justification text",
+      "input": {
+        "product": "Zoom Meetings Pro",
+        "quantity": 5,
+        "discount": 20,
+        "justification": ""
+      },
+      "expected": {
+        "success": false,
+        "errorType": "FIELD_CUSTOM_VALIDATION_EXCEPTION",
+        "errorMessagePattern": "(?i)(justification|required|discount.*15)",
+        "validationRule": "Discount_Justification_Required"
+      },
+      "excelValidation": {
+        "formula": "IF(AND(discount > 15, justification = \"\"), \"INVALID\", \"VALID\")",
+        "expectedResult": "INVALID"
+      }
+    },
+    {
+      "id": "C006-2",
+      "testCase": "C006",
+      "scenario": "Discount >15% with justification",
+      "description": "Should accept Quote Line Item when discount exceeds 15% WITH justification text",
+      "input": {
+        "product": "Zoom Meetings Pro",
+        "quantity": 5,
+        "discount": 20,
+        "justification": "Volume discount for enterprise client"
+      },
+      "expected": {
+        "success": true,
+        "errorType": null,
+        "errorMessagePattern": null
+      },
+      "excelValidation": {
+        "formula": "IF(AND(discount > 15, LEN(justification) > 0), \"VALID\", \"INVALID\")",
+        "expectedResult": "VALID"
+      }
+    },
+    {
+      "id": "C008-1",
+      "testCase": "C008",
+      "scenario": "Zero quantity",
+      "description": "Should reject Quote Line Item when quantity is zero",
+      "input": {
+        "product": "Zoom Meetings Pro",
+        "quantity": 0,
+        "discount": 5,
+        "justification": ""
+      },
+      "expected": {
+        "success": false,
+        "errorType": "FIELD_CUSTOM_VALIDATION_EXCEPTION",
+        "errorMessagePattern": "(?i)(quantity|must be|greater|zero|positive)",
+        "validationRule": "Quantity_Must_Be_Positive"
+      },
+      "excelValidation": {
+        "formula": "IF(quantity <= 0, \"INVALID\", \"VALID\")",
+        "expectedResult": "INVALID"
+      }
+    },
+    {
+      "id": "C008-2",
+      "testCase": "C008",
+      "scenario": "Negative quantity",
+      "description": "Should reject Quote Line Item when quantity is negative",
+      "input": {
+        "product": "Zoom Meetings Pro",
+        "quantity": -5,
+        "discount": 5,
+        "justification": ""
+      },
+      "expected": {
+        "success": false,
+        "errorType": "FIELD_CUSTOM_VALIDATION_EXCEPTION",
+        "errorMessagePattern": "(?i)(quantity|must be|greater|zero|positive)",
+        "validationRule": "Quantity_Must_Be_Positive"
+      },
+      "excelValidation": {
+        "formula": "IF(quantity <= 0, \"INVALID\", \"VALID\")",
+        "expectedResult": "INVALID"
+      }
+    },
+    {
+      "id": "C008-3",
+      "testCase": "C008",
+      "scenario": "Valid quantity",
+      "description": "Should accept Quote Line Item when quantity is positive",
+      "input": {
+        "product": "Zoom Meetings Pro",
+        "quantity": 10,
+        "discount": 5,
+        "justification": ""
+      },
+      "expected": {
+        "success": true,
+        "errorType": null,
+        "errorMessagePattern": null
+      },
+      "excelValidation": {
+        "formula": "IF(quantity > 0, \"VALID\", \"INVALID\")",
+        "expectedResult": "VALID"
+      }
+    },
+    {
+      "id": "CALC-1",
+      "testCase": "CALCULATION",
+      "scenario": "Discount calculation validation",
+      "description": "Verify discount percentage is calculated correctly: discountAmount = unitPrice * quantity * (discount/100)",
+      "input": {
+        "product": "Zoom Meetings Pro",
+        "quantity": 10,
+        "unitPrice": 14.99,
+        "discount": 15
+      },
+      "expected": {
+        "success": true,
+        "totalPrice": 127.42,
+        "discountAmount": 22.49,
+        "subtotal": 149.90
+      },
+      "excelValidation": {
+        "formulas": {
+          "subtotal": "unitPrice * quantity",
+          "discountAmount": "subtotal * (discount / 100)",
+          "totalPrice": "subtotal - discountAmount"
+        },
+        "expectedResults": {
+          "subtotal": 149.90,
+          "discountAmount": 22.49,
+          "totalPrice": 127.42
+        }
+      }
+    }
+  ],
+  "approvalThresholds": {
+    "noApproval": {
+      "maxDiscount": 20,
+      "description": "Discounts ≤20% require no approval"
+    },
+    "singleLevel": {
+      "minDiscount": 20.01,
+      "maxDiscount": 50,
+      "description": "Discounts >20% and ≤50% require single-level approval"
+    },
+    "twoLevel": {
+      "minDiscount": 50.01,
+      "maxDiscount": 100,
+      "description": "Discounts >50% require two-level approval"
+    }
+  },
+  "validationRules": {
+    "discountJustification": {
+      "threshold": 15,
+      "operator": ">",
+      "requiredField": "justification",
+      "errorMessage": "Justification is required for discounts greater than 15%"
+    },
+    "quantityPositive": {
+      "field": "quantity",
+      "operator": ">",
+      "threshold": 0,
+      "errorMessage": "Quantity must be greater than zero"
+    },
+    "discountRange": {
+      "field": "discount",
+      "min": 0,
+      "max": 100,
+      "errorMessage": "Discount must be between 0% and 100%"
+    }
+  }
+}

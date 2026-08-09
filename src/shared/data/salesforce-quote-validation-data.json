@@ -1,0 +1,196 @@
+{
+  "description": "Salesforce Quote Line Item Validation Test Data",
+  "version": "1.0",
+  "testCases": [
+    {
+      "testId": "C005",
+      "scenario": "Valid data - all fields correct",
+      "product": "ZOOM",
+      "quantity": 10,
+      "discount": 10,
+      "justification": "Standard volume discount",
+      "expectedResult": {
+        "shouldPass": true,
+        "validationErrors": []
+      },
+      "calculations": {
+        "unitPrice": 14.99,
+        "subtotal": "quantity * unitPrice",
+        "discountAmount": "subtotal * (discount / 100)",
+        "totalPrice": "subtotal - discountAmount"
+      }
+    },
+    {
+      "testId": "C006",
+      "scenario": "Discount >15% without justification - SHOULD FAIL",
+      "product": "ZOOM",
+      "quantity": 5,
+      "discount": 20,
+      "justification": "",
+      "expectedResult": {
+        "shouldPass": false,
+        "validationErrors": [
+          "Justification is required for discounts greater than 15%",
+          "FIELD_CUSTOM_VALIDATION_EXCEPTION"
+        ]
+      },
+      "calculations": {
+        "unitPrice": 14.99,
+        "subtotal": "quantity * unitPrice",
+        "discountAmount": "subtotal * (discount / 100)",
+        "totalPrice": "subtotal - discountAmount"
+      }
+    },
+    {
+      "testId": "C007",
+      "scenario": "Discount >15% with justification - SHOULD PASS",
+      "product": "ZOOM",
+      "quantity": 5,
+      "discount": 20,
+      "justification": "Strategic partnership deal",
+      "expectedResult": {
+        "shouldPass": true,
+        "validationErrors": []
+      },
+      "calculations": {
+        "unitPrice": 14.99,
+        "subtotal": "quantity * unitPrice",
+        "discountAmount": "subtotal * (discount / 100)",
+        "totalPrice": "subtotal - discountAmount"
+      }
+    },
+    {
+      "testId": "C008-ZERO",
+      "scenario": "Zero quantity - SHOULD FAIL",
+      "product": "ZOOM",
+      "quantity": 0,
+      "discount": 5,
+      "justification": "",
+      "expectedResult": {
+        "shouldPass": false,
+        "validationErrors": [
+          "Quantity must be greater than zero",
+          "FIELD_CUSTOM_VALIDATION_EXCEPTION",
+          "INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST"
+        ]
+      },
+      "calculations": {
+        "unitPrice": 14.99,
+        "subtotal": 0,
+        "discountAmount": 0,
+        "totalPrice": 0
+      }
+    },
+    {
+      "testId": "C008-NEGATIVE",
+      "scenario": "Negative quantity - SHOULD FAIL",
+      "product": "ZOOM",
+      "quantity": -5,
+      "discount": 5,
+      "justification": "",
+      "expectedResult": {
+        "shouldPass": false,
+        "validationErrors": [
+          "Quantity must be greater than zero",
+          "FIELD_CUSTOM_VALIDATION_EXCEPTION",
+          "Value must be greater than 0"
+        ]
+      },
+      "calculations": {
+        "unitPrice": 14.99,
+        "subtotal": "quantity * unitPrice",
+        "discountAmount": "subtotal * (discount / 100)",
+        "totalPrice": "subtotal - discountAmount"
+      }
+    },
+    {
+      "testId": "C009",
+      "scenario": "Valid quantity - SHOULD PASS",
+      "product": "ZOOM",
+      "quantity": 100,
+      "discount": 5,
+      "justification": "",
+      "expectedResult": {
+        "shouldPass": true,
+        "validationErrors": []
+      },
+      "calculations": {
+        "unitPrice": 14.99,
+        "subtotal": "quantity * unitPrice",
+        "discountAmount": "subtotal * (discount / 100)",
+        "totalPrice": "subtotal - discountAmount"
+      }
+    },
+    {
+      "testId": "CALC-001",
+      "scenario": "Calculation verification - no discount",
+      "product": "ZOOM",
+      "quantity": 20,
+      "discount": 0,
+      "justification": "",
+      "expectedResult": {
+        "shouldPass": true,
+        "validationErrors": []
+      },
+      "calculations": {
+        "unitPrice": 14.99,
+        "subtotal": 299.80,
+        "discountAmount": 0,
+        "totalPrice": 299.80
+      }
+    },
+    {
+      "testId": "CALC-002",
+      "scenario": "Calculation verification - 15% discount",
+      "product": "ZOOM",
+      "quantity": 10,
+      "discount": 15,
+      "justification": "Volume discount",
+      "expectedResult": {
+        "shouldPass": true,
+        "validationErrors": []
+      },
+      "calculations": {
+        "unitPrice": 14.99,
+        "subtotal": 149.90,
+        "discountAmount": 22.485,
+        "totalPrice": 127.415
+      }
+    },
+    {
+      "testId": "CALC-003",
+      "scenario": "Calculation verification - high quantity, high discount",
+      "product": "ZOOM",
+      "quantity": 100,
+      "discount": 25,
+      "justification": "Enterprise deal",
+      "expectedResult": {
+        "shouldPass": true,
+        "validationErrors": []
+      },
+      "calculations": {
+        "unitPrice": 14.99,
+        "subtotal": 1499.00,
+        "discountAmount": 374.75,
+        "totalPrice": 1124.25
+      }
+    }
+  ],
+  "validationRules": {
+    "discount": {
+      "threshold": 15,
+      "rule": "Discounts > 15% require justification",
+      "field": "Discount_Justification__c"
+    },
+    "quantity": {
+      "min": 1,
+      "rule": "Quantity must be greater than zero",
+      "field": "Quantity"
+    }
+  },
+  "calculationFormulas": {
+    "subtotal": "Quantity × UnitPrice",
+    "discountAmount": "Subtotal × (Discount% ÷ 100)",
+    "totalPrice": "Subtotal - DiscountAmount"
+  }
+}

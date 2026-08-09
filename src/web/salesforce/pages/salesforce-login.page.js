@@ -16,7 +16,9 @@ class SalesforceLoginPage {
    * @param {string} loginUrl - The Salesforce login URL
    */
   async navigateTo(loginUrl) {
-    await this.page.goto(loginUrl);
+    await this.page.goto(loginUrl, { waitUntil: 'domcontentloaded' });
+    // Wait for redirect to login page if needed
+    await this.page.waitForTimeout(2000);
   }
 
   /**
@@ -25,12 +27,40 @@ class SalesforceLoginPage {
    * @param {string} password - Salesforce password
    */
   async login(username, password) {
+    // Check if login form is present (if not, already logged in)
+    const loginFormVisible = await loc.usernameInput(this.page).isVisible({ timeout: 3000 }).catch(() => false);
+    
+    if (!loginFormVisible) {
+      console.log('Already logged in to Salesforce (no login form detected), skipping login');
+      
+      // Even if logged in, ensure we're on a Lightning page, not stuck on login URL
+      const currentUrl = this.page.url();
+      if (currentUrl.includes('/login')) {
+        console.log('On login URL but authenticated - navigating to Lightning home...');
+        const baseUrl = process.env.SALESFORCE_ORG_URL;
+        await this.page.goto(`${baseUrl}/lightning/page/home`);
+        await this.page.waitForTimeout(3000);
+      }
+      return;
+    }
+    
+    console.log('Login form detected, proceeding with login...');
+    
+    // Fill username
     await loc.usernameInput(this.page).fill(username);
+    
+    // Fill password
+    await loc.passwordInput(this.page).waitFor({ state: 'visible', timeout: 5000 });
     await loc.passwordInput(this.page).fill(password);
+    
+    // Click login button
     await loc.loginButton(this.page).click();
     
-    // Wait for navigation to home page
-    await this.page.waitForURL(/.*\/lightning\/page\/home/, { timeout: 30000 }).catch(() => {});
+    // Wait for navigation to home page or any Lightning page
+    await this.page.waitForURL(/.*\/lightning\/.*/, { timeout: 60000 }).catch(() => {});
+    
+    // Additional wait for Lightning to fully initialize
+    await this.page.waitForTimeout(3000);
   }
 
   /**

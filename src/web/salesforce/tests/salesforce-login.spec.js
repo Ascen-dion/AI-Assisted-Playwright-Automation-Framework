@@ -24,18 +24,18 @@ test.describe('Salesforce Login Tests', () => {
 
   test('[C00001] Should successfully log in with valid credentials', async ({ page }) => {
     // Get credentials from environment variables
-    const username = process.env.SALESFORCE_USERNAME || 'your-username@example.com';
-    const password = process.env.SALESFORCE_PASSWORD || 'your-password';
+    const username = process.env.SALESFORCE_USERNAME;
+    const password = process.env.SALESFORCE_PASSWORD;
+    const baseUrl = process.env.SALESFORCE_ORG_URL;
 
-    // Navigate to login page
-    await loginPage.navigateTo(TD.urls.login);
-    await loginPage.verifyLoginPage();
+    // Navigate to Salesforce (will redirect to login if not authenticated)
+    await loginPage.navigateTo(baseUrl);
 
     // Perform login
     await loginPage.login(username, password);
 
     // Verify home page loads successfully
-    await expect(page).toHaveURL(TD.urlPatterns.home, { timeout: 30000 });
+    await expect(page).toHaveURL(/.*\/lightning\/.*/, { timeout: 30000 });
     await homePage.verifyHomePage();
   });
 

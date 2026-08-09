@@ -1,0 +1,16 @@
+Test ID,Scenario,Product,Quantity,Unit Price,Discount %,Justification,Subtotal Formula,Discount Amount Formula,Total Price Formula,Expected Subtotal,Expected Discount,Expected Total,Should Pass,Expected Error
+C005,Valid data - all fields correct,ZOOM,10,14.99,10,Standard volume discount,149.9,22.47001,127.42999,149.9,14.99,134.91,TRUE,
+C006,Discount >15% without justification - SHOULD FAIL,ZOOM,5,14.99,20,,74.95,11.235005,63.714995,74.95,14.99,59.96,FALSE,Justification is required
+C006-WITH,Discount >15% with justification - SHOULD PASS,ZOOM,5,14.99,20,Strategic partnership,74.95,11.235005,63.714995,74.95,14.99,59.96,TRUE,
+C007,Discount >15% with justification,ZOOM,5,14.99,20,Enterprise deal,74.95,11.235005,63.714995,74.95,14.99,59.96,TRUE,
+C008-ZERO,Zero quantity - SHOULD FAIL,ZOOM,0,14.99,5,,0,0,0,0,0,0,FALSE,Quantity must be greater than zero
+C008-NEGATIVE,Negative quantity - SHOULD FAIL,ZOOM,-5,14.99,5,,-74.95,-11.235005,-63.714995,-74.95,-3.75,-71.2,FALSE,Quantity must be greater than zero
+C009,Valid quantity - high volume,ZOOM,100,14.99,5,,1499,224.7001,1274.2999,1499,74.95,1424.05,TRUE,
+CALC-001,No discount calculation,ZOOM,20,14.99,0,,299.8,44.94002,254.85998,299.8,0,299.8,TRUE,
+CALC-002,15% discount calculation,ZOOM,10,14.99,15,Volume discount,149.9,22.47001,127.42999,149.9,22.49,127.42,TRUE,
+CALC-003,High quantity + high discount,ZOOM,100,14.99,25,Enterprise contract,1499,224.7001,1274.2999,1499,374.75,1124.25,TRUE,
+EDGE-001,Exactly 15% discount - no justification,ZOOM,10,14.99,15,,149.9,22.47001,127.42999,149.9,22.49,127.42,TRUE,"15% is threshold, not above"
+EDGE-002,Discount 15.01% without justification,ZOOM,10,14.99,15.01,,149.9,22.47001,127.42999,149.9,22.5,127.4,FALSE,Justification required >15%
+EDGE-003,Quantity = 1 (minimum valid),ZOOM,1,14.99,5,,14.99,2.247001,12.742999,14.99,0.75,14.24,TRUE,
+EDGE-004,Very high discount with justification,ZOOM,50,14.99,90,Liquidation sale,749.5,112.35005,637.14995,749.5,674.55,74.95,TRUE,
+PERF-001,Large quantity performance test,ZOOM,10000,14.99,10,Bulk order,149900,22470.01,127429.99,149900,14990,134910,TRUE,

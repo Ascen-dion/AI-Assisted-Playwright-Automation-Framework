@@ -121,7 +121,17 @@ class TestRailReporter {
     if (!this.enabled || this.results.length === 0) return;
 
     const isMobileRun = this.results.some(r => r.isMobile);
-    const runPrefix = process.env.TESTRAIL_RUN_NAME_PREFIX || (isMobileRun ? 'DSG Mobile Automation' : 'UnionDigital Bank Automation');
+    const isSalesforceRun = this.results.some(r => {
+      const filePath = r.sourceFile || '';
+      console.log(`[TestRail] Checking file: ${filePath}`);
+      return filePath.includes('salesforce') || filePath.includes('\\salesforce\\') || filePath.includes('/salesforce/');
+    });
+    console.log(`[TestRail] isSalesforceRun: ${isSalesforceRun}, isMobileRun: ${isMobileRun}`);
+    const runPrefix = process.env.TESTRAIL_RUN_NAME_PREFIX || 
+                      (isSalesforceRun ? 'Salesforce Automation' : 
+                       isMobileRun ? 'DSG Mobile Automation' : 
+                       'UnionDigital Bank Automation');
+    console.log(`[TestRail] Using run prefix: ${runPrefix}`);
     const runName = `${runPrefix} — ${new Date().toISOString().split('T')[0]}`;
     const caseIds = [...new Set(this.results.map(r => r.caseId))];
 
